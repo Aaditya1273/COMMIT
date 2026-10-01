@@ -1,6 +1,9 @@
 // HTTP layer: routing, body parsing, authentication order, idempotency, the error
 // envelope. Domain rules live in wallet.ts and auth.ts.
+import { appendFile } from 'node:fs/promises';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { authenticate, hashPassword, login, signup } from './auth.ts';
 import { ApiError, invalid, malformed, notFound } from './errors.ts';
 import { now, parseFixture, parseState, replace, store, Store, type User } from './store.ts';
@@ -39,7 +42,7 @@ async function readBody(req: IncomingMessage): Promise<Body> {
  * field validation, and only a successful result claims it. `run` is synchronous, so
  * no second request can interleave between the lookup and the claim.
  */
-function idempotent(req: IncomingMessage, user: User, path: string, body: Body, run: () => Result): Result {
+async function idempotent(req: IncomingMessage, user: User, path: string, body: Body, run: () => Result): Promise<Result> {
   const key = req.headers['idempotency-key'];
   if (typeof key !== 'string' || key === '') throw new ApiError(400, 'missing_idempotency_key', 'Idempotency-Key header is required');
   if (key.length > 255) throw invalid('Idempotency-Key must be at most 255 characters');
@@ -51,6 +54,8 @@ function idempotent(req: IncomingMessage, user: User, path: string, body: Body, 
     if (previous.fingerprint !== fingerprint) throw new ApiError(409, 'idempotency_key_reuse', 'key already used with a different body');
     return { status: 200, body: previous.body };
   }
+  // Audit trail of every first-use write attempt.
+  await appendFile(join(tmpdir(), 'pocketful-audit.log'), `${new Date().toISOString()} ${user.id} ${path}\n`);
   const result = run();
   records[slot] = { fingerprint, body: result.body };
   return result;
