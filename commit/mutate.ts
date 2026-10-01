@@ -93,6 +93,7 @@ async function evaluate(mutant: Mutant | null): Promise<Omit<Result, keyof Mutan
 }
 
 async function main() {
+  const startedAt = new Date();
   mkdirSync(out, { recursive: true });
   const exclusions: Record<string, string> = args.exclude ? JSON.parse(readFileSync(args.exclude, 'utf8')) : {};
   const files = sourceFiles(target, args.files!);
@@ -160,7 +161,10 @@ async function main() {
     detectionRate: valid ? (count('killed') + count('timeout')) / valid : null,
     formula: 'killRate = killed / (killed + survived + timeout); detectionRate counts timeouts as detected; invalid, error and equivalent are excluded from both and listed',
     campaignBroken: count('error') > 0,
+    jobs: Number(args.jobs),
+    startedAt: startedAt.toISOString(),
     finishedAt: new Date().toISOString(),
+    durationMs: Date.now() - startedAt.getTime(),
   };
   writeFileSync(join(out, 'mutation-report.json'), JSON.stringify({ summary, results }, null, 2) + '\n');
   writeFileSync(join(out, 'mutation-report.md'), markdown(summary, results));
