@@ -184,7 +184,8 @@ if (verdict === 'REJECT') {
   for (const f of failed) {
     lines.push(`Failure class:`, `    ${f.kind} check failed (${f.status})`, `Requirement:`, `    ${(f.requirements ?? ['(not mapped)']).join(', ')}`,
       `Observed:`, ...readFileSync(join(out, f.log), 'utf8').trim().split('\n').slice(-12).map((l) => `    ${l}`),
-      `Expected:`, `    exit status 0 from the ${f.id} step`, `Reproduction:`, `    ${f.command}`, `Evidence:`, `    ${f.log} (sha256 ${f.logSha256.slice(0, 16)}…)`, '');
+      `Expected:`, `    exit status 0 from the ${f.id} step`, `Reproduction:`, `    ${service ? f.command.replaceAll(service.url, '{url}') : f.command}`,
+      ...(service && f.needsService ? [`    where {url} is the candidate started with: ${plan.service!.start}`] : []), `Evidence:`, `    ${f.log} (sha256 ${f.logSha256.slice(0, 16)}…)`, '');
   }
   lines.push('Production modification by verifier:', '    NONE', '', 'Next action:', '    Builder repairs and resubmits a new revision.');
 } else if (verdict === 'INCONCLUSIVE') {
