@@ -218,11 +218,17 @@ export function parseState(state: unknown): Data {
     userIds.add(u.id);
     handles.add(u.handle);
   }
+  const paymentIds = new Set<string>();
   for (const p of payments) {
+    check(isObj(p) && !paymentIds.has(p.id as string), 'state payments are duplicated');
+    paymentIds.add(p.id as string);
     check(isObj(p) && isId(p.id) && userIds.has(p.fromUserId as string) && userIds.has(p.toUserId as string)
       && isAmount(p.amount) && isStr(p.note) && isVisibility(p.visibility) && isStr(p.createdAt), 'state payment is invalid');
   }
+  const requestIds = new Set<string>();
   for (const r of requests) {
+    check(isObj(r) && !requestIds.has(r.id as string), 'state requests are duplicated');
+    requestIds.add(r.id as string);
     check(isObj(r) && isId(r.id) && userIds.has(r.requesterId as string) && userIds.has(r.payerId as string)
       && isAmount(r.amount) && isStr(r.note) && REQUEST_STATUSES.includes(r.status as RequestStatus)
       && isStr(r.createdAt), 'state request is invalid');
