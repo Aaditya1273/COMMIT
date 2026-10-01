@@ -366,7 +366,8 @@ const post = (path: string, token: string | undefined, body: unknown, idem: stri
   await call(base, 'POST', '/_test/import', { body: snap });
   check('import-api-user', '§10', 'accounts created after reset survive export and import',
     await call(base, 'POST', '/auth/login', { body: { email: 'neo@example.com', password: 'correct horse' } }), 200);
-  const before = JSON.stringify((await call(base, 'GET', '/_test/export')).body);
+  const beforeBody = (await call(base, 'GET', '/_test/export')).body;
+  const before = JSON.stringify(beforeBody);
 
   const state = snap.state as Record<string, any>;
   const keys = Object.keys(state);
@@ -383,17 +384,28 @@ const post = (path: string, token: string | undefined, body: unknown, idem: stri
       corrupt.push([`state.${listKey}[0].${field} missing`, (s) => { delete s[listKey][0][field]; }]);
       corrupt.push([`state.${listKey}[0].${field} wrong type`, (s) => { s[listKey][0][field] = typeof value === 'string' ? 42 : 'x'; }]);
     }
-    if (state[listKey].length > 1) corrupt.push([`state.${listKey} duplicated entry`, (s) => { s[listKey][1] = structuredClone(s[listKey][0]); }]);
+    // Append, never replace: replacing an entry also orphans whatever referenced it, and
+    // the import would fail for that reason instead of the duplicate (the first version
+    // of this check did exactly that, and mutation campaign #2 showed it).
+    corrupt.push([`state.${listKey} duplicated entry`, (s) => { s[listKey].push(structuredClone(s[listKey][0])); }]);
   }
+  corrupt.push(['two users share a handle', (s) => { s.users[1].handle = s.users[0].handle; }]);
   for (const mapKey of keys.filter((k) => state[k] && typeof state[k] === 'object' && !Array.isArray(state[k]) && Object.keys(state[k]).length)) {
     const first = Object.keys(state[mapKey])[0];
     corrupt.push([`state.${mapKey} entry wrong type`, (s) => { s[mapKey][first] = 7; }]);
+    const entry = state[mapKey][first];
+    if (entry && typeof entry === 'object') {
+      for (const field of Object.keys(entry)) corrupt.push([`state.${mapKey} entry without ${field}`, (s) => { delete s[mapKey][first][field]; }]);
+    }
   }
   for (const [name, mutateState] of corrupt) {
     const body = structuredClone(snap);
     mutateState(body.state);
     const r = await call(base, 'POST', '/_test/import', { body });
     const after = JSON.stringify((await call(base, 'GET', '/_test/export')).body);
+    // Restore the good state after an unexpected acceptance, so one failure cannot
+    // cascade into every later case.
+    if (after !== before) await call(base, 'POST', '/_test/import', { body: beforeBody });
     assert(`import-corrupt ${name}`, '§10', 'an invalid state is 422 validation_failed and leaves the destination unchanged',
       r.status === 422 && r.code === 'validation_failed' && after === before, `${r.status} ${r.code}${after === before ? '' : ', destination changed'}`);
   }
@@ -426,6 +438,46 @@ const post = (path: string, token: string | undefined, body: unknown, idem: stri
   const s1 = await post('/settlements', t2.ada, { transfers: [{ from_handle: 'ada', to_handle: 'bob', amount: 5, note: 'n' }] }, sk);
   const s2 = await post('/settlements', t2.ada, { transfers: [{ note: 'n', amount: 5, to_handle: 'bob', from_handle: 'ada' }] }, sk);
   assert('replay-nested-key-order', '§7', 'key order inside nested objects does not change the JSON value', s1.status === 201 && s2.status === 200, [s1.status, s2.status]);
+}
+
+// ---- valid fixtures at the edges of their domain (§3.3, §3.4, §4) ----
+{
+  const id64 = 'u'.repeat(64);
+  await reset({
+    currency: 'BHD', minor_units: 3,
+    users: [{ ...user('a', 5), id: 'a' }, { ...user('bb', 0), id: id64 }],
+    payments: [
+      { id: 'p1', from_user_id: 'a', to_user_id: id64, amount: 1, note: 'one', visibility: 'public' },
+      { id: 'p2', from_user_id: id64, to_user_id: 'a', amount: 1_000_000_000, note: 'max', visibility: 'private' },
+    ],
+    requests: [
+      { id: 'r1', requester_id: 'a', payer_id: id64, amount: 1, note: '', status: 'pending' },
+      { id: 'r2', requester_id: id64, payer_id: 'a', amount: 7, note: 'x', status: 'declined' },
+    ],
+  });
+  const a = await login(base, 'a@example.com', 'correct horse');
+  const meA = await me(a);
+  assert('fixture-id-edges', '§3.4', 'fixture ids of 1 and 64 characters are valid', meA?.user_id === 'a' && meA.minor_units === 3 && meA.currency === 'BHD', meA);
+  const feedA = await all(base, '/activity', 'payments', a);
+  assert('fixture-seeded-payments', '§4 fixture', 'several seeded payments, including amounts 1 and 1000000000, are loaded without changing balances',
+    feedA.length === 2 && meA?.balance === 5 && feedA.some((x) => x.amount === 1_000_000_000), [feedA.length, meA?.balance]);
+  const reqA = await all(base, '/requests', 'requests', a);
+  assert('fixture-seeded-requests', '§4 fixture', 'several seeded requests keep their ids and statuses',
+    reqA.map((x) => `${x.request_id}:${x.status}`).sort().join() === 'r1:pending,r2:declined', reqA.map((x) => x.status));
+}
+
+// ---- remaining shape rules (§5, §8 splits, §11) ----
+{
+  const t = await standard();
+  check('split-handles-missing', '§5', 'a missing participant_handles is 422', await post('/splits', t.ada, { amount: 10 }), 422, 'validation_failed');
+  check('split-handles-string', '§5', 'participant_handles of the wrong JSON type is 400', await post('/splits', t.ada, { amount: 10, participant_handles: 'bob' }), 400, 'malformed_request');
+  check('split-handles-numbers', '§5', 'non-string handles are the wrong JSON type: 400', await post('/splits', t.ada, { amount: 10, participant_handles: [1, 2] }), 400, 'malformed_request');
+  check('settle-null-entry', '§11', 'a null transfer entry is a malformed batch: 422, never 5xx', await post('/settlements', t.ada, { transfers: [null] }), 422, 'validation_failed');
+  const key = k();
+  const first = await post('/splits', t.ada, { amount: 10, participant_handles: ['bob'] }, key);
+  const other = await post('/splits', t.ada, { amount: 10, participant_handles: { 0: 'bob' } }, key);
+  assert('fingerprint-array-vs-object', '§7', 'an array and an object with index keys are different JSON values: 409 reuse, not a replay',
+    first.status === 201 && other.status === 409 && other.code === 'idempotency_key_reuse', [first.status, other.status]);
 }
 
 const failed = cases.filter((c) => !c.ok);
