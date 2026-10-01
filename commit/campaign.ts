@@ -10,6 +10,7 @@
 // divergence, and writing a report whose seed and command reproduce the run exactly.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual, parseArgs } from 'node:util';
 import { rng, type Rng } from './lib/rng.ts';
 
@@ -139,7 +140,8 @@ The full operation sequence is in \`reference-report.json\`.
 `;
 }
 
-if (import.meta.main) {
+// Run as a CLI only when executed directly (portable to Node 22; `import.meta.main` is newer).
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const { values: args } = parseArgs({
     options: {
       module: { type: 'string' },

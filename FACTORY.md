@@ -239,7 +239,20 @@ planner records a blocker instead of looping.
 **Rehearsed with real revisions.** [`evidence/calibration/stage-1/repair-loop/`](evidence/calibration/stage-1/repair-loop/)
 holds a scripted rehearsal on the calibration target: a deliberately faulty revision,
 the verifier's REJECT with its reproduction, the repair commit, and the re-verification.
-<pending: repair-loop results>
+Both revisions are real commits on the branch `rehearsal/repair-loop`; `main` carries only
+their evidence. It is a rehearsal of the *mechanism* with one person playing builder,
+not evidence of seat autonomy — that comes from the BAND run.
+
+| | Revision | What it is | Verdict |
+|---|---|---|---|
+| 0 | — | prediction, written before the faulty revision existed: shipped, contract and reference checks pass; adversarial same-key campaigns fail ([`0-prediction.md`](evidence/calibration/stage-1/repair-loop/0-prediction.md); written to a scratch file at 15:49 UTC, committed with the evidence afterwards) | — |
+| 1 | `6020598` | an audit-log write awaited between the idempotency-key lookup and the claim | **REJECT** — shipped checks 147/147 pass, contract and all three reference campaigns pass; adversarial fails: **up to 24 payments committed under one key** in a 50-request burst ([verdict](evidence/calibration/stage-1/repair-loop/1-faulty-revision/verdict.md)) |
+| 2 | `57e088b` | repair: lookup, operation and claim in one synchronous step; audit after the claim | **INCONCLUSIVE** — every runnable step passes, adversarial 55/55 rounds; not ACCEPT because mutation was skipped for this gate run and Docker could not run here ([verdict](evidence/calibration/stage-1/repair-loop/2-repaired-revision/verdict.md)) |
+
+The point of the rehearsal: the defect is invisible to every sequential check —
+including the 147 checks shipped with the task — and is caught only because the verifier
+attacks with concurrent requests and judges the resulting state. A factory whose
+acceptance rested on the supplied checks would have shipped a double-spend.
 
 ---
 
@@ -250,13 +263,84 @@ specification (`calibration/pocketful-stage-1/`). It exists to answer one questi
 before any judged run: **how much bad work does this verifier actually catch?** It is
 not a submission stage and is never copied into one.
 
-<pending: measured results>
+### Final independent verification of `04563ed`
+
+[`evidence/calibration/stage-1/run-20261001T163312Z/`](evidence/calibration/stage-1/run-20261001T163312Z/) — [`verdict.md`](evidence/calibration/stage-1/run-20261001T163312Z/verdict.md), [`scorecard.md`](evidence/calibration/stage-1/run-20261001T163312Z/scorecard.md),
+manifest sha256 `0e46b1b1e9dd4f810c7c8d9f0de96cc79e8d1c110d9af2a6eb4ab1fd31f6e369`.
+
+| Layer | Result |
+|---|---|
+| Typecheck, lint | pass |
+| Startup / health | pass |
+| Shipped stage-1 checks (official kickoff package) | **147 / 147** |
+| Overshoot probe (stage-1 must *not* pass the stage-2 suite) | pass — stage 2 fails, as required |
+| Contract checks (one per spec rule, incl. import-corruption fuzz) | **248 / 248** |
+| Reference model, seeds 481927 · 7 · 90210 | **agree** — 3 × 1,000 generated operations, 6,300 invariant checks, no divergence |
+| Adversarial campaigns | **55 / 55** rounds (11 campaigns × 5 seeds), 225 state checks, 50 concurrent requests per burst |
+| Mutation campaign #3 | **398 killed / 417 valid = 95.4%** (see below) |
+| Clean build (`docker build --no-cache`) | **not run** — no Docker daemon on this machine |
+| Offline, resource-capped run (`harness run --mode isolated`) | **not run** — same reason |
+| **Verdict** | **INCONCLUSIVE** — nothing failed; two blocking steps could not run |
+
+### What the mutation campaigns measured
+
+The kill check is the verifier's whole suite against each mutant. Between campaigns the
+*suite* was strengthened from what the survivors showed; the service changed only where
+a new check found a real defect.
+
+| Campaign | Kill check | Valid | Killed | Survived | Kill rate | Raw rate¹ | Evidence |
+|---|---|---|---|---|---|---|---|
+| #1 | shipped + reference + adversarial | 469 | 300 | 168 | 64.0% | 64.0% | [`mutation-run-1`](evidence/calibration/stage-1/mutation-run-1/mutation-report.md) |
+| #2 | + contract checks, import fuzz, signup race | 467 | 372 | 94 | 79.7% | 79.7% | [`mutation-run-2`](evidence/calibration/stage-1/mutation-run-2/mutation-report.md) |
+| #3 | + checks for #2's observable survivors; 58 equivalents excluded | 417 | 398 | 18 | **95.4%** | **83.8%** | [`run-…/mutation`](evidence/calibration/stage-1/run-20261001T163312Z/mutation/mutation-report.md) |
+
+¹ Counting the 58 excluded equivalents as survivors — the like-for-like comparison with #1
+and #2. Each campaign also had 8 invalid mutants (never started) and 1 timeout.
+
+**Which layer caught what (campaign #3).** Killed by each layer, and killed by that layer
+*alone* — defects every other layer would have accepted:
+
+| Layer | Killed | Alone |
+|---|---|---|
+| Shipped checks | 282 | 3 |
+| Contract checks | 388 | 97 |
+| Reference model | 235 | 1 |
+| Adversarial | 145 | 1 |
+
+97 of the 398 kills — a quarter — would have shipped with the task's own checks plus the
+reference model and adversarial campaigns. That is the gap a verifier that stops at "the
+supplied checks pass" leaves open.
+
+**The 18 survivors are not hidden.** They are listed in the report and are real gaps,
+not excluded: a request-size guard nothing tests (8), a tampered password hash inside an
+imported state (4), the default port 8080 when `PORT` is unset (1), fixture-id and amount
+boundary logic (4), a one-character seeded password (1).
+
+**Defects the verifier found in the calibration service itself** (beyond mutants):
+an imported state with a duplicated payment or request was accepted instead of rejected
+(§10) — found by the import-corruption fuzz, fixed in `6a1dc58`; and an index that was
+written but never read — found by a surviving mutant, removed in `ae805bc`.
 
 ---
 
 ## 7. What it costs
 
-<pending: cost table>
+Measured on one 12-core, 15 GB Linux machine (Node 26), from the reports' own timings.
+
+| Activity | Wall time |
+|---|---|
+| Shipped stage-1 checks | 19–20 s |
+| Contract checks (248) | 2.8 s |
+| One reference campaign, 1,000 operations | 4.5–5.3 s |
+| Adversarial campaigns, 5 rounds × 11 | ~10 s |
+| Release gate (`verify --skip mutation`) per revision | ~50 s |
+| Kill suite against one candidate | ~26 s |
+| Mutation campaign, ~480 mutants, 6 parallel jobs | 31.4–37.3 min |
+| Full verification including mutation | 32.2 min (1,934 s) |
+
+The design consequence: the **release gate** (under a minute) runs on every revision;
+the **mutation campaign** runs when a stage is about to be accepted, and whenever the
+suite changes, because its job is to measure the suite rather than the revision.
 
 Token and model spend per seat can only be measured in a BAND run; they are recorded in
 `plan/stage-<n>.md` by the planner during the run and are **not yet measured** here.
@@ -276,6 +360,7 @@ Each of these happened while building and calibrating the factory; each changed 
 | `verify.ts` substituted `{url}` in every step, including the mutation step whose `{url}` belongs to each mutant | Generic tools composing generic tools need explicit placeholder ownership | `{url}` is filled only for steps that declare `needsService` |
 | Editing the verification scripts while a campaign ran would have changed the check halfway through a measurement | A measurement is only valid if its inputs are frozen for its duration | Campaign inputs are frozen until the run finishes; each run is committed with its own evidence directory, and `verify.ts` refuses a non-empty output directory |
 | The upstream ledger this repository started from matched none of the Pocketful API, and its dev database URLs trip the event's credential scanner | Reuse has to survive the specification and the rules, not only the code review | The ledger stays for provenance and is never copied into a submission (README, Provenance) |
+| The docs promised Node ≥ 22.18, but the campaign runner used `import.meta.main`, a newer API | A version claim is a claim like any other: it needs a run behind it | Replaced with a portable check; the toolkit self-tests, the calibration service (248/248 contract checks) and a reference campaign were then run on a real Node 22.18.0 binary |
 | No Docker daemon could be started on the calibration machine (no root) | A verifier that turned "could not run" into "pass" or "fail" would lie either way | `INCONCLUSIVE` is a first-class verdict: a blocking step that could not run blocks acceptance without blaming the implementation |
 
 ---
