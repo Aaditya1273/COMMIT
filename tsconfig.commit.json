@@ -1,0 +1,16 @@
+{
+  "//": "Typecheck for the factory toolkit (commit/) and the calibration target. Both run directly under Node's type stripping, so only erasable syntax is allowed.",
+  "compilerOptions": {
+    "target": "ES2024",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": ["commit/**/*.ts", "calibration/**/*.ts"]
+}
