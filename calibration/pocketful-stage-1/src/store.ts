@@ -66,13 +66,11 @@ export class Store {
   readonly usersById = new Map<string, User>();
   readonly usersByEmail = new Map<string, User>();
   readonly usersByHandle = new Map<string, User>();
-  readonly paymentsById = new Map<string, Payment>();
   readonly requestsById = new Map<string, PaymentRequest>();
 
   constructor(data: Data) {
     this.data = data;
     for (const user of data.users) this.indexUser(user);
-    for (const payment of data.payments) this.paymentsById.set(payment.id, payment);
     for (const request of data.requests) this.requestsById.set(request.id, request);
   }
 
@@ -89,7 +87,6 @@ export class Store {
 
   addPayment(payment: Payment): void {
     this.data.payments.push(payment);
-    this.paymentsById.set(payment.id, payment);
   }
 
   addRequest(request: PaymentRequest): void {
