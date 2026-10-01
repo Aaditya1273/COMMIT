@@ -54,10 +54,11 @@ async function idempotent(req: IncomingMessage, user: User, path: string, body: 
     if (previous.fingerprint !== fingerprint) throw new ApiError(409, 'idempotency_key_reuse', 'key already used with a different body');
     return { status: 200, body: previous.body };
   }
-  // Audit trail of every first-use write attempt.
-  await appendFile(join(tmpdir(), 'pocketful-audit.log'), `${new Date().toISOString()} ${user.id} ${path}\n`);
   const result = run();
   records[slot] = { fingerprint, body: result.body };
+  // Audit after the key is claimed: anything that yields the thread between the lookup
+  // above and the claim lets concurrent requests with the same key all see it unclaimed.
+  await appendFile(join(tmpdir(), 'pocketful-audit.log'), `${new Date().toISOString()} ${user.id} ${path}\n`);
   return result;
 }
 
