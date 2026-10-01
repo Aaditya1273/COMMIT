@@ -25,7 +25,8 @@
     "verify:reference": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts",
     "verify:adversarial": "node --no-warnings calibration/verification/adversarial.ts",
     "verify:mutation": "node --no-warnings commit/mutate.ts --target calibration/pocketful-stage-1 --start 'node --no-warnings src/server.ts' --check 'calibration/verification/kill-suite.sh {url}' --exclude calibration/verification/equivalents.json --jobs 6 --timeout 180000 --out evidence/calibration/stage-1/mutation-$(date -u +%Y%m%dT%H%M%SZ)",
-    "factory:bootstrap": "commit/bootstrap.sh"
+    "factory:bootstrap": "commit/bootstrap.sh",
+    "test:commit": "node --no-warnings --test 'commit/**/*.test.ts'"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

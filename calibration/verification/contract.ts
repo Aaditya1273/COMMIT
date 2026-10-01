@@ -351,6 +351,83 @@ const post = (path: string, token: string | undefined, body: unknown, idem: stri
   check('reset-clears-tokens', '§10', 'reset clears all state, including imported tokens', await call(base, 'GET', '/me', { token: t.bob }), 401, 'unauthenticated');
 }
 
+// ---- §10 import must reject any invalid state, atomically ----
+// The state format is the service's own, so the verifier corrupts a real export one
+// field at a time: every corruption must be 422 with the destination unchanged, and
+// the service must stay healthy afterwards.
+{
+  const t = await standard();
+  await call(base, 'POST', '/auth/signup', { body: { email: 'neo@example.com', password: 'correct horse', display_name: 'Neo' } });
+  await post('/payments', t.ada, { to_handle: 'bob', amount: 10 });
+  await post('/requests', t.bob, { payer_handle: 'ada', amount: 3 });
+  const snap = (await call(base, 'GET', '/_test/export')).body;
+  // An account created through the API, not the fixture, must survive the round trip too.
+  await reset({ currency: 'EUR', minor_units: 2, users: [user('zz', 1)] });
+  await call(base, 'POST', '/_test/import', { body: snap });
+  check('import-api-user', '§10', 'accounts created after reset survive export and import',
+    await call(base, 'POST', '/auth/login', { body: { email: 'neo@example.com', password: 'correct horse' } }), 200);
+  const before = JSON.stringify((await call(base, 'GET', '/_test/export')).body);
+
+  const state = snap.state as Record<string, any>;
+  const keys = Object.keys(state);
+  const corrupt: Array<[string, (s: any) => void]> = [
+    ['state is a list', (s) => { for (const k of Object.keys(s)) delete s[k]; s.length = 0; }],
+    ...keys.map((k): [string, (s: any) => void] => [`state.${k} missing`, (s) => { delete s[k]; }]),
+    ...keys.map((k): [string, (s: any) => void] => [`state.${k} wrong type`, (s) => { s[k] = typeof s[k] === 'string' ? 42 : 'x'; }]),
+  ];
+  for (const listKey of keys.filter((k) => Array.isArray(state[k]) && state[k].length && typeof state[k][0] === 'object')) {
+    corrupt.push([`state.${listKey}[0] not an object`, (s) => { s[listKey][0] = 7; }]);
+    for (const field of Object.keys(state[listKey][0])) {
+      const value = state[listKey][0][field];
+      if (value === null) continue; // a null field may legitimately be anything nullable
+      corrupt.push([`state.${listKey}[0].${field} missing`, (s) => { delete s[listKey][0][field]; }]);
+      corrupt.push([`state.${listKey}[0].${field} wrong type`, (s) => { s[listKey][0][field] = typeof value === 'string' ? 42 : 'x'; }]);
+    }
+    if (state[listKey].length > 1) corrupt.push([`state.${listKey} duplicated entry`, (s) => { s[listKey][1] = structuredClone(s[listKey][0]); }]);
+  }
+  for (const mapKey of keys.filter((k) => state[k] && typeof state[k] === 'object' && !Array.isArray(state[k]) && Object.keys(state[k]).length)) {
+    const first = Object.keys(state[mapKey])[0];
+    corrupt.push([`state.${mapKey} entry wrong type`, (s) => { s[mapKey][first] = 7; }]);
+  }
+  for (const [name, mutateState] of corrupt) {
+    const body = structuredClone(snap);
+    mutateState(body.state);
+    const r = await call(base, 'POST', '/_test/import', { body });
+    const after = JSON.stringify((await call(base, 'GET', '/_test/export')).body);
+    assert(`import-corrupt ${name}`, '§10', 'an invalid state is 422 validation_failed and leaves the destination unchanged',
+      r.status === 422 && r.code === 'validation_failed' && after === before, `${r.status} ${r.code}${after === before ? '' : ', destination changed'}`);
+  }
+  const healthy = await me(t.ada);
+  assert('import-fuzz-healthy', '§5', 'after every rejected import the service still answers', healthy?.handle === 'ada', healthy);
+}
+
+// ---- §8 paging edges and §11 exact affordability ----
+{
+  const t = await standard();
+  const feedPage = async (q: string) => (await call(base, 'GET', `/activity?${q}`, { token: t.ada })).body;
+  for (let i = 0; i < 51; i++) await post('/payments', t.ada, { to_handle: 'bob', amount: 1 });
+  const first = await feedPage('');
+  assert('feed-default-limit', '§8 GET /requests', 'limit defaults to 50', first.payments.length === 50 && first.has_more === true, first.payments.length);
+  const exact = await feedPage('limit=51');
+  assert('feed-has-more-exact', '§8 GET /activity', 'has_more is false when the page ends exactly at the last item', exact.payments.length === 51 && exact.has_more === false, exact.has_more);
+  const one = await feedPage('limit=1&offset=50');
+  assert('feed-limit-1', '§5', 'limit=1 is valid; offset past the newest pages correctly', one.payments?.length === 1 && one.has_more === false, one);
+  const beyond = await feedPage('offset=500');
+  assert('feed-offset-beyond', '§8', 'an offset beyond the end is an empty page', beyond.payments?.length === 0 && beyond.has_more === false, beyond);
+
+  const t2 = await standard();
+  const tr = (from: string, to: string, amount: number) => ({ from_handle: from, to_handle: to, amount });
+  check('settle-minus-one', '§11', 'a settlement leaving one wallet at exactly -1 is 409',
+    await post('/settlements', t2.ada, { transfers: [tr('bob', 'cy', 100), tr('cy', 'ada', 601)] }), 409, 'insufficient_funds');
+  check('settle-exactly-zero', '§11', 'a settlement leaving one wallet at exactly 0 is accepted',
+    await post('/settlements', t2.ada, { transfers: [tr('bob', 'cy', 100), tr('cy', 'ada', 600)] }), 201);
+  check('settle-handle-type', '§11', 'a non-string handle in an entry is 422', await post('/settlements', t2.ada, { transfers: [{ from_handle: 7, to_handle: 'bob', amount: 1 }] }), 422, 'validation_failed');
+  const sk = k();
+  const s1 = await post('/settlements', t2.ada, { transfers: [{ from_handle: 'ada', to_handle: 'bob', amount: 5, note: 'n' }] }, sk);
+  const s2 = await post('/settlements', t2.ada, { transfers: [{ note: 'n', amount: 5, to_handle: 'bob', from_handle: 'ada' }] }, sk);
+  assert('replay-nested-key-order', '§7', 'key order inside nested objects does not change the JSON value', s1.status === 201 && s2.status === 200, [s1.status, s2.status]);
+}
+
 const failed = cases.filter((c) => !c.ok);
 for (const c of failed) console.log(`FAIL ${c.id} (${c.spec}) ${c.rule} :: ${c.detail}`);
 console.log(`${cases.length - failed.length}/${cases.length} contract checks passed`);

@@ -250,6 +250,22 @@ const campaigns: Campaign[] = [
     },
   },
   {
+    name: 'signup-race',
+    property: 'concurrent signups for one email: exactly one account is created, every other attempt is 409 email_taken',
+    async run(r, f) {
+      await world({ ada: 0 });
+      const email = `race${r.int(1e6)}@example.com`;
+      const replies = await Promise.all(Array.from({ length: WORKERS }, () =>
+        call(base, 'POST', '/auth/signup', { body: { email, password: 'correct horse', display_name: 'Racer' } })));
+      const created = replies.filter((x) => x.status === 201);
+      expect(f, 'exactly one 201', created.length === 1, tally(replies));
+      expect(f, 'the rest are 409 email_taken', replies.every((x) => x.status === 201 || x.code === 'email_taken'), tally(replies));
+      const again = await call(base, 'POST', '/auth/login', { body: { email, password: 'correct horse' } });
+      expect(f, 'login reaches the one account', again.status === 200 && again.body.user_id === created[0]?.body?.user_id, again.status);
+      return { replies, state: { created: created.length } };
+    },
+  },
+  {
     name: 'mixed-garbage',
     property: 'a burst of valid, invalid, malformed and unauthenticated writes: no 5xx, no partial effects',
     async run(r, f) {

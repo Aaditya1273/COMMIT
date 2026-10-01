@@ -23,6 +23,7 @@ layer() {
   fi
 }
 
+layer contract node --no-warnings "$here/calibration/verification/contract.ts" --base-url "$url"
 layer reference node --no-warnings "$here/commit/campaign.ts" --module "$here/calibration/verification/reference.campaign.ts" \
   --base-url "$url" --seed 481927 --operations 400
 layer adversarial node --no-warnings "$here/calibration/verification/adversarial.ts" --base-url "$url" --rounds 1 --workers 30
