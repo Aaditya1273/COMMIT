@@ -1,0 +1,545 @@
+import request from 'supertest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { REPLAYED_HEADER } from '../../src/middleware/idempotency.js';
+import { createTestApplication, type TestApplication } from '../helpers/app.js';
+import {
+  bearer,
+  createAccount,
+  createBook,
+  registerUser,
+  type TestBook,
+  type TestUser,
+} from '../helpers/books.js';
+import { withBookClient } from '../helpers/ledger.js';
+
+/**
+ * `Idempotency-Key`, against a real database.
+ *
+ * The distinction being tested throughout is between this and `external_id`. `external_id`
+ * dedupes the entry: post the same one twice and there is still one entry. This dedupes the
+ * HTTP call: retry the same request and get back the same response, byte for byte, including
+ * when the first attempt was refused and created nothing at all.
+ */
+
+let application: TestApplication;
+let owner: TestUser;
+let book: TestBook;
+let cash: string;
+let sales: string;
+
+beforeAll(async () => {
+  application = createTestApplication();
+  owner = await registerUser(application);
+  book = await createBook(application, owner);
+  cash = await createAccount(application, book, { name: 'Cash', type: 'asset' });
+  sales = await createAccount(application, book, { name: 'Sales', type: 'revenue' });
+});
+
+afterAll(async () => {
+  await application.close();
+});
+
+const api = () => request(application.app);
+const auth = () => bearer(owner.accessToken);
+
+let keyCounter = 0;
+const uniqueKey = () => `key-${String(Date.now())}-${String(keyCounter++)}`;
+
+function sale(overrides: Record<string, unknown> = {}) {
+  return {
+    occurredAt: '2026-03-01T12:00:00.000Z',
+    description: 'a sale',
+    legs: [
+      { accountId: cash, amount: '10.00', currency: 'EUR' },
+      { accountId: sales, amount: '-10.00', currency: 'EUR' },
+    ],
+    ...overrides,
+  };
+}
+
+/**
+ * Counts entries by description, through a book context.
+ *
+ * `entries` is behind a row-level security policy keyed on `app.current_book_id`. A bare pool
+ * query sees no rows at all - not an error, just nothing - so a count run without a context
+ * reports zero and the assertion passes for entirely the wrong reason. `idempotency_keys` has
+ * no policy, which is why the reservation queries below are plain pool queries.
+ */
+async function countEntriesDescribed(bookId: string, description: string): Promise<{ n: string }[]> {
+  const result = await withBookClient(application.pool, bookId, (client) =>
+    client.query<{ n: string }>('SELECT count(*)::text AS n FROM entries WHERE description = $1', [
+      description,
+    ]),
+  );
+
+  return result.rows;
+}
+
+/** Waits for the reservation to be written back, which happens after the response is sent. */
+async function completed(key: string): Promise<void> {
+  for (let attempt = 0; attempt < 50; attempt += 1) {
+    const { rows } = await application.pool.query<{ completed_at: Date | null }>(
+      'SELECT completed_at FROM idempotency_keys WHERE key = $1',
+      [key],
+    );
+    if (rows[0]?.completed_at != null) return;
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  throw new Error(`reservation for ${key} was never completed`);
+}
+
+describe('a request with no Idempotency-Key', () => {
+  it('is served normally and reserves nothing', async () => {
+    const response = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .send(sale());
+
+    expect(response.status).toBe(201);
+    expect(response.headers[REPLAYED_HEADER.toLowerCase()]).toBeUndefined();
+  });
+});
+
+describe('a retried request', () => {
+  it('replays the original response rather than acting twice', async () => {
+    const key = uniqueKey();
+
+    const first = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(sale({ description: 'the first attempt' }));
+
+    await completed(key);
+
+    const second = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(sale({ description: 'the first attempt' }));
+
+    expect(first.status).toBe(201);
+    expect(second.status).toBe(201);
+    expect(second.body).toEqual(first.body);
+    expect(second.headers[REPLAYED_HEADER.toLowerCase()]).toBe('true');
+  });
+
+  it('creates exactly one entry, even though the entry had no external id', async () => {
+    // Without the header this would be two entries: the ledger has no reason to think two
+    // identical-looking entries are the same one, and it is right not to.
+    const key = uniqueKey();
+    const description = `unique-${key}`;
+
+    await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(sale({ description }));
+
+    await completed(key);
+
+    await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(sale({ description }));
+
+    // Through a book context: entries is behind a row-level security policy, and a bare
+    // pool query would see nothing and cheerfully report zero.
+    const rows = await countEntriesDescribed(book.bookId, description);
+
+    expect(rows[0]?.n).toBe('1');
+  });
+
+  it('replays a refusal too, not just a success', async () => {
+    // The case `external_id` cannot cover: the first attempt created nothing, so there is no
+    // entry to deduplicate against, and a retry would otherwise be a fresh 422 - which is the
+    // same answer, but arrived at by doing the work again.
+    const key = uniqueKey();
+    const unbalanced = sale({
+      legs: [
+        { accountId: cash, amount: '10.00', currency: 'EUR' },
+        { accountId: sales, amount: '-9.99', currency: 'EUR' },
+      ],
+    });
+
+    const first = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(unbalanced);
+
+    await completed(key);
+
+    const second = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(unbalanced);
+
+    expect(first.status).toBe(422);
+    expect(second.status).toBe(422);
+    expect(second.headers[REPLAYED_HEADER.toLowerCase()]).toBe('true');
+    expect(second.body.code).toBe('ENTRY_UNBALANCED');
+  });
+
+  it('links the reservation to the entry it produced', async () => {
+    const key = uniqueKey();
+
+    const response = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(sale());
+
+    await completed(key);
+
+    const { rows } = await application.pool.query<{ entry_id: string | null }>(
+      'SELECT entry_id FROM idempotency_keys WHERE key = $1',
+      [key],
+    );
+
+    expect(rows[0]?.entry_id).toBe(response.body.id);
+  });
+});
+
+describe('a refusal that depends on the state of the ledger', () => {
+  /**
+   * The one 4xx that is not cached, and the sequence that explains why.
+   *
+   * Every other refusal this middleware replays is a function of the request alone: an
+   * unbalanced entry is unbalanced whoever asks and whenever, so replaying it costs nothing and
+   * saves the work of deciding again. `ACCOUNT_OVERDRAWN` is the first one in the system that
+   * is not - the same bytes succeed or fail depending on a balance that anything else in the
+   * book can change a moment later.
+   *
+   * So this is the sequence a correct client performs, and the one caching would break: take
+   * the 422, read the shortfall out of it, deposit exactly that, and retry under the same key -
+   * which is what an idempotency key is *for*, since the client still cannot know whether the
+   * original withdrawal happened. Replaying the stored 422 would hand them a refusal that
+   * stopped being true the moment they acted on it, and would keep handing it to them forever.
+   *
+   * What the key still guarantees is the part that matters: the withdrawal happens at most
+   * once. It is the response that is allowed to differ between attempts, not the effect.
+   */
+  it('is re-run rather than replayed, so a retry sees the balance as it now is', async () => {
+    const solvent = await createBook(application, owner);
+    const account = await createAccount(application, solvent, { name: 'Cash', type: 'asset' });
+    const revenue = await createAccount(application, solvent, { name: 'Sales', type: 'revenue' });
+    const expense = await createAccount(application, solvent, { name: 'Rent', type: 'expense' });
+
+    const key = uniqueKey();
+    const withdrawal = {
+      occurredAt: '2026-03-01T12:00:00.000Z',
+      description: `withdrawal-${key}`,
+      legs: [
+        { accountId: account, amount: '-50.00', currency: 'EUR' },
+        { accountId: expense, amount: '50.00', currency: 'EUR' },
+      ],
+    };
+
+    // Nothing in the account yet, so this cannot be afforded.
+    const refused = await api()
+      .post(`/books/${solvent.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(withdrawal);
+
+    expect(refused.status).toBe(422);
+    expect(refused.body.code).toBe('ACCOUNT_OVERDRAWN');
+
+    await completed(key);
+
+    // The client does what the error told them to.
+    const deposit = await api()
+      .post(`/books/${solvent.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', uniqueKey())
+      .send({
+        occurredAt: '2026-02-01T12:00:00.000Z',
+        description: `funding-${key}`,
+        legs: [
+          { accountId: account, amount: '100.00', currency: 'EUR' },
+          { accountId: revenue, amount: '-100.00', currency: 'EUR' },
+        ],
+      });
+
+    expect(deposit.status).toBe(201);
+
+    // The same request, the same key, and now it is affordable.
+    const retried = await api()
+      .post(`/books/${solvent.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(withdrawal);
+
+    expect(retried.status).toBe(201);
+    expect(retried.headers[REPLAYED_HEADER.toLowerCase()]).toBeUndefined();
+
+    // And exactly once, which is the promise the key actually makes.
+    const rows = await countEntriesDescribed(solvent.bookId, `withdrawal-${key}`);
+    expect(rows[0]?.n).toBe('1');
+  });
+
+  it('still replays a refusal that does not depend on state, which is the contrast', async () => {
+    // Same status, same endpoint, opposite treatment - and the difference is entirely whether
+    // re-running could produce a different answer. This one could not.
+    const key = uniqueKey();
+    const unbalanced = sale({
+      legs: [
+        { accountId: cash, amount: '10.00', currency: 'EUR' },
+        { accountId: sales, amount: '-9.98', currency: 'EUR' },
+      ],
+    });
+
+    await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(unbalanced);
+
+    await completed(key);
+
+    const second = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(unbalanced);
+
+    expect(second.status).toBe(422);
+    expect(second.headers[REPLAYED_HEADER.toLowerCase()]).toBe('true');
+  });
+});
+
+describe('a replayed body describing state that has since moved on', () => {
+  /**
+   * `reversedBy` is the first field in a cached body that can stop being true, and this pins
+   * what happens when it does.
+   *
+   * The stored response is not re-serialised on the way out, so a replay reports the entry as
+   * unreversed however long ago it was reversed. That is deliberate and is the same contract as
+   * every other replay here: retrying an HTTP call returns that call's response, not a fresh
+   * reading of the ledger. It is also the opposite of what the `external_id` replay does, which
+   * runs the service and reports the reversal - so the two need a test each, or the difference
+   * between them is one nobody notices changing.
+   *
+   * Nothing is hidden by this. The entry resource asks the ledger and answers with the
+   * reversal, which is the assertion at the end.
+   */
+  it('reports the entry as unreversed, because a replay repeats a response and not a state', async () => {
+    const key = uniqueKey();
+    const entry = sale({ description: `reversed-after-the-fact-${key}` });
+
+    const created = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(entry);
+
+    expect(created.status).toBe(201);
+    expect(created.body.reversedBy).toBeNull();
+
+    await completed(key);
+
+    // A different request entirely, and one this key knows nothing about.
+    const reversal = await api()
+      .post(`/entries/${created.body.id}/reverse`)
+      .set('Authorization', auth())
+      .send({});
+
+    expect(reversal.status).toBe(201);
+
+    const replayed = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(entry);
+
+    expect(replayed.headers[REPLAYED_HEADER.toLowerCase()]).toBe('true');
+    expect(replayed.status).toBe(201);
+    expect(replayed.body).toEqual(created.body);
+    expect(replayed.body.reversedBy).toBeNull();
+
+    // The stale field is in the cached body, not in the system: the entry itself says so.
+    const fetched = await api().get(`/entries/${created.body.id}`).set('Authorization', auth());
+
+    expect(fetched.status).toBe(200);
+    expect(fetched.body.reversedBy).toBe(reversal.body.id);
+  });
+});
+
+describe('the same key for a different request', () => {
+  it('is refused as a client bug rather than answered with the first response', async () => {
+    // Replaying here would hand back the result of a request the caller did not make, which
+    // hides the bug behind a plausible answer.
+    const key = uniqueKey();
+
+    await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(sale({ description: 'the original' }));
+
+    await completed(key);
+
+    const different = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(sale({ description: 'something else entirely' }));
+
+    expect(different.status).toBe(422);
+    expect(different.body.code).toBe('IDEMPOTENCY_KEY_REUSED');
+  });
+
+  it('notices a change anywhere in the body, not just the obvious fields', async () => {
+    const key = uniqueKey();
+
+    await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(sale());
+
+    await completed(key);
+
+    const cheaper = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(
+        sale({
+          legs: [
+            { accountId: cash, amount: '9.00', currency: 'EUR' },
+            { accountId: sales, amount: '-9.00', currency: 'EUR' },
+          ],
+        }),
+      );
+
+    expect(cheaper.status).toBe(422);
+    expect(cheaper.body.code).toBe('IDEMPOTENCY_KEY_REUSED');
+  });
+});
+
+describe('two requests with one key at the same time', () => {
+  it('serves one and tells the other it is in flight', async () => {
+    const key = uniqueKey();
+    const body = sale({ description: `concurrent-${key}` });
+
+    const [first, second] = await Promise.all([
+      api()
+        .post(`/books/${book.bookId}/entries`)
+        .set('Authorization', auth())
+        .set('Idempotency-Key', key)
+        .send(body),
+      api()
+        .post(`/books/${book.bookId}/entries`)
+        .set('Authorization', auth())
+        .set('Idempotency-Key', key)
+        .send(body),
+    ]);
+
+    const statuses = [first.status, second.status].sort((a, b) => a - b);
+
+    // 409 for the loser: a request with this key is running, and the answer is not known yet.
+    // The alternative - waiting for the first to finish - turns a retry into a request that
+    // holds a connection open for as long as the original takes.
+    expect(statuses).toEqual([201, 409]);
+
+    const rows = await countEntriesDescribed(book.bookId, `concurrent-${key}`);
+    expect(rows[0]?.n).toBe('1');
+  });
+});
+
+describe('keys are scoped to their book', () => {
+  it('does not collide across books', async () => {
+    // The reservation is keyed on (book_id, key), so two callers picking the same string in
+    // different books are not retrying each other's request.
+    const other = await createBook(application, owner);
+    const otherCash = await createAccount(application, other, { name: 'Cash' });
+    const otherSales = await createAccount(application, other, { name: 'Sales', type: 'revenue' });
+
+    const key = uniqueKey();
+
+    const first = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send(sale());
+
+    const second = await api()
+      .post(`/books/${other.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', key)
+      .send({
+        occurredAt: '2026-03-01T12:00:00.000Z',
+        description: 'a different book entirely',
+        legs: [
+          { accountId: otherCash, amount: '10.00', currency: 'EUR' },
+          { accountId: otherSales, amount: '-10.00', currency: 'EUR' },
+        ],
+      });
+
+    expect(first.status).toBe(201);
+    expect(second.status).toBe(201);
+    expect(second.body.id).not.toBe(first.body.id);
+  });
+});
+
+describe('the header itself', () => {
+  it('is rejected when blank or absurdly long', async () => {
+    const blank = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', '   ')
+      .send(sale());
+
+    const enormous = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', 'x'.repeat(300))
+      .send(sale());
+
+    expect(blank.status).toBe(400);
+    expect(enormous.status).toBe(400);
+  });
+
+  it('is ignored on a read, which is already idempotent', async () => {
+    const response = await api()
+      .get(`/accounts/${cash}/balance`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', uniqueKey());
+
+    expect(response.status).toBe(200);
+    expect(response.headers[REPLAYED_HEADER.toLowerCase()]).toBeUndefined();
+  });
+});
+
+describe('idempotency and external_id together', () => {
+  it('are complementary: one dedupes the call, the other dedupes the entry', async () => {
+    // Same entry, two different HTTP calls with different keys. The transport layer sees two
+    // distinct requests and lets both through; `external_id` is what makes the second a
+    // replay of the first at the domain level, answered with 200 rather than 201.
+    const externalId = `invoice-${uniqueKey()}`;
+
+    const first = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', uniqueKey())
+      .send(sale({ externalId }));
+
+    const second = await api()
+      .post(`/books/${book.bookId}/entries`)
+      .set('Authorization', auth())
+      .set('Idempotency-Key', uniqueKey())
+      .send(sale({ externalId }));
+
+    expect(first.status).toBe(201);
+    expect(second.status).toBe(200);
+    expect(second.body.id).toBe(first.body.id);
+
+    // Not a transport replay: this response was produced by running the request, not by
+    // reading a stored one.
+    expect(second.headers[REPLAYED_HEADER.toLowerCase()]).toBeUndefined();
+  });
+});
