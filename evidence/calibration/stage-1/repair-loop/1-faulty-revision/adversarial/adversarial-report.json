@@ -1,0 +1,2388 @@
+{
+  "kind": "adversarial-campaign",
+  "baseSeed": 20261001,
+  "workers": 50,
+  "rounds": 5,
+  "campaigns": 55,
+  "passed": 46,
+  "failed": 9,
+  "checks": 225,
+  "reproduction": "node calibration/verification/adversarial.ts --base-url <url> --seed 20261001 --workers 50 --rounds 5",
+  "results": [
+    {
+      "campaign": "same-key-storm",
+      "property": "N concurrent identical requests under one unused key: exactly one 201, the rest 200 with the identical body, money moves once",
+      "round": 0,
+      "seed": 20261001,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 158,
+      "responses": {
+        "200": 49,
+        "201": 1
+      },
+      "finalState": {
+        "balances": {
+          "ada": 712,
+          "bob": 288
+        },
+        "feed": 1
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"200\":49,\"201\":1}"
+        },
+        {
+          "check": "every other reply is 200 with the same body",
+          "ok": true,
+          "detail": "{\"200\":49,\"201\":1}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 1000, seeded 1000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":712,\"bob\":288}"
+        },
+        {
+          "check": "moved once",
+          "ok": true,
+          "detail": "{\"ada\":712,\"bob\":288}"
+        },
+        {
+          "check": "one feed item",
+          "ok": true,
+          "detail": "1 payments in the feed"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "same-key-different-bodies",
+      "property": "concurrent requests sharing a key but not a body: at most one takes effect, the rest are 409 reuse or identical replays",
+      "round": 0,
+      "seed": 20261002,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 104,
+      "responses": {
+        "200": 12,
+        "201": 15,
+        "409 idempotency_key_reuse": 23
+      },
+      "finalState": {
+        "ada": 2500,
+        "bob": 2500
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": false,
+          "detail": "{\"200\":12,\"201\":15,\"409 idempotency_key_reuse\":23}"
+        },
+        {
+          "check": "losers are 409 reuse or same-body 200",
+          "ok": false,
+          "detail": "{\"200\":12,\"201\":15,\"409 idempotency_key_reuse\":23}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 5000, seeded 5000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":2500,\"bob\":2500}"
+        },
+        {
+          "check": "only the winner moved money",
+          "ok": false,
+          "detail": "{\"ada\":2500,\"bob\":2500}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "campaign": "drain-race",
+      "property": "concurrent payments from one wallet whose sum exceeds it: accepted payments never overdraw, refusals move nothing",
+      "round": 0,
+      "seed": 20261003,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 134,
+      "responses": {
+        "201": 14,
+        "409 insufficient_funds": 36
+      },
+      "finalState": {
+        "balances": {
+          "ada": 15,
+          "bob": 2182,
+          "cy": 2090
+        },
+        "accepted": 4272
+      },
+      "findings": [
+        {
+          "check": "only 201 or 409 insufficient_funds",
+          "ok": true,
+          "detail": "{\"201\":14,\"409 insufficient_funds\":36}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 4287, seeded 4287"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":15,\"bob\":2182,\"cy\":2090}"
+        },
+        {
+          "check": "sender lost exactly the accepted total",
+          "ok": true,
+          "detail": "{\"start\":4287,\"accepted\":4272,\"ada\":15}"
+        },
+        {
+          "check": "every refusal was genuinely unaffordable at the end",
+          "ok": true,
+          "detail": "{\"ada\":15,\"bob\":2182,\"cy\":2090}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "fan-in",
+      "property": "many senders paying one recipient at once: the recipient gains exactly what was accepted",
+      "round": 0,
+      "seed": 20261004,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 414,
+      "responses": {
+        "201": 35,
+        "409 insufficient_funds": 15
+      },
+      "finalState": {
+        "s0": 51,
+        "s1": 107,
+        "s2": 51,
+        "s3": 5,
+        "s4": 13,
+        "s5": 11,
+        "s6": 43,
+        "s7": 29,
+        "s8": 22,
+        "s9": 5,
+        "sink": 1670
+      },
+      "findings": [
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 2007, seeded 2007"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"s0\":51,\"s1\":107,\"s2\":51,\"s3\":5,\"s4\":13,\"s5\":11,\"s6\":43,\"s7\":29,\"s8\":22,\"s9\":5,\"sink\":1670}"
+        },
+        {
+          "check": "recipient gained the accepted total",
+          "ok": true,
+          "detail": "{\"sink\":1670,\"accepted\":1670}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "ring",
+      "property": "payments around a cycle in both directions at once: no wallet goes negative, nothing is created or lost",
+      "round": 0,
+      "seed": 20261005,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 173,
+      "responses": {
+        "201": 36,
+        "409 insufficient_funds": 14
+      },
+      "finalState": {
+        "a": 106,
+        "b": 71,
+        "c": 42,
+        "d": 369
+      },
+      "findings": [
+        {
+          "check": "no 5xx",
+          "ok": true,
+          "detail": "{\"201\":36,\"409 insufficient_funds\":14}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 588, seeded 588"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"a\":106,\"b\":71,\"c\":42,\"d\":369}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "request-double-pay",
+      "property": "one request paid concurrently under different keys: it moves money at most once",
+      "round": 0,
+      "seed": 20261006,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 109,
+      "responses": {
+        "201": 1,
+        "409 request_not_pending": 49
+      },
+      "finalState": {
+        "ada": 5866,
+        "bob": 4134
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 request_not_pending\":49}"
+        },
+        {
+          "check": "the rest are request_not_pending",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 request_not_pending\":49}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 10000, seeded 10000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":5866,\"bob\":4134}"
+        },
+        {
+          "check": "moved once",
+          "ok": true,
+          "detail": "{\"ada\":5866,\"bob\":4134}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "pay-versus-cancel",
+      "property": "payer pays while requester cancels: the request ends paid xor cancelled, and money matches the outcome",
+      "round": 0,
+      "seed": 20261007,
+      "workers": 50,
+      "operations": 20,
+      "durationMs": 121,
+      "responses": {
+        "200": 10,
+        "409 request_not_pending": 10
+      },
+      "finalState": {
+        "balances": {
+          "ada": 10000,
+          "bob": 0
+        },
+        "paid": 0
+      },
+      "findings": [
+        {
+          "check": "every request ended paid or cancelled",
+          "ok": true,
+          "detail": "[\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\"]"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 10000, seeded 10000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":10000,\"bob\":0}"
+        },
+        {
+          "check": "money matches the paid count",
+          "ok": true,
+          "detail": "{\"paid\":0,\"bob\":0}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "settlement-under-drain",
+      "property": "a settlement races ordinary payments draining its senders: all-or-nothing, never negative",
+      "round": 0,
+      "seed": 20261008,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 165,
+      "responses": {
+        "201": 4,
+        "409 insufficient_funds": 46
+      },
+      "finalState": {
+        "op": 0,
+        "ada": 20,
+        "bob": 50,
+        "cy": 1130
+      },
+      "findings": [
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 1200, seeded 1200"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"op\":0,\"ada\":20,\"bob\":50,\"cy\":1130}"
+        },
+        {
+          "check": "settlement all or nothing",
+          "ok": true,
+          "detail": "{\"status\":201,\"members\":2}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "lost-response-retry",
+      "property": "the client abandons a request mid-flight and retries with the same key and body: one effect in total",
+      "round": 0,
+      "seed": 20261009,
+      "workers": 50,
+      "operations": 20,
+      "durationMs": 108,
+      "responses": {
+        "200": 8,
+        "201": 12
+      },
+      "finalState": {
+        "ada": 4800,
+        "bob": 200
+      },
+      "findings": [
+        {
+          "check": "every retry is 200 or 201",
+          "ok": true,
+          "detail": "{\"200\":8,\"201\":12}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 5000, seeded 5000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":4800,\"bob\":200}"
+        },
+        {
+          "check": "exactly one effect per key",
+          "ok": true,
+          "detail": "{\"ada\":4800,\"bob\":200}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "signup-race",
+      "property": "concurrent signups for one email: exactly one account is created, every other attempt is 409 email_taken",
+      "round": 0,
+      "seed": 20261010,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 505,
+      "responses": {
+        "201": 1,
+        "409 email_taken": 49
+      },
+      "finalState": {
+        "created": 1
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 email_taken\":49}"
+        },
+        {
+          "check": "the rest are 409 email_taken",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 email_taken\":49}"
+        },
+        {
+          "check": "login reaches the one account",
+          "ok": true,
+          "detail": "200"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "mixed-garbage",
+      "property": "a burst of valid, invalid, malformed and unauthenticated writes: no 5xx, no partial effects",
+      "round": 0,
+      "seed": 20261011,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 125,
+      "responses": {
+        "201": 10,
+        "422 validation_failed": 10,
+        "400 missing_idempotency_key": 15,
+        "401 unauthenticated": 4,
+        "400 malformed_request": 2,
+        "422 self_payment": 3,
+        "404 not_found": 5,
+        "409 insufficient_funds": 1
+      },
+      "finalState": {
+        "ada": 363,
+        "bob": 5637,
+        "cy": 0
+      },
+      "findings": [
+        {
+          "check": "no 5xx",
+          "ok": true,
+          "detail": "{\"201\":10,\"422 validation_failed\":10,\"400 missing_idempotency_key\":15,\"401 unauthenticated\":4,\"400 malformed_request\":2,\"422 self_payment\":3,\"404 not_found\":5,\"409 insufficient_funds\":1}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 6000, seeded 6000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":363,\"bob\":5637,\"cy\":0}"
+        },
+        {
+          "check": "only accepted payments moved money",
+          "ok": true,
+          "detail": "{\"accepted\":2637,\"ada\":363,\"bob\":5637,\"cy\":0}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "same-key-storm",
+      "property": "N concurrent identical requests under one unused key: exactly one 201, the rest 200 with the identical body, money moves once",
+      "round": 1,
+      "seed": 20262001,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 100,
+      "responses": {
+        "200": 25,
+        "201": 4,
+        "409 insufficient_funds": 21
+      },
+      "finalState": {
+        "balances": {
+          "ada": 132,
+          "bob": 868
+        },
+        "feed": 4
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": false,
+          "detail": "{\"200\":25,\"201\":4,\"409 insufficient_funds\":21}"
+        },
+        {
+          "check": "every other reply is 200 with the same body",
+          "ok": false,
+          "detail": "{\"200\":25,\"201\":4,\"409 insufficient_funds\":21}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 1000, seeded 1000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":132,\"bob\":868}"
+        },
+        {
+          "check": "moved once",
+          "ok": false,
+          "detail": "{\"ada\":132,\"bob\":868}"
+        },
+        {
+          "check": "one feed item",
+          "ok": false,
+          "detail": "4 payments in the feed"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "campaign": "same-key-different-bodies",
+      "property": "concurrent requests sharing a key but not a body: at most one takes effect, the rest are 409 reuse or identical replays",
+      "round": 1,
+      "seed": 20262002,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 97,
+      "responses": {
+        "200": 14,
+        "201": 6,
+        "409 idempotency_key_reuse": 30
+      },
+      "finalState": {
+        "ada": 3700,
+        "bob": 1300
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": false,
+          "detail": "{\"200\":14,\"201\":6,\"409 idempotency_key_reuse\":30}"
+        },
+        {
+          "check": "losers are 409 reuse or same-body 200",
+          "ok": false,
+          "detail": "{\"200\":14,\"201\":6,\"409 idempotency_key_reuse\":30}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 5000, seeded 5000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":3700,\"bob\":1300}"
+        },
+        {
+          "check": "only the winner moved money",
+          "ok": false,
+          "detail": "{\"ada\":3700,\"bob\":1300}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "campaign": "drain-race",
+      "property": "concurrent payments from one wallet whose sum exceeds it: accepted payments never overdraw, refusals move nothing",
+      "round": 1,
+      "seed": 20262003,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 133,
+      "responses": {
+        "201": 19,
+        "409 insufficient_funds": 31
+      },
+      "finalState": {
+        "balances": {
+          "ada": 3,
+          "bob": 2086,
+          "cy": 2384
+        },
+        "accepted": 4470
+      },
+      "findings": [
+        {
+          "check": "only 201 or 409 insufficient_funds",
+          "ok": true,
+          "detail": "{\"201\":19,\"409 insufficient_funds\":31}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 4473, seeded 4473"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":3,\"bob\":2086,\"cy\":2384}"
+        },
+        {
+          "check": "sender lost exactly the accepted total",
+          "ok": true,
+          "detail": "{\"start\":4473,\"accepted\":4470,\"ada\":3}"
+        },
+        {
+          "check": "every refusal was genuinely unaffordable at the end",
+          "ok": true,
+          "detail": "{\"ada\":3,\"bob\":2086,\"cy\":2384}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "fan-in",
+      "property": "many senders paying one recipient at once: the recipient gains exactly what was accepted",
+      "round": 1,
+      "seed": 20262004,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 431,
+      "responses": {
+        "201": 29,
+        "409 insufficient_funds": 21
+      },
+      "finalState": {
+        "s0": 93,
+        "s1": 16,
+        "s2": 25,
+        "s3": 2,
+        "s4": 2,
+        "s5": 235,
+        "s6": 37,
+        "s7": 88,
+        "s8": 6,
+        "s9": 5,
+        "sink": 1573
+      },
+      "findings": [
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 2082, seeded 2082"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"s0\":93,\"s1\":16,\"s2\":25,\"s3\":2,\"s4\":2,\"s5\":235,\"s6\":37,\"s7\":88,\"s8\":6,\"s9\":5,\"sink\":1573}"
+        },
+        {
+          "check": "recipient gained the accepted total",
+          "ok": true,
+          "detail": "{\"sink\":1573,\"accepted\":1573}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "ring",
+      "property": "payments around a cycle in both directions at once: no wallet goes negative, nothing is created or lost",
+      "round": 1,
+      "seed": 20262005,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 156,
+      "responses": {
+        "201": 27,
+        "409 insufficient_funds": 23
+      },
+      "finalState": {
+        "a": 71,
+        "b": 107,
+        "c": 106,
+        "d": 227
+      },
+      "findings": [
+        {
+          "check": "no 5xx",
+          "ok": true,
+          "detail": "{\"201\":27,\"409 insufficient_funds\":23}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 511, seeded 511"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"a\":71,\"b\":107,\"c\":106,\"d\":227}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "request-double-pay",
+      "property": "one request paid concurrently under different keys: it moves money at most once",
+      "round": 1,
+      "seed": 20262006,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 98,
+      "responses": {
+        "201": 1,
+        "409 request_not_pending": 49
+      },
+      "finalState": {
+        "ada": 5974,
+        "bob": 4026
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 request_not_pending\":49}"
+        },
+        {
+          "check": "the rest are request_not_pending",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 request_not_pending\":49}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 10000, seeded 10000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":5974,\"bob\":4026}"
+        },
+        {
+          "check": "moved once",
+          "ok": true,
+          "detail": "{\"ada\":5974,\"bob\":4026}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "pay-versus-cancel",
+      "property": "payer pays while requester cancels: the request ends paid xor cancelled, and money matches the outcome",
+      "round": 1,
+      "seed": 20262007,
+      "workers": 50,
+      "operations": 20,
+      "durationMs": 111,
+      "responses": {
+        "200": 10,
+        "409 request_not_pending": 10
+      },
+      "finalState": {
+        "balances": {
+          "ada": 10000,
+          "bob": 0
+        },
+        "paid": 0
+      },
+      "findings": [
+        {
+          "check": "every request ended paid or cancelled",
+          "ok": true,
+          "detail": "[\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\"]"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 10000, seeded 10000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":10000,\"bob\":0}"
+        },
+        {
+          "check": "money matches the paid count",
+          "ok": true,
+          "detail": "{\"paid\":0,\"bob\":0}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "settlement-under-drain",
+      "property": "a settlement races ordinary payments draining its senders: all-or-nothing, never negative",
+      "round": 1,
+      "seed": 20262008,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 166,
+      "responses": {
+        "201": 4,
+        "409 insufficient_funds": 46
+      },
+      "finalState": {
+        "op": 0,
+        "ada": 34,
+        "bob": 1,
+        "cy": 1165
+      },
+      "findings": [
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 1200, seeded 1200"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"op\":0,\"ada\":34,\"bob\":1,\"cy\":1165}"
+        },
+        {
+          "check": "settlement all or nothing",
+          "ok": true,
+          "detail": "{\"status\":201,\"members\":2}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "lost-response-retry",
+      "property": "the client abandons a request mid-flight and retries with the same key and body: one effect in total",
+      "round": 1,
+      "seed": 20262009,
+      "workers": 50,
+      "operations": 20,
+      "durationMs": 100,
+      "responses": {
+        "200": 10,
+        "201": 10
+      },
+      "finalState": {
+        "ada": 4800,
+        "bob": 200
+      },
+      "findings": [
+        {
+          "check": "every retry is 200 or 201",
+          "ok": true,
+          "detail": "{\"200\":10,\"201\":10}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 5000, seeded 5000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":4800,\"bob\":200}"
+        },
+        {
+          "check": "exactly one effect per key",
+          "ok": true,
+          "detail": "{\"ada\":4800,\"bob\":200}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "signup-race",
+      "property": "concurrent signups for one email: exactly one account is created, every other attempt is 409 email_taken",
+      "round": 1,
+      "seed": 20262010,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 494,
+      "responses": {
+        "201": 1,
+        "409 email_taken": 49
+      },
+      "finalState": {
+        "created": 1
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 email_taken\":49}"
+        },
+        {
+          "check": "the rest are 409 email_taken",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 email_taken\":49}"
+        },
+        {
+          "check": "login reaches the one account",
+          "ok": true,
+          "detail": "200"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "mixed-garbage",
+      "property": "a burst of valid, invalid, malformed and unauthenticated writes: no 5xx, no partial effects",
+      "round": 1,
+      "seed": 20262011,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 129,
+      "responses": {
+        "201": 11,
+        "422 validation_failed": 6,
+        "401 unauthenticated": 13,
+        "400 malformed_request": 3,
+        "422 self_payment": 3,
+        "400 missing_idempotency_key": 11,
+        "404 not_found": 2,
+        "409 insufficient_funds": 1
+      },
+      "finalState": {
+        "ada": 10,
+        "bob": 5990,
+        "cy": 0
+      },
+      "findings": [
+        {
+          "check": "no 5xx",
+          "ok": true,
+          "detail": "{\"201\":11,\"422 validation_failed\":6,\"401 unauthenticated\":13,\"400 malformed_request\":3,\"422 self_payment\":3,\"400 missing_idempotency_key\":11,\"404 not_found\":2,\"409 insufficient_funds\":1}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 6000, seeded 6000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":10,\"bob\":5990,\"cy\":0}"
+        },
+        {
+          "check": "only accepted payments moved money",
+          "ok": true,
+          "detail": "{\"accepted\":2990,\"ada\":10,\"bob\":5990,\"cy\":0}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "same-key-storm",
+      "property": "N concurrent identical requests under one unused key: exactly one 201, the rest 200 with the identical body, money moves once",
+      "round": 2,
+      "seed": 20263001,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 101,
+      "responses": {
+        "200": 16,
+        "201": 3,
+        "409 insufficient_funds": 31
+      },
+      "finalState": {
+        "balances": {
+          "ada": 169,
+          "bob": 831
+        },
+        "feed": 3
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": false,
+          "detail": "{\"200\":16,\"201\":3,\"409 insufficient_funds\":31}"
+        },
+        {
+          "check": "every other reply is 200 with the same body",
+          "ok": false,
+          "detail": "{\"200\":16,\"201\":3,\"409 insufficient_funds\":31}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 1000, seeded 1000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":169,\"bob\":831}"
+        },
+        {
+          "check": "moved once",
+          "ok": false,
+          "detail": "{\"ada\":169,\"bob\":831}"
+        },
+        {
+          "check": "one feed item",
+          "ok": false,
+          "detail": "3 payments in the feed"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "campaign": "same-key-different-bodies",
+      "property": "concurrent requests sharing a key but not a body: at most one takes effect, the rest are 409 reuse or identical replays",
+      "round": 2,
+      "seed": 20263002,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 108,
+      "responses": {
+        "200": 10,
+        "201": 23,
+        "409 insufficient_funds": 1,
+        "409 idempotency_key_reuse": 16
+      },
+      "finalState": {
+        "ada": 200,
+        "bob": 4800
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": false,
+          "detail": "{\"200\":10,\"201\":23,\"409 insufficient_funds\":1,\"409 idempotency_key_reuse\":16}"
+        },
+        {
+          "check": "losers are 409 reuse or same-body 200",
+          "ok": false,
+          "detail": "{\"200\":10,\"201\":23,\"409 insufficient_funds\":1,\"409 idempotency_key_reuse\":16}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 5000, seeded 5000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":200,\"bob\":4800}"
+        },
+        {
+          "check": "only the winner moved money",
+          "ok": false,
+          "detail": "{\"ada\":200,\"bob\":4800}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "campaign": "drain-race",
+      "property": "concurrent payments from one wallet whose sum exceeds it: accepted payments never overdraw, refusals move nothing",
+      "round": 2,
+      "seed": 20263003,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 128,
+      "responses": {
+        "201": 20,
+        "409 insufficient_funds": 30
+      },
+      "finalState": {
+        "balances": {
+          "ada": 25,
+          "bob": 1649,
+          "cy": 1416
+        },
+        "accepted": 3065
+      },
+      "findings": [
+        {
+          "check": "only 201 or 409 insufficient_funds",
+          "ok": true,
+          "detail": "{\"201\":20,\"409 insufficient_funds\":30}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 3090, seeded 3090"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":25,\"bob\":1649,\"cy\":1416}"
+        },
+        {
+          "check": "sender lost exactly the accepted total",
+          "ok": true,
+          "detail": "{\"start\":3090,\"accepted\":3065,\"ada\":25}"
+        },
+        {
+          "check": "every refusal was genuinely unaffordable at the end",
+          "ok": true,
+          "detail": "{\"ada\":25,\"bob\":1649,\"cy\":1416}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "fan-in",
+      "property": "many senders paying one recipient at once: the recipient gains exactly what was accepted",
+      "round": 2,
+      "seed": 20263004,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 414,
+      "responses": {
+        "201": 35,
+        "409 insufficient_funds": 15
+      },
+      "finalState": {
+        "s0": 22,
+        "s1": 45,
+        "s2": 13,
+        "s3": 113,
+        "s4": 99,
+        "s5": 120,
+        "s6": 8,
+        "s7": 16,
+        "s8": 19,
+        "s9": 139,
+        "sink": 1720
+      },
+      "findings": [
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 2314, seeded 2314"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"s0\":22,\"s1\":45,\"s2\":13,\"s3\":113,\"s4\":99,\"s5\":120,\"s6\":8,\"s7\":16,\"s8\":19,\"s9\":139,\"sink\":1720}"
+        },
+        {
+          "check": "recipient gained the accepted total",
+          "ok": true,
+          "detail": "{\"sink\":1720,\"accepted\":1720}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "ring",
+      "property": "payments around a cycle in both directions at once: no wallet goes negative, nothing is created or lost",
+      "round": 2,
+      "seed": 20263005,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 159,
+      "responses": {
+        "201": 40,
+        "409 insufficient_funds": 10
+      },
+      "finalState": {
+        "a": 251,
+        "b": 91,
+        "c": 130,
+        "d": 229
+      },
+      "findings": [
+        {
+          "check": "no 5xx",
+          "ok": true,
+          "detail": "{\"201\":40,\"409 insufficient_funds\":10}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 701, seeded 701"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"a\":251,\"b\":91,\"c\":130,\"d\":229}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "request-double-pay",
+      "property": "one request paid concurrently under different keys: it moves money at most once",
+      "round": 2,
+      "seed": 20263006,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 97,
+      "responses": {
+        "201": 1,
+        "409 request_not_pending": 49
+      },
+      "finalState": {
+        "ada": 6870,
+        "bob": 3130
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 request_not_pending\":49}"
+        },
+        {
+          "check": "the rest are request_not_pending",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 request_not_pending\":49}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 10000, seeded 10000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":6870,\"bob\":3130}"
+        },
+        {
+          "check": "moved once",
+          "ok": true,
+          "detail": "{\"ada\":6870,\"bob\":3130}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "pay-versus-cancel",
+      "property": "payer pays while requester cancels: the request ends paid xor cancelled, and money matches the outcome",
+      "round": 2,
+      "seed": 20263007,
+      "workers": 50,
+      "operations": 20,
+      "durationMs": 112,
+      "responses": {
+        "200": 10,
+        "409 request_not_pending": 10
+      },
+      "finalState": {
+        "balances": {
+          "ada": 10000,
+          "bob": 0
+        },
+        "paid": 0
+      },
+      "findings": [
+        {
+          "check": "every request ended paid or cancelled",
+          "ok": true,
+          "detail": "[\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\"]"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 10000, seeded 10000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":10000,\"bob\":0}"
+        },
+        {
+          "check": "money matches the paid count",
+          "ok": true,
+          "detail": "{\"paid\":0,\"bob\":0}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "settlement-under-drain",
+      "property": "a settlement races ordinary payments draining its senders: all-or-nothing, never negative",
+      "round": 2,
+      "seed": 20263008,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 166,
+      "responses": {
+        "201": 5,
+        "409 insufficient_funds": 45
+      },
+      "finalState": {
+        "op": 0,
+        "ada": 29,
+        "bob": 8,
+        "cy": 1163
+      },
+      "findings": [
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 1200, seeded 1200"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"op\":0,\"ada\":29,\"bob\":8,\"cy\":1163}"
+        },
+        {
+          "check": "settlement all or nothing",
+          "ok": true,
+          "detail": "{\"status\":201,\"members\":2}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "lost-response-retry",
+      "property": "the client abandons a request mid-flight and retries with the same key and body: one effect in total",
+      "round": 2,
+      "seed": 20263009,
+      "workers": 50,
+      "operations": 20,
+      "durationMs": 98,
+      "responses": {
+        "200": 4,
+        "201": 16
+      },
+      "finalState": {
+        "ada": 4800,
+        "bob": 200
+      },
+      "findings": [
+        {
+          "check": "every retry is 200 or 201",
+          "ok": true,
+          "detail": "{\"200\":4,\"201\":16}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 5000, seeded 5000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":4800,\"bob\":200}"
+        },
+        {
+          "check": "exactly one effect per key",
+          "ok": true,
+          "detail": "{\"ada\":4800,\"bob\":200}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "signup-race",
+      "property": "concurrent signups for one email: exactly one account is created, every other attempt is 409 email_taken",
+      "round": 2,
+      "seed": 20263010,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 483,
+      "responses": {
+        "201": 1,
+        "409 email_taken": 49
+      },
+      "finalState": {
+        "created": 1
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 email_taken\":49}"
+        },
+        {
+          "check": "the rest are 409 email_taken",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 email_taken\":49}"
+        },
+        {
+          "check": "login reaches the one account",
+          "ok": true,
+          "detail": "200"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "mixed-garbage",
+      "property": "a burst of valid, invalid, malformed and unauthenticated writes: no 5xx, no partial effects",
+      "round": 2,
+      "seed": 20263011,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 132,
+      "responses": {
+        "201": 5,
+        "400 missing_idempotency_key": 13,
+        "422 validation_failed": 20,
+        "401 unauthenticated": 8,
+        "404 not_found": 3,
+        "400 malformed_request": 1
+      },
+      "finalState": {
+        "ada": 2172,
+        "bob": 3828,
+        "cy": 0
+      },
+      "findings": [
+        {
+          "check": "no 5xx",
+          "ok": true,
+          "detail": "{\"201\":5,\"400 missing_idempotency_key\":13,\"422 validation_failed\":20,\"401 unauthenticated\":8,\"404 not_found\":3,\"400 malformed_request\":1}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 6000, seeded 6000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":2172,\"bob\":3828,\"cy\":0}"
+        },
+        {
+          "check": "only accepted payments moved money",
+          "ok": true,
+          "detail": "{\"accepted\":828,\"ada\":2172,\"bob\":3828,\"cy\":0}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "same-key-storm",
+      "property": "N concurrent identical requests under one unused key: exactly one 201, the rest 200 with the identical body, money moves once",
+      "round": 3,
+      "seed": 20264001,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 96,
+      "responses": {
+        "200": 26,
+        "201": 1,
+        "409 insufficient_funds": 23
+      },
+      "finalState": {
+        "balances": {
+          "ada": 120,
+          "bob": 880
+        },
+        "feed": 1
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"200\":26,\"201\":1,\"409 insufficient_funds\":23}"
+        },
+        {
+          "check": "every other reply is 200 with the same body",
+          "ok": false,
+          "detail": "{\"200\":26,\"201\":1,\"409 insufficient_funds\":23}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 1000, seeded 1000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":120,\"bob\":880}"
+        },
+        {
+          "check": "moved once",
+          "ok": true,
+          "detail": "{\"ada\":120,\"bob\":880}"
+        },
+        {
+          "check": "one feed item",
+          "ok": true,
+          "detail": "1 payments in the feed"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "campaign": "same-key-different-bodies",
+      "property": "concurrent requests sharing a key but not a body: at most one takes effect, the rest are 409 reuse or identical replays",
+      "round": 3,
+      "seed": 20264002,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 96,
+      "responses": {
+        "200": 5,
+        "201": 24,
+        "409 insufficient_funds": 4,
+        "409 idempotency_key_reuse": 17
+      },
+      "finalState": {
+        "ada": 0,
+        "bob": 5000
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": false,
+          "detail": "{\"200\":5,\"201\":24,\"409 insufficient_funds\":4,\"409 idempotency_key_reuse\":17}"
+        },
+        {
+          "check": "losers are 409 reuse or same-body 200",
+          "ok": false,
+          "detail": "{\"200\":5,\"201\":24,\"409 insufficient_funds\":4,\"409 idempotency_key_reuse\":17}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 5000, seeded 5000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":0,\"bob\":5000}"
+        },
+        {
+          "check": "only the winner moved money",
+          "ok": false,
+          "detail": "{\"ada\":0,\"bob\":5000}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "campaign": "drain-race",
+      "property": "concurrent payments from one wallet whose sum exceeds it: accepted payments never overdraw, refusals move nothing",
+      "round": 3,
+      "seed": 20264003,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 127,
+      "responses": {
+        "201": 21,
+        "409 insufficient_funds": 29
+      },
+      "finalState": {
+        "balances": {
+          "ada": 2,
+          "bob": 911,
+          "cy": 614
+        },
+        "accepted": 1525
+      },
+      "findings": [
+        {
+          "check": "only 201 or 409 insufficient_funds",
+          "ok": true,
+          "detail": "{\"201\":21,\"409 insufficient_funds\":29}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 1527, seeded 1527"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":2,\"bob\":911,\"cy\":614}"
+        },
+        {
+          "check": "sender lost exactly the accepted total",
+          "ok": true,
+          "detail": "{\"start\":1527,\"accepted\":1525,\"ada\":2}"
+        },
+        {
+          "check": "every refusal was genuinely unaffordable at the end",
+          "ok": true,
+          "detail": "{\"ada\":2,\"bob\":911,\"cy\":614}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "fan-in",
+      "property": "many senders paying one recipient at once: the recipient gains exactly what was accepted",
+      "round": 3,
+      "seed": 20264004,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 423,
+      "responses": {
+        "201": 34,
+        "409 insufficient_funds": 16
+      },
+      "finalState": {
+        "s0": 251,
+        "s1": 10,
+        "s2": 55,
+        "s3": 4,
+        "s4": 45,
+        "s5": 36,
+        "s6": 34,
+        "s7": 30,
+        "s8": 24,
+        "s9": 0,
+        "sink": 1916
+      },
+      "findings": [
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 2405, seeded 2405"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"s0\":251,\"s1\":10,\"s2\":55,\"s3\":4,\"s4\":45,\"s5\":36,\"s6\":34,\"s7\":30,\"s8\":24,\"s9\":0,\"sink\":1916}"
+        },
+        {
+          "check": "recipient gained the accepted total",
+          "ok": true,
+          "detail": "{\"sink\":1916,\"accepted\":1916}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "ring",
+      "property": "payments around a cycle in both directions at once: no wallet goes negative, nothing is created or lost",
+      "round": 3,
+      "seed": 20264005,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 159,
+      "responses": {
+        "201": 36,
+        "409 insufficient_funds": 14
+      },
+      "finalState": {
+        "a": 235,
+        "b": 140,
+        "c": 185,
+        "d": 69
+      },
+      "findings": [
+        {
+          "check": "no 5xx",
+          "ok": true,
+          "detail": "{\"201\":36,\"409 insufficient_funds\":14}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 629, seeded 629"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"a\":235,\"b\":140,\"c\":185,\"d\":69}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "request-double-pay",
+      "property": "one request paid concurrently under different keys: it moves money at most once",
+      "round": 3,
+      "seed": 20264006,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 109,
+      "responses": {
+        "201": 1,
+        "409 request_not_pending": 49
+      },
+      "finalState": {
+        "ada": 6280,
+        "bob": 3720
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 request_not_pending\":49}"
+        },
+        {
+          "check": "the rest are request_not_pending",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 request_not_pending\":49}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 10000, seeded 10000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":6280,\"bob\":3720}"
+        },
+        {
+          "check": "moved once",
+          "ok": true,
+          "detail": "{\"ada\":6280,\"bob\":3720}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "pay-versus-cancel",
+      "property": "payer pays while requester cancels: the request ends paid xor cancelled, and money matches the outcome",
+      "round": 3,
+      "seed": 20264007,
+      "workers": 50,
+      "operations": 20,
+      "durationMs": 118,
+      "responses": {
+        "200": 10,
+        "409 request_not_pending": 10
+      },
+      "finalState": {
+        "balances": {
+          "ada": 10000,
+          "bob": 0
+        },
+        "paid": 0
+      },
+      "findings": [
+        {
+          "check": "every request ended paid or cancelled",
+          "ok": true,
+          "detail": "[\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\"]"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 10000, seeded 10000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":10000,\"bob\":0}"
+        },
+        {
+          "check": "money matches the paid count",
+          "ok": true,
+          "detail": "{\"paid\":0,\"bob\":0}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "settlement-under-drain",
+      "property": "a settlement races ordinary payments draining its senders: all-or-nothing, never negative",
+      "round": 3,
+      "seed": 20264008,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 173,
+      "responses": {
+        "201": 4,
+        "409 insufficient_funds": 46
+      },
+      "finalState": {
+        "op": 0,
+        "ada": 19,
+        "bob": 34,
+        "cy": 1147
+      },
+      "findings": [
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 1200, seeded 1200"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"op\":0,\"ada\":19,\"bob\":34,\"cy\":1147}"
+        },
+        {
+          "check": "settlement all or nothing",
+          "ok": true,
+          "detail": "{\"status\":201,\"members\":2}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "lost-response-retry",
+      "property": "the client abandons a request mid-flight and retries with the same key and body: one effect in total",
+      "round": 3,
+      "seed": 20264009,
+      "workers": 50,
+      "operations": 20,
+      "durationMs": 99,
+      "responses": {
+        "200": 8,
+        "201": 12
+      },
+      "finalState": {
+        "ada": 4800,
+        "bob": 200
+      },
+      "findings": [
+        {
+          "check": "every retry is 200 or 201",
+          "ok": true,
+          "detail": "{\"200\":8,\"201\":12}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 5000, seeded 5000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":4800,\"bob\":200}"
+        },
+        {
+          "check": "exactly one effect per key",
+          "ok": true,
+          "detail": "{\"ada\":4800,\"bob\":200}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "signup-race",
+      "property": "concurrent signups for one email: exactly one account is created, every other attempt is 409 email_taken",
+      "round": 3,
+      "seed": 20264010,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 475,
+      "responses": {
+        "201": 1,
+        "409 email_taken": 49
+      },
+      "finalState": {
+        "created": 1
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 email_taken\":49}"
+        },
+        {
+          "check": "the rest are 409 email_taken",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 email_taken\":49}"
+        },
+        {
+          "check": "login reaches the one account",
+          "ok": true,
+          "detail": "200"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "mixed-garbage",
+      "property": "a burst of valid, invalid, malformed and unauthenticated writes: no 5xx, no partial effects",
+      "round": 3,
+      "seed": 20264011,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 124,
+      "responses": {
+        "201": 11,
+        "422 self_payment": 5,
+        "401 unauthenticated": 11,
+        "422 validation_failed": 11,
+        "400 malformed_request": 3,
+        "400 missing_idempotency_key": 9
+      },
+      "finalState": {
+        "ada": 620,
+        "bob": 5380,
+        "cy": 0
+      },
+      "findings": [
+        {
+          "check": "no 5xx",
+          "ok": true,
+          "detail": "{\"201\":11,\"422 self_payment\":5,\"401 unauthenticated\":11,\"422 validation_failed\":11,\"400 malformed_request\":3,\"400 missing_idempotency_key\":9}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 6000, seeded 6000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":620,\"bob\":5380,\"cy\":0}"
+        },
+        {
+          "check": "only accepted payments moved money",
+          "ok": true,
+          "detail": "{\"accepted\":2380,\"ada\":620,\"bob\":5380,\"cy\":0}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "same-key-storm",
+      "property": "N concurrent identical requests under one unused key: exactly one 201, the rest 200 with the identical body, money moves once",
+      "round": 4,
+      "seed": 20265001,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 93,
+      "responses": {
+        "200": 14,
+        "201": 1,
+        "409 insufficient_funds": 35
+      },
+      "finalState": {
+        "balances": {
+          "ada": 453,
+          "bob": 547
+        },
+        "feed": 1
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"200\":14,\"201\":1,\"409 insufficient_funds\":35}"
+        },
+        {
+          "check": "every other reply is 200 with the same body",
+          "ok": false,
+          "detail": "{\"200\":14,\"201\":1,\"409 insufficient_funds\":35}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 1000, seeded 1000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":453,\"bob\":547}"
+        },
+        {
+          "check": "moved once",
+          "ok": true,
+          "detail": "{\"ada\":453,\"bob\":547}"
+        },
+        {
+          "check": "one feed item",
+          "ok": true,
+          "detail": "1 payments in the feed"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "campaign": "same-key-different-bodies",
+      "property": "concurrent requests sharing a key but not a body: at most one takes effect, the rest are 409 reuse or identical replays",
+      "round": 4,
+      "seed": 20265002,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 97,
+      "responses": {
+        "200": 13,
+        "201": 24,
+        "409 idempotency_key_reuse": 13
+      },
+      "finalState": {
+        "ada": 600,
+        "bob": 4400
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": false,
+          "detail": "{\"200\":13,\"201\":24,\"409 idempotency_key_reuse\":13}"
+        },
+        {
+          "check": "losers are 409 reuse or same-body 200",
+          "ok": false,
+          "detail": "{\"200\":13,\"201\":24,\"409 idempotency_key_reuse\":13}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 5000, seeded 5000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":600,\"bob\":4400}"
+        },
+        {
+          "check": "only the winner moved money",
+          "ok": false,
+          "detail": "{\"ada\":600,\"bob\":4400}"
+        }
+      ],
+      "ok": false
+    },
+    {
+      "campaign": "drain-race",
+      "property": "concurrent payments from one wallet whose sum exceeds it: accepted payments never overdraw, refusals move nothing",
+      "round": 4,
+      "seed": 20265003,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 125,
+      "responses": {
+        "201": 16,
+        "409 insufficient_funds": 34
+      },
+      "finalState": {
+        "balances": {
+          "ada": 2,
+          "bob": 1845,
+          "cy": 2279
+        },
+        "accepted": 4124
+      },
+      "findings": [
+        {
+          "check": "only 201 or 409 insufficient_funds",
+          "ok": true,
+          "detail": "{\"201\":16,\"409 insufficient_funds\":34}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 4126, seeded 4126"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":2,\"bob\":1845,\"cy\":2279}"
+        },
+        {
+          "check": "sender lost exactly the accepted total",
+          "ok": true,
+          "detail": "{\"start\":4126,\"accepted\":4124,\"ada\":2}"
+        },
+        {
+          "check": "every refusal was genuinely unaffordable at the end",
+          "ok": true,
+          "detail": "{\"ada\":2,\"bob\":1845,\"cy\":2279}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "fan-in",
+      "property": "many senders paying one recipient at once: the recipient gains exactly what was accepted",
+      "round": 4,
+      "seed": 20265004,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 428,
+      "responses": {
+        "201": 33,
+        "409 insufficient_funds": 17
+      },
+      "finalState": {
+        "s0": 12,
+        "s1": 3,
+        "s2": 16,
+        "s3": 5,
+        "s4": 50,
+        "s5": 52,
+        "s6": 64,
+        "s7": 15,
+        "s8": 150,
+        "s9": 119,
+        "sink": 1918
+      },
+      "findings": [
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 2404, seeded 2404"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"s0\":12,\"s1\":3,\"s2\":16,\"s3\":5,\"s4\":50,\"s5\":52,\"s6\":64,\"s7\":15,\"s8\":150,\"s9\":119,\"sink\":1918}"
+        },
+        {
+          "check": "recipient gained the accepted total",
+          "ok": true,
+          "detail": "{\"sink\":1918,\"accepted\":1918}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "ring",
+      "property": "payments around a cycle in both directions at once: no wallet goes negative, nothing is created or lost",
+      "round": 4,
+      "seed": 20265005,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 153,
+      "responses": {
+        "201": 25,
+        "409 insufficient_funds": 25
+      },
+      "finalState": {
+        "a": 17,
+        "b": 253,
+        "c": 6,
+        "d": 79
+      },
+      "findings": [
+        {
+          "check": "no 5xx",
+          "ok": true,
+          "detail": "{\"201\":25,\"409 insufficient_funds\":25}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 355, seeded 355"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"a\":17,\"b\":253,\"c\":6,\"d\":79}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "request-double-pay",
+      "property": "one request paid concurrently under different keys: it moves money at most once",
+      "round": 4,
+      "seed": 20265006,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 101,
+      "responses": {
+        "201": 1,
+        "409 request_not_pending": 49
+      },
+      "finalState": {
+        "ada": 6558,
+        "bob": 3442
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 request_not_pending\":49}"
+        },
+        {
+          "check": "the rest are request_not_pending",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 request_not_pending\":49}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 10000, seeded 10000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":6558,\"bob\":3442}"
+        },
+        {
+          "check": "moved once",
+          "ok": true,
+          "detail": "{\"ada\":6558,\"bob\":3442}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "pay-versus-cancel",
+      "property": "payer pays while requester cancels: the request ends paid xor cancelled, and money matches the outcome",
+      "round": 4,
+      "seed": 20265007,
+      "workers": 50,
+      "operations": 20,
+      "durationMs": 114,
+      "responses": {
+        "200": 10,
+        "409 request_not_pending": 10
+      },
+      "finalState": {
+        "balances": {
+          "ada": 10000,
+          "bob": 0
+        },
+        "paid": 0
+      },
+      "findings": [
+        {
+          "check": "every request ended paid or cancelled",
+          "ok": true,
+          "detail": "[\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\",\"cancelled\"]"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 10000, seeded 10000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":10000,\"bob\":0}"
+        },
+        {
+          "check": "money matches the paid count",
+          "ok": true,
+          "detail": "{\"paid\":0,\"bob\":0}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "settlement-under-drain",
+      "property": "a settlement races ordinary payments draining its senders: all-or-nothing, never negative",
+      "round": 4,
+      "seed": 20265008,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 156,
+      "responses": {
+        "201": 6,
+        "409 insufficient_funds": 44
+      },
+      "finalState": {
+        "op": 0,
+        "ada": 0,
+        "bob": 25,
+        "cy": 1175
+      },
+      "findings": [
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 1200, seeded 1200"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"op\":0,\"ada\":0,\"bob\":25,\"cy\":1175}"
+        },
+        {
+          "check": "settlement all or nothing",
+          "ok": true,
+          "detail": "{\"status\":201,\"members\":2}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "lost-response-retry",
+      "property": "the client abandons a request mid-flight and retries with the same key and body: one effect in total",
+      "round": 4,
+      "seed": 20265009,
+      "workers": 50,
+      "operations": 20,
+      "durationMs": 102,
+      "responses": {
+        "200": 7,
+        "201": 13
+      },
+      "finalState": {
+        "ada": 4800,
+        "bob": 200
+      },
+      "findings": [
+        {
+          "check": "every retry is 200 or 201",
+          "ok": true,
+          "detail": "{\"200\":7,\"201\":13}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 5000, seeded 5000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":4800,\"bob\":200}"
+        },
+        {
+          "check": "exactly one effect per key",
+          "ok": true,
+          "detail": "{\"ada\":4800,\"bob\":200}"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "signup-race",
+      "property": "concurrent signups for one email: exactly one account is created, every other attempt is 409 email_taken",
+      "round": 4,
+      "seed": 20265010,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 462,
+      "responses": {
+        "201": 1,
+        "409 email_taken": 49
+      },
+      "finalState": {
+        "created": 1
+      },
+      "findings": [
+        {
+          "check": "exactly one 201",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 email_taken\":49}"
+        },
+        {
+          "check": "the rest are 409 email_taken",
+          "ok": true,
+          "detail": "{\"201\":1,\"409 email_taken\":49}"
+        },
+        {
+          "check": "login reaches the one account",
+          "ok": true,
+          "detail": "200"
+        }
+      ],
+      "ok": true
+    },
+    {
+      "campaign": "mixed-garbage",
+      "property": "a burst of valid, invalid, malformed and unauthenticated writes: no 5xx, no partial effects",
+      "round": 4,
+      "seed": 20265011,
+      "workers": 50,
+      "operations": 50,
+      "durationMs": 123,
+      "responses": {
+        "201": 12,
+        "401 unauthenticated": 12,
+        "404 not_found": 4,
+        "422 self_payment": 4,
+        "422 validation_failed": 13,
+        "400 missing_idempotency_key": 5
+      },
+      "finalState": {
+        "ada": 552,
+        "bob": 5448,
+        "cy": 0
+      },
+      "findings": [
+        {
+          "check": "no 5xx",
+          "ok": true,
+          "detail": "{\"201\":12,\"401 unauthenticated\":12,\"404 not_found\":4,\"422 self_payment\":4,\"422 validation_failed\":13,\"400 missing_idempotency_key\":5}"
+        },
+        {
+          "check": "conservation",
+          "ok": true,
+          "detail": "sum 6000, seeded 6000"
+        },
+        {
+          "check": "non-negative",
+          "ok": true,
+          "detail": "{\"ada\":552,\"bob\":5448,\"cy\":0}"
+        },
+        {
+          "check": "only accepted payments moved money",
+          "ok": true,
+          "detail": "{\"accepted\":2448,\"ada\":552,\"bob\":5448,\"cy\":0}"
+        }
+      ],
+      "ok": true
+    }
+  ]
+}
