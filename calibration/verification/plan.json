@@ -155,7 +155,7 @@
       "requirements": [
         "\u00a72 no outbound network at run time, 2 vCPU, 2 GiB"
       ],
-      "cmd": "PYTHONPATH={kickoff} {kickoff}/.venv/bin/python -m harness run --track pocketful --build calibration/pocketful-stage-1 --mode isolated --stage 1 --out {out}/isolated",
+      "cmd": "PYTHONPATH={kickoff} {kickoff}/.venv/bin/python -m harness run --track pocketful --build calibration/pocketful-stage-1 --mode isolated --stage 1 --out {out}/isolated; echo \"harness exit $? (the worst of all suites, including the next stage's, which must fail; judged from report.json instead)\"; node --no-warnings calibration/verification/isolated-check.ts {out}/isolated/report.json 1",
       "timeoutMs": 2700000
     }
   ]
