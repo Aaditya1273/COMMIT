@@ -19,7 +19,7 @@
     "lint:fix": "eslint . --fix",
     "typecheck:commit": "tsc -p tsconfig.commit.json",
     "calibration:start": "PORT=${PORT:-8080} node --no-warnings calibration/pocketful-stage-1/src/server.ts",
-    "verify": "node --no-warnings commit/self-audit.ts",
+    "verify": "node --no-warnings scripts/self-audit.ts",
     "verify:gate": "node --no-warnings commit/verify.ts --plan calibration/verification/plan.json --skip mutation --out evidence/calibration/stage-1/gate-$(date -u +%Y%m%dT%H%M%SZ)",
     "verify:contract": "node --no-warnings calibration/verification/contract.ts",
     "verify:reference": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts",
@@ -27,7 +27,7 @@
     "verify:mutation": "node --no-warnings commit/mutate.ts --target calibration/pocketful-stage-1 --start 'node --no-warnings src/server.ts' --check 'calibration/verification/kill-suite.sh {url}' --exclude calibration/verification/equivalents.json --jobs 6 --timeout 180000 --out evidence/calibration/stage-1/mutation-$(date -u +%Y%m%dT%H%M%SZ)",
     "factory:bootstrap": "commit/bootstrap.sh",
     "test:upstream": "pnpm -r test",
-    "verify:full": "node --no-warnings commit/self-audit.ts --full",
+    "verify:full": "node --no-warnings scripts/self-audit.ts --full",
     "verify:calibration": "node --no-warnings commit/verify.ts --plan calibration/verification/plan.json --out evidence/calibration/stage-1/run-$(date -u +%Y%m%dT%H%M%SZ)",
     "factory": "node --no-warnings commit/cli.ts",
     "doctor": "node --no-warnings commit/cli.ts doctor"

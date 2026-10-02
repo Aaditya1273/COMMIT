@@ -13,7 +13,6 @@ const COMMANDS: Record<string, string> = {
   mutate: 'mutation campaign: how much seeded bad work does a check kill?',
   campaign: 'seeded reference-model campaign against a running candidate',
   audit: 'check that evidence directories are internally consistent and unaltered',
-  'self-audit': 'run the factory\'s own health checks and write evidence/factory-self-audit/',
   doctor: 'report what this machine can run (Node, git, Docker daemon, Python, kickoff package)',
   version: 'print the factory version',
 };

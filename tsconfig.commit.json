@@ -12,5 +12,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["commit/**/*.ts", "calibration/**/*.ts"]
+  "include": ["commit/**/*.ts", "calibration/**/*.ts", "scripts/**/*.ts"]
 }

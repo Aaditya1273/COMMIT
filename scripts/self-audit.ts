@@ -1,7 +1,10 @@
-// The factory's own health check. Every line of the summary comes from a command this
-// run executed; nothing is copied from earlier results.
+// This repository's own health check: the generic toolkit, the mandates, the bootstrap,
+// the committed evidence and the calibration target. It names this repository's
+// calibration plan, so it lives here in scripts/ and is not installed into result
+// repositories (commit/ stays generic). Every PASS/FAIL comes from a command this run
+// executed; a cited earlier result says so and is audited first.
 //
-//   node commit/self-audit.ts [--full] [--out evidence/factory-self-audit]
+//   node scripts/self-audit.ts [--full] [--out evidence/factory-self-audit]
 //
 // Statuses: PASS (ran and passed), FAIL (ran and failed), INCONCLUSIVE (could not run
 // here, with the reason), NOT RUN (outside this mode). Exit: 0 when nothing FAILED,
@@ -12,20 +15,22 @@ import { tmpdir } from 'node:os';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { auditRun } from './audit.ts';
-import { detectEnvironment, EXIT, FACTORY_VERSION, loadConfig, nodeSupported } from './lib/config.ts';
-import { redact, writeAtomic, writeJsonAtomic } from './lib/fsx.ts';
-import { run, runShell, startService } from './lib/proc.ts';
+import { auditRun } from '../commit/audit.ts';
+import { detectEnvironment, EXIT, FACTORY_VERSION, loadConfig, nodeSupported } from '../commit/lib/config.ts';
+import { redact, writeAtomic, writeJsonAtomic } from '../commit/lib/fsx.ts';
+import { run, runShell, startService } from '../commit/lib/proc.ts';
 
 type Status = 'PASS' | 'FAIL' | 'INCONCLUSIVE' | 'NOT RUN';
 interface Item { area: string; status: Status; detail: string; command?: string; durationMs?: number }
 
-const USAGE = `usage: node commit/self-audit.ts [--full] [--out DIR]
+const USAGE = `usage: node scripts/self-audit.ts [--full] [--out DIR]
 
   quick (default): typecheck, lint, factory self-tests, mandate genericity (official
   scanner), bootstrap rehearsal, evidence consistency, secret/path scan, domain
   coupling, reference replay, calibration release gate, container checks if Docker works
-  --full: also the full calibration verification, mutation campaign included (~35 min)`;
+  --full: also a new full calibration verification, mutation campaign included (~35 min),
+  written to evidence/calibration/stage-1/run-<time>/. Without --full the latest committed
+  full run is audited and cited, and labelled as cited rather than run.`;
 
 let args;
 try {
@@ -36,7 +41,7 @@ try {
 }
 if (args.help) { console.log(USAGE); process.exit(EXIT.OK); }
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '..'); // the repository root
 process.chdir(root);
 const config = loadConfig();
 const out = resolve(args.out!);
@@ -172,15 +177,31 @@ else {
   add('Gate evidence audits clean', gateAudit.problems.length ? 'FAIL' : 'PASS', gateAudit.problems.join(' | ') || `run ${gateEvidence.runId}`);
 }
 
+const describe = (ev: any) => {
+  const m = ev?.reports?.mutation;
+  return `verdict ${ev.verdict} on ${String(ev.revision.commit).slice(0, 7)}${m ? `; mutation ${m.tally.killed}/${m.valid} killed (${(m.killRate * 100).toFixed(1)}%), ${m.tally.equivalent} equivalents excluded` : ''}; reasons: ${(ev.verdictReasons as string[]).join('; ') || 'none'}`;
+};
+const fullStatus = (ev: any): Status => (['REJECT', 'ERROR'].includes(ev.verdict) ? 'FAIL'
+  : ev.verdict === 'ACCEPT' ? 'PASS'
+    // INCONCLUSIVE is a pass for the factory only if the sole reasons are environmental.
+    : (ev.verdictReasons as string[]).every((r) => /environment precondition not met/.test(r)) ? 'PASS' : 'FAIL');
 if (args.full) {
-  const fullDir = join(out, 'full-verification');
+  const fullDir = join('evidence', 'calibration', 'stage-1', `run-${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z')}`);
   const r = await run(process.execPath, ['--no-warnings', 'commit/verify.ts', '--plan', 'calibration/verification/plan.json', '--out', fullDir], { cwd: root, timeoutMs: 3 * 60 * 60_000 });
   const ev = existsSync(join(fullDir, 'evidence.json')) ? JSON.parse(readFileSync(join(fullDir, 'evidence.json'), 'utf8')) : null;
-  const m = ev?.reports?.mutation;
-  add('Full calibration verification (mutation included)', ev && !['REJECT', 'ERROR'].includes(ev.verdict) ? 'PASS' : 'FAIL',
-    ev ? `verdict ${ev.verdict}${m ? `; mutation ${m.tally.killed}/${m.valid} killed (${(m.killRate * 100).toFixed(1)}%), ${m.tally.equivalent} equivalents excluded` : ''}` : `no evidence: ${r.tail.slice(-200)}`);
+  add('Full calibration verification (mutation included, run now)', ev ? fullStatus(ev) : 'FAIL', ev ? `${fullDir}: ${describe(ev)}` : `no evidence: ${r.tail.slice(-200)}`);
 } else {
-  add('Full calibration verification (mutation included)', 'NOT RUN', 'run with --full (pnpm verify:full); latest committed result is cited in FACTORY.md §6');
+  // Cite the most recent committed full run (schema v2, with a mutation report), after auditing it.
+  const runs = readdirSync(join('evidence', 'calibration', 'stage-1')).filter((d) => d.startsWith('run-')).sort().reverse()
+    .map((d) => join('evidence', 'calibration', 'stage-1', d))
+    .filter((d) => existsSync(join(d, 'evidence.json')) && JSON.parse(readFileSync(join(d, 'evidence.json'), 'utf8')).schemaVersion === 2);
+  const cited = runs.find((d) => JSON.parse(readFileSync(join(d, 'evidence.json'), 'utf8')).reports?.mutation);
+  if (!cited) add('Full calibration verification (cited)', 'NOT RUN', 'no committed schema-v2 full run; run pnpm verify:full');
+  else {
+    const ev = JSON.parse(readFileSync(join(cited, 'evidence.json'), 'utf8'));
+    const problems = auditRun(cited).problems;
+    add('Full calibration verification (cited, audited, not re-run)', problems.length ? 'FAIL' : fullStatus(ev), problems.length ? `${cited} fails its audit: ${problems[0]}` : `${cited}: ${describe(ev)}`);
+  }
 }
 
 const counts = Object.fromEntries((['PASS', 'FAIL', 'INCONCLUSIVE', 'NOT RUN'] as const).map((s) => [s, items.filter((i) => i.status === s).length]));
@@ -199,7 +220,7 @@ const summary = {
 writeJsonAtomic(join(out, 'summary.json'), summary);
 writeAtomic(join(out, 'summary.md'), `# Factory self-audit
 
-Generated by \`node commit/self-audit.ts${args.full ? ' --full' : ''}\` from \`summary.json\`; do not edit by hand.
+Generated by \`node scripts/self-audit.ts${args.full ? ' --full' : ''}\` from \`summary.json\`; do not edit by hand.
 
 | | |
 |---|---|

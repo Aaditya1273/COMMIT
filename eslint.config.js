@@ -115,7 +115,7 @@ export default tseslint.config(
   // The factory toolkit and calibration target are command-line programs: they print to
   // stdout and read PORT and similar from the environment by design.
   {
-    files: ['commit/**/*.ts', 'calibration/**/*.ts'],
+    files: ['commit/**/*.ts', 'calibration/**/*.ts', 'scripts/**/*.ts'],
     rules: {
       'no-console': 'off',
       'no-restricted-properties': 'off',
