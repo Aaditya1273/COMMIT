@@ -347,30 +347,31 @@ specification (`calibration/pocketful-stage-1/`). It exists to answer one questi
 before any judged run: **how much bad work does this verifier actually catch?** It is
 not a submission stage and is never copied into one.
 
-### Latest independent verification: `e4b5f93`, factory 1.0.0-rc.1
+### Latest independent verification: `bcc73e9`, factory 1.0.0-rc.2
 
-[`evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/`](evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/) — [`verdict.md`](evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/verdict.md), [`scorecard.md`](evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/scorecard.md),
-evidence schema v2, manifest sha256 `8944b2d23fa95b26cb9750e18b1de1fcd124fbeea264399603e20a2aef6e76d4`,
-run 2026-10-02 02:45–03:18 UTC on Node v26.5.0, clean revision. `node commit/cli.ts audit`
-passes on it.
+[`evidence/calibration/stage-1/run-20261002T033320Z/`](evidence/calibration/stage-1/run-20261002T033320Z/) — [`verdict.md`](evidence/calibration/stage-1/run-20261002T033320Z/verdict.md), [`scorecard.md`](evidence/calibration/stage-1/run-20261002T033320Z/scorecard.md),
+evidence schema v2, manifest sha256 `837cdb9b64d81dd8096134a77bdae345aa39388a0426fecc03475f7242db1de7`,
+run 2026-10-02 03:33–04:04 UTC on Node v26.5.0, clean revision. `node commit/cli.ts audit`
+passes on it, also in a fresh clone.
 
 | Layer | Result |
 |---|---|
 | Typecheck, lint | pass |
 | Startup / health | pass |
 | Shipped stage-1 checks (official kickoff package) | **147 / 147** |
-| Overshoot probe (stage-1 must *not* pass the stage-2 suite) | pass — stage 2 fails, as required |
+| Overshoot probe (stage-1 must *not* pass the stage-2 suite) | pass — the stage-2 hold check ran and failed (pytest exit 1), as required. In every run **before** rc.2 this probe was vacuous: pytest failed at collection and the negated exit code read that as a pass (§8) |
 | Contract checks (one per spec rule, incl. import-corruption fuzz) | **248 / 248** |
 | Reference model, seeds 481927 · 7 · 90210 | **agree** — 3 × 1,000 generated operations, 6,300 invariant checks, no divergence |
 | Adversarial campaigns | **55 / 55** rounds (11 campaigns × 5 seeds), 225 state checks, 50 concurrent requests per burst |
-| Mutation campaign #4 | **398 killed / 417 valid = 95.4%** (see below) |
+| Mutation campaign #5 | **398 killed / 417 valid = 95.4%** (see below) |
 | Clean build (`docker build --no-cache`) | **not run** — no Docker daemon on this machine |
 | Offline, resource-capped run (`harness run --mode isolated`) | **not run** — same reason |
 | **Verdict** | **INCONCLUSIVE** — nothing failed; the only reasons are the two Docker steps (`environment precondition not met: docker info`) |
 
-The previous full run, on `04563ed` with the pre-hardening toolkit, is
-[`run-20261001T163312Z`](evidence/calibration/stage-1/run-20261001T163312Z/) (legacy
-evidence schema; same verdict, same numbers).
+Earlier full runs, same verdict and mutation numbers, vacuous overshoot probe:
+[`run-20261002T024548Z-d4b9f5`](evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/)
+(`e4b5f93`, rc.1) and [`run-20261001T163312Z`](evidence/calibration/stage-1/run-20261001T163312Z/)
+(`04563ed`, pre-hardening toolkit, legacy evidence schema).
 
 ### What the mutation campaigns measured
 
@@ -384,13 +385,14 @@ a new check found a real defect.
 | #2 | + contract checks, import fuzz, signup race | 467 | 372 | 94 | 79.7% | 79.7% | [`mutation-run-2`](evidence/calibration/stage-1/mutation-run-2/mutation-report.md) |
 | #3 | + checks for #2's observable survivors; 58 equivalents excluded | 417 | 398 | 18 | **95.4%** | **83.8%** | [`run-20261001…/mutation`](evidence/calibration/stage-1/run-20261001T163312Z/mutation/mutation-report.md) |
 | #4 | same suite, rewritten engine (factory 1.0.0-rc.1), validated register | 417 | 398 | 18 | **95.4%** | **83.8%** | [`run-20261002…/mutation`](evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/mutation/mutation-report.md) |
+| #5 | same suite, factory 1.0.0-rc.2 | 417 | 398 | 18 | **95.4%** | **83.8%** | [`run-20261002T0333…/mutation`](evidence/calibration/stage-1/run-20261002T033320Z/mutation/mutation-report.md) |
 
 ¹ Counting the 58 excluded equivalents as survivors — the like-for-like comparison with #1
-and #2. Campaign #4 reproduced #3 exactly — same kills, same survivors, same per-layer
+and #2. Campaigns #4 and #5 reproduced #3 exactly — same kills, same survivors, same per-layer
 counts — after the mutation engine, process runner and report format were rewritten: the
 measurement does not depend on the incidental details of the tool that took it. Each campaign also had 8 invalid mutants (never started) and 1 timeout.
 
-**Which layer caught what (campaigns #3 and #4, identical).** Killed by each layer, and killed by that layer
+**Which layer caught what (campaigns #3, #4 and #5, identical).** Killed by each layer, and killed by that layer
 *alone* — defects every other layer would have accepted:
 
 | Layer | Killed | Alone |
@@ -429,7 +431,7 @@ Measured on one 12-core, 15 GB Linux machine (Node 26), from the reports' own ti
 | Release gate (`verify --skip mutation`) per revision | ~50 s |
 | Kill suite against one candidate | ~26 s |
 | Mutation campaign, ~480 mutants, 6 parallel jobs | 31.4–37.3 min |
-| Full verification including mutation | 32.2 min (1,934 s, #3); 32.2 min (1,931 s, #4) |
+| Full verification including mutation | 32.2 min (#3), 32.2 min (#4), 30.9 min (#5) |
 | Factory self-audit (`pnpm verify`) | 81 s |
 | Factory self-tests (37) | 23 s, most of it the mutation-engine test |
 
@@ -461,6 +463,8 @@ Each of these happened while building and calibrating the factory; each changed 
 | The full self-audit flagged `commit/self-audit.ts` for naming the track | It was right: that script hard-codes this repository's calibration plan, so it is not generic, and bootstrap would have installed it into result repositories where it cannot work | Moved to `scripts/self-audit.ts`; `commit/` stays installable anywhere |
 | An earlier summary said the README had been rewritten; it had not reached `main` (see §5) | A claim about the repository needs the same check as a claim about the software | The README was rewritten on `main`; the self-audit now covers the documents' file paths and secrets, and the release checklist includes reading the committed files |
 | Tests that print fake credentials would have shipped credential shapes into every result repository, where the event's scanner fails the submission | Test fixtures are files too | Fixture secrets are assembled at run time; the self-audit runs the credential scan over every factory file |
+| The root `.gitignore`'s `*.log` rule silently excluded every step log under `evidence/`: each committed manifest referenced logs, with their sha256, that a clone never received | The self-audit checked the working tree, where the ignored files exist; a judge receives a clone, where they do not | Logs committed byte-identical; `!evidence/**/*.log` in this repository and in the result repositories bootstrap creates; the self-audit now audits a fresh clone of HEAD |
+| The overshoot probe ("the stage-1 service must not pass the stage-2 suite") was `! pytest …`, and pytest was failing at collection (`ModuleNotFoundError: playwright`) — so every run's "overshoot: pass" meant only "pytest crashed" | Negating an exit code turns *any* failure, including a broken harness, into success: the exact "missing evidence → assume pass" pattern the toolkit forbids elsewhere | The probe runs one API-only stage-2 check, requires pytest exit 1 (ran and failed), and is BLOCKED when its tools are missing; runs before 1.0.0-rc.2 are annotated |
 | No Docker daemon could be started on the calibration machine (no root) | A verifier that turned "could not run" into "pass" or "fail" would lie either way | `INCONCLUSIVE` is a first-class verdict: a blocking step that could not run blocks acceptance without blaming the implementation |
 
 ---

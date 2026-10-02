@@ -80,14 +80,15 @@ The verifier was calibrated against a hand-written Pocketful stage-1 service
 | Contract checks (one per spec rule, incl. import-corruption fuzz) | 248 / 248 |
 | Reference model — 3 seeds × 1,000 generated operations | agree; 6,300 invariant checks |
 | Adversarial concurrency / retry campaigns | 55 / 55 rounds, 50 concurrent requests per burst |
-| **Mutation kill rate**, campaigns #1 → #2 → #3 → #4 | **64.0% → 79.7% → 95.4% → 95.4%** (83.8% counting the 58 justified equivalents as survivors; #4 reproduced #3 exactly on the rewritten engine) |
+| **Mutation kill rate**, campaigns #1 → #2 → #3 → #4 → #5 | **64.0% → 79.7% → 95.4% → 95.4% → 95.4%** (83.8% counting the 58 justified equivalents as survivors; #4 and #5 reproduced #3 exactly on the rewritten engine) |
 | Defects killed *only* by the verifier's own contract layer | 97 of 398 |
 | Seeded double-spend (rehearsal) | shipped checks green; **REJECTED** by the adversarial layer — 24 payments under one key |
 | Clean-container build and offline run | **not run** — no Docker daemon on the calibration machine |
-| Latest verdict (`e4b5f93`) | **INCONCLUSIVE**: nothing failed; the only reasons are the two Docker steps |
+| Overshoot probe (stage-1 must fail the stage-2 suite) | the stage-2 hold check ran and failed, as required — vacuous in runs before rc.2 ([`FACTORY.md` §8](FACTORY.md#8-what-we-tried-that-failed-and-what-it-taught-the-factory)) |
+| Latest verdict (`bcc73e9`, factory 1.0.0-rc.2) | **INCONCLUSIVE**: nothing failed; the only reasons are the two Docker steps |
 | Factory self-audit (`pnpm verify`) | see [`evidence/factory-self-audit/summary.md`](evidence/factory-self-audit/summary.md) |
 
-Evidence: [`evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/verdict.md`](evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/verdict.md) · [`scorecard.md`](evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/scorecard.md) ·
+Evidence: [`evidence/calibration/stage-1/run-20261002T033320Z/verdict.md`](evidence/calibration/stage-1/run-20261002T033320Z/verdict.md) · [`scorecard.md`](evidence/calibration/stage-1/run-20261002T033320Z/scorecard.md) ·
 [all runs](evidence/calibration/stage-1/) · [repair-loop rehearsal](evidence/calibration/stage-1/repair-loop/).
 The 18 remaining survivors are listed in [`FACTORY.md` §6](FACTORY.md#6-measured-results--verifier-calibration).
 
