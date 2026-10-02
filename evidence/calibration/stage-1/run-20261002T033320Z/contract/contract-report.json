@@ -1,0 +1,1744 @@
+{
+  "kind": "contract-checks",
+  "total": 248,
+  "passed": 248,
+  "failed": 0,
+  "cases": [
+    {
+      "id": "health",
+      "spec": "§3.2",
+      "rule": "GET /health is 200 {\"status\":\"ok\"}",
+      "ok": true,
+      "detail": "{\"status\":200,\"code\":null,\"body\":{\"status\":\"ok\"}}"
+    },
+    {
+      "id": "reset-negative",
+      "spec": "§4 fixture",
+      "rule": "a negative seeded balance is 422 validation_failed",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "reset-unchanged",
+      "spec": "§4 fixture",
+      "rule": "a rejected reset changes nothing",
+      "ok": true,
+      "detail": "{\"user_id\":\"u_zed\",\"display_name\":\"ZED\",\"handle\":\"zed\",\"balance\":7,\"currency\":\"JPY\",\"minor_units\":0}"
+    },
+    {
+      "id": "me-shape",
+      "spec": "§8 GET /me",
+      "rule": "GET /me carries handle, balance, currency and minor_units",
+      "ok": true,
+      "detail": "{\"user_id\":\"u_zed\",\"display_name\":\"ZED\",\"handle\":\"zed\",\"balance\":7,\"currency\":\"JPY\",\"minor_units\":0}"
+    },
+    {
+      "id": "signup-ok",
+      "spec": "§6",
+      "rule": "signup returns 201",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "signup-email-taken",
+      "spec": "§6",
+      "rule": "an already registered email is 409 email_taken",
+      "ok": true,
+      "detail": "got 409 email_taken, want 409 email_taken"
+    },
+    {
+      "id": "signup-short-password",
+      "spec": "§6",
+      "rule": "a password shorter than 8 characters is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "signup-8-char-password",
+      "spec": "§6",
+      "rule": "an 8-character password is accepted",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "signup-bad-email \"no-at-sign.example.com\"",
+      "spec": "§6",
+      "rule": "an email not of the form local@domain is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "signup-bad-email \"@example.com\"",
+      "spec": "§6",
+      "rule": "an email not of the form local@domain is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "signup-bad-email \"local@\"",
+      "spec": "§6",
+      "rule": "an email not of the form local@domain is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "signup-bad-email \"\"",
+      "spec": "§6",
+      "rule": "an email not of the form local@domain is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "signup-handle-taken",
+      "spec": "§6",
+      "rule": "a derived handle already taken is 409 handle_taken",
+      "ok": true,
+      "detail": "got 409 handle_taken, want 409 handle_taken"
+    },
+    {
+      "id": "handle-taken-creates-nothing",
+      "spec": "§6",
+      "rule": "a handle_taken signup creates no account",
+      "ok": true,
+      "detail": "got 401 unauthenticated, want 401 unauthenticated"
+    },
+    {
+      "id": "handle-derivation",
+      "spec": "§4 handles",
+      "rule": "derived handle: lowercase, non [a-z0-9_] to _, cut to 20",
+      "ok": true,
+      "detail": "a_very_long_local_pa"
+    },
+    {
+      "id": "login-wrong-password",
+      "spec": "§6",
+      "rule": "a wrong password is 401",
+      "ok": true,
+      "detail": "got 401 unauthenticated, want 401 unauthenticated"
+    },
+    {
+      "id": "login-unknown",
+      "spec": "§6",
+      "rule": "an unknown email is 401",
+      "ok": true,
+      "detail": "got 401 unauthenticated, want 401 unauthenticated"
+    },
+    {
+      "id": "me-no-token",
+      "spec": "§6",
+      "rule": "no bearer token is 401",
+      "ok": true,
+      "detail": "got 401 unauthenticated, want 401 unauthenticated"
+    },
+    {
+      "id": "me-bad-token",
+      "spec": "§6",
+      "rule": "an unknown bearer token is 401",
+      "ok": true,
+      "detail": "got 401 unauthenticated, want 401 unauthenticated"
+    },
+    {
+      "id": "multiple-tokens",
+      "spec": "§6",
+      "rule": "an account may hold several valid tokens",
+      "ok": true,
+      "detail": "both tokens work"
+    },
+    {
+      "id": "missing-key",
+      "spec": "§7",
+      "rule": "a write without Idempotency-Key is 400",
+      "ok": true,
+      "detail": "got 400 missing_idempotency_key, want 400 missing_idempotency_key"
+    },
+    {
+      "id": "empty-key",
+      "spec": "§7",
+      "rule": "an empty Idempotency-Key is 400",
+      "ok": true,
+      "detail": "got 400 missing_idempotency_key, want 400 missing_idempotency_key"
+    },
+    {
+      "id": "key-255",
+      "spec": "§5",
+      "rule": "a 255-character key is valid",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "key-256",
+      "spec": "§5",
+      "rule": "a 256-character key is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "replay-key-order",
+      "spec": "§7",
+      "rule": "same JSON value in a different key order is a replay (200, identical body)",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "reuse-different-body",
+      "spec": "§7",
+      "rule": "same key, different body is 409",
+      "ok": true,
+      "detail": "got 409 idempotency_key_reuse, want 409 idempotency_key_reuse"
+    },
+    {
+      "id": "reuse-invalid-body",
+      "spec": "§7",
+      "rule": "a claimed key is resolved before validation",
+      "ok": true,
+      "detail": "got 409 idempotency_key_reuse, want 409 idempotency_key_reuse"
+    },
+    {
+      "id": "key-per-user",
+      "spec": "§7",
+      "rule": "another user may use the same key string",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "key-per-path",
+      "spec": "§7",
+      "rule": "the same key and body on another path is a new request",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "failed-first",
+      "spec": "§7",
+      "rule": "an unaffordable payment is 409",
+      "ok": true,
+      "detail": "got 409 insufficient_funds, want 409 insufficient_funds"
+    },
+    {
+      "id": "reuse-after-4xx",
+      "spec": "§7",
+      "rule": "a key whose request failed with 4xx is a first use again",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "numeric-equality",
+      "spec": "§4 amounts",
+      "rule": "1000 and 1e3 are the same JSON value: replay",
+      "ok": true,
+      "detail": "[201,200]"
+    },
+    {
+      "id": "float-integral",
+      "spec": "§4 amounts",
+      "rule": "an integral 1000.0 is a valid amount",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "id": "malformed-json",
+      "spec": "§5",
+      "rule": "an unparseable body is 400 malformed_request",
+      "ok": true,
+      "detail": "400"
+    },
+    {
+      "id": "non-object-body null",
+      "spec": "§3.4 / §5",
+      "rule": "a JSON body that is not an object is 400 malformed_request, never 5xx",
+      "ok": true,
+      "detail": "400"
+    },
+    {
+      "id": "non-object-body []",
+      "spec": "§3.4 / §5",
+      "rule": "a JSON body that is not an object is 400 malformed_request, never 5xx",
+      "ok": true,
+      "detail": "400"
+    },
+    {
+      "id": "non-object-body \"text\"",
+      "spec": "§3.4 / §5",
+      "rule": "a JSON body that is not an object is 400 malformed_request, never 5xx",
+      "ok": true,
+      "detail": "400"
+    },
+    {
+      "id": "non-object-body 7",
+      "spec": "§3.4 / §5",
+      "rule": "a JSON body that is not an object is 400 malformed_request, never 5xx",
+      "ok": true,
+      "detail": "400"
+    },
+    {
+      "id": "unknown-route GET /nope",
+      "spec": "§5",
+      "rule": "an endpoint that does not exist is 404 not_found",
+      "ok": true,
+      "detail": "got 404 not_found, want 404 not_found"
+    },
+    {
+      "id": "unknown-route POST /me",
+      "spec": "§5",
+      "rule": "an endpoint that does not exist is 404 not_found",
+      "ok": true,
+      "detail": "got 404 not_found, want 404 not_found"
+    },
+    {
+      "id": "unknown-route GET /payments",
+      "spec": "§5",
+      "rule": "an endpoint that does not exist is 404 not_found",
+      "ok": true,
+      "detail": "got 404 not_found, want 404 not_found"
+    },
+    {
+      "id": "unknown-route POST /activity",
+      "spec": "§5",
+      "rule": "an endpoint that does not exist is 404 not_found",
+      "ok": true,
+      "detail": "got 404 not_found, want 404 not_found"
+    },
+    {
+      "id": "unknown-route POST /requests/x/approve",
+      "spec": "§5",
+      "rule": "an endpoint that does not exist is 404 not_found",
+      "ok": true,
+      "detail": "got 404 not_found, want 404 not_found"
+    },
+    {
+      "id": "unknown-route GET /requests/x/pay",
+      "spec": "§5",
+      "rule": "an endpoint that does not exist is 404 not_found",
+      "ok": true,
+      "detail": "got 404 not_found, want 404 not_found"
+    },
+    {
+      "id": "wrong-type-handle",
+      "spec": "§5",
+      "rule": "a field of the wrong JSON type is 400",
+      "ok": true,
+      "detail": "got 400 malformed_request, want 400 malformed_request"
+    },
+    {
+      "id": "missing-handle",
+      "spec": "§5",
+      "rule": "a missing required field is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "unknown-fields",
+      "spec": "§3.4",
+      "rule": "unknown request fields are ignored",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "pay-amount 0",
+      "spec": "§8 payments",
+      "rule": "amount below 1, above 1e9, non-integer, string or boolean is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "pay-amount -1",
+      "spec": "§8 payments",
+      "rule": "amount below 1, above 1e9, non-integer, string or boolean is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "pay-amount 1000000001",
+      "spec": "§8 payments",
+      "rule": "amount below 1, above 1e9, non-integer, string or boolean is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "pay-amount 2.5",
+      "spec": "§8 payments",
+      "rule": "amount below 1, above 1e9, non-integer, string or boolean is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "pay-amount \"100\"",
+      "spec": "§8 payments",
+      "rule": "amount below 1, above 1e9, non-integer, string or boolean is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "pay-amount true",
+      "spec": "§8 payments",
+      "rule": "amount below 1, above 1e9, non-integer, string or boolean is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "pay-amount null",
+      "spec": "§8 payments",
+      "rule": "amount below 1, above 1e9, non-integer, string or boolean is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "pay-amount-max",
+      "spec": "§8 payments",
+      "rule": "an amount of exactly 1000000000 is valid",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "pay-exact-balance",
+      "spec": "§8 payments",
+      "rule": "paying exactly the whole balance is allowed",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "pay-one-over",
+      "spec": "§8 payments",
+      "rule": "one unit over the balance is 409",
+      "ok": true,
+      "detail": "got 409 insufficient_funds, want 409 insufficient_funds"
+    },
+    {
+      "id": "pay-self",
+      "spec": "§8 payments",
+      "rule": "paying your own handle is 422 self_payment",
+      "ok": true,
+      "detail": "got 422 self_payment, want 422 self_payment"
+    },
+    {
+      "id": "pay-unknown",
+      "spec": "§8 payments",
+      "rule": "an unknown handle is 404",
+      "ok": true,
+      "detail": "got 404 not_found, want 404 not_found"
+    },
+    {
+      "id": "note-200",
+      "spec": "§8 payments",
+      "rule": "a 200-character note is valid",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "note-201",
+      "spec": "§8 payments",
+      "rule": "a 201-character note is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "note-null",
+      "spec": "§5",
+      "rule": "a null note is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "note-number",
+      "spec": "§5",
+      "rule": "a non-string note is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "visibility-bad",
+      "spec": "§8 payments",
+      "rule": "visibility other than public/private is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "note-verbatim",
+      "spec": "§8 payments",
+      "rule": "notes round-trip verbatim, emoji and whitespace included",
+      "ok": true,
+      "detail": "café ☕ 🎉 ​  spaced  "
+    },
+    {
+      "id": "timestamp-format",
+      "spec": "§3.4",
+      "rule": "timestamps are RFC 3339 with an explicit offset",
+      "ok": true,
+      "detail": "2026-10-02T03:33:43.581+00:00"
+    },
+    {
+      "id": "id-length",
+      "spec": "§3.4",
+      "rule": "ids are strings of at most 64 characters",
+      "ok": true,
+      "detail": "p_1bffcec0-6e9a-472b-b325-82a90c722dc7"
+    },
+    {
+      "id": "failed-no-trace",
+      "spec": "§8 payments",
+      "rule": "a failed payment leaves no trace in balances or the feed",
+      "ok": true,
+      "detail": "[3,3]"
+    },
+    {
+      "id": "request-over-balance",
+      "spec": "§4 requests",
+      "rule": "a request may exceed the payer balance",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "request-self",
+      "spec": "§8 requests",
+      "rule": "requesting from yourself is 422 self_request",
+      "ok": true,
+      "detail": "got 422 self_request, want 422 self_request"
+    },
+    {
+      "id": "request-unknown",
+      "spec": "§8 requests",
+      "rule": "an unknown payer handle is 404",
+      "ok": true,
+      "detail": "got 404 not_found, want 404 not_found"
+    },
+    {
+      "id": "request-amount",
+      "spec": "§8 requests",
+      "rule": "an invalid amount is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "request-note-201",
+      "spec": "§8 requests",
+      "rule": "a 201-character note is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "pay-short",
+      "spec": "§8 pay",
+      "rule": "paying a request while short is 409 and changes nothing",
+      "ok": true,
+      "detail": "got 409 insufficient_funds, want 409 insufficient_funds"
+    },
+    {
+      "id": "pay-short-still-pending",
+      "spec": "§4 requests",
+      "rule": "the request stays pending after an unaffordable pay",
+      "ok": true,
+      "detail": "pending"
+    },
+    {
+      "id": "pay-by-requester",
+      "spec": "§8 pay",
+      "rule": "only the payer may pay",
+      "ok": true,
+      "detail": "got 403 forbidden, want 403 forbidden"
+    },
+    {
+      "id": "pay-by-stranger",
+      "spec": "§8 pay",
+      "rule": "a third party may not pay",
+      "ok": true,
+      "detail": "got 403 forbidden, want 403 forbidden"
+    },
+    {
+      "id": "pay-unknown-request",
+      "spec": "§8 pay",
+      "rule": "an unknown request is 404",
+      "ok": true,
+      "detail": "got 404 not_found, want 404 not_found"
+    },
+    {
+      "id": "decline-by-requester",
+      "spec": "§8 decline",
+      "rule": "only the payer may decline",
+      "ok": true,
+      "detail": "got 403 forbidden, want 403 forbidden"
+    },
+    {
+      "id": "cancel-by-payer",
+      "spec": "§8 cancel",
+      "rule": "only the requester may cancel",
+      "ok": true,
+      "detail": "got 403 forbidden, want 403 forbidden"
+    },
+    {
+      "id": "pay-request-payment",
+      "spec": "§8 pay",
+      "rule": "paying returns the payment with request_id, the payer chooses visibility",
+      "ok": true,
+      "detail": "{\"payment_id\":\"p_3d4caf20-0203-4d24-94a7-7ed9e597c82f\",\"from_user_id\":\"u_ada\",\"from_handle\":\"ada\",\"to_user_id\":\"u_bob\",\"to_handle\":\"bob\",\"amount\":300,\"currency\":\"EUR\",\"note\":\"taxi\",\"visibility\":\"private\",\"request_id\":\"rq_987902b0-921c-425e-a172-44d6cd97f7cc\",\"settlement_id\":null,\"created_at\":\"2026-10-02T03:33:43.727+00:00\"}"
+    },
+    {
+      "id": "pay-replay-after-paid",
+      "spec": "§8 pay",
+      "rule": "a replay after the request is paid is 200 with the original body, not request_not_pending",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "pay-replay-other-body",
+      "spec": "§8 pay",
+      "rule": "{} and {\"visibility\":\"public\"} are different bodies",
+      "ok": true,
+      "detail": "got 409 idempotency_key_reuse, want 409 idempotency_key_reuse"
+    },
+    {
+      "id": "pay-twice",
+      "spec": "§8 pay",
+      "rule": "paying a paid request under a new key is 409 request_not_pending",
+      "ok": true,
+      "detail": "got 409 request_not_pending, want 409 request_not_pending"
+    },
+    {
+      "id": "decline-paid",
+      "spec": "§8 decline",
+      "rule": "declining a paid request is 409",
+      "ok": true,
+      "detail": "got 409 request_not_pending, want 409 request_not_pending"
+    },
+    {
+      "id": "cancel-paid",
+      "spec": "§8 cancel",
+      "rule": "cancelling a paid request is 409",
+      "ok": true,
+      "detail": "got 409 request_not_pending, want 409 request_not_pending"
+    },
+    {
+      "id": "cancel-declined",
+      "spec": "§8 cancel",
+      "rule": "cancelling a declined request is 409",
+      "ok": true,
+      "detail": "got 409 request_not_pending, want 409 request_not_pending"
+    },
+    {
+      "id": "pay-declined",
+      "spec": "§8 pay",
+      "rule": "paying a declined request is 409",
+      "ok": true,
+      "detail": "got 409 request_not_pending, want 409 request_not_pending"
+    },
+    {
+      "id": "decline-cancelled",
+      "spec": "§8 decline",
+      "rule": "declining a cancelled request is 409",
+      "ok": true,
+      "detail": "got 409 request_not_pending, want 409 request_not_pending"
+    },
+    {
+      "id": "private-hidden",
+      "spec": "§4 feed",
+      "rule": "a private payment is hidden from third parties",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "id": "private-visible-receiver",
+      "spec": "§4 feed",
+      "rule": "a private payment is visible to its receiver",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "id": "requests-not-in-feed",
+      "spec": "§4 feed",
+      "rule": "requests never appear in the activity feed",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "id": "requests-only-parties",
+      "spec": "§8 GET /requests",
+      "rule": "a caller sees only requests they are party to",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "id": "direction",
+      "spec": "§8 GET /requests",
+      "rule": "incoming = caller is payer, outgoing = caller is requester",
+      "ok": true,
+      "detail": "[3,1]"
+    },
+    {
+      "id": "newest-first",
+      "spec": "§8 GET /requests",
+      "rule": "requests are newest first",
+      "ok": true,
+      "detail": "[3,2,1]"
+    },
+    {
+      "id": "has-more",
+      "spec": "§8 GET /requests",
+      "rule": "has_more is true exactly when items remain",
+      "ok": true,
+      "detail": "[true,false]"
+    },
+    {
+      "id": "has-more-exact",
+      "spec": "§8 GET /requests",
+      "rule": "has_more is false when the page ends exactly at the last item",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "id": "status-filter",
+      "spec": "§8 GET /requests",
+      "rule": "status filters the list",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "id": "list-param limit=0",
+      "spec": "§5 / §8",
+      "rule": "out-of-range or non-digit list parameters are 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "feed-param limit=0",
+      "spec": "§8 GET /activity",
+      "rule": "the feed applies the same limit/offset rules",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "list-param limit=201",
+      "spec": "§5 / §8",
+      "rule": "out-of-range or non-digit list parameters are 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "feed-param limit=201",
+      "spec": "§8 GET /activity",
+      "rule": "the feed applies the same limit/offset rules",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "list-param limit=1e1",
+      "spec": "§5 / §8",
+      "rule": "out-of-range or non-digit list parameters are 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "feed-param limit=1e1",
+      "spec": "§8 GET /activity",
+      "rule": "the feed applies the same limit/offset rules",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "list-param limit=4.0",
+      "spec": "§5 / §8",
+      "rule": "out-of-range or non-digit list parameters are 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "feed-param limit=4.0",
+      "spec": "§8 GET /activity",
+      "rule": "the feed applies the same limit/offset rules",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "list-param limit=+4",
+      "spec": "§5 / §8",
+      "rule": "out-of-range or non-digit list parameters are 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "feed-param limit=+4",
+      "spec": "§8 GET /activity",
+      "rule": "the feed applies the same limit/offset rules",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "list-param limit=abc",
+      "spec": "§5 / §8",
+      "rule": "out-of-range or non-digit list parameters are 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "feed-param limit=abc",
+      "spec": "§8 GET /activity",
+      "rule": "the feed applies the same limit/offset rules",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "list-param offset=-1",
+      "spec": "§5 / §8",
+      "rule": "out-of-range or non-digit list parameters are 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "feed-param offset=-1",
+      "spec": "§8 GET /activity",
+      "rule": "the feed applies the same limit/offset rules",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "list-param direction=sideways",
+      "spec": "§5 / §8",
+      "rule": "out-of-range or non-digit list parameters are 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "list-param status=open",
+      "spec": "§5 / §8",
+      "rule": "out-of-range or non-digit list parameters are 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "limit-200",
+      "spec": "§5",
+      "rule": "limit=200 is valid",
+      "ok": true,
+      "detail": "got 200 , want 200 "
+    },
+    {
+      "id": "unknown-query",
+      "spec": "§3.4",
+      "rule": "unknown query parameters are ignored",
+      "ok": true,
+      "detail": "got 200 , want 200 "
+    },
+    {
+      "id": "split 1000/ada,bob,cy",
+      "spec": "§9",
+      "rule": "shares follow the equal-split table, larger shares first",
+      "ok": true,
+      "detail": "[334,333,333]"
+    },
+    {
+      "id": "split 1/ada,bob,cy",
+      "spec": "§9",
+      "rule": "shares follow the equal-split table, larger shares first",
+      "ok": true,
+      "detail": "[1,0,0]"
+    },
+    {
+      "id": "split 10/ada,bob,cy",
+      "spec": "§9",
+      "rule": "shares follow the equal-split table, larger shares first",
+      "ok": true,
+      "detail": "[4,3,3]"
+    },
+    {
+      "id": "split 999/ada,bob,cy",
+      "spec": "§9",
+      "rule": "shares follow the equal-split table, larger shares first",
+      "ok": true,
+      "detail": "[333,333,333]"
+    },
+    {
+      "id": "split 10/cy,bob,ada",
+      "spec": "§9",
+      "rule": "shares follow the equal-split table, larger shares first",
+      "ok": true,
+      "detail": "[4,3,3]"
+    },
+    {
+      "id": "split-zero-share-request",
+      "spec": "§9",
+      "rule": "a zero share still produces a request",
+      "ok": true,
+      "detail": "[0,0]"
+    },
+    {
+      "id": "split-caller-omitted",
+      "spec": "§8 splits",
+      "rule": "a caller omitted from the handles is not a share holder",
+      "ok": true,
+      "detail": "[{\"handle\":\"bob\",\"amount\":50},{\"handle\":\"cy\",\"amount\":50}]"
+    },
+    {
+      "id": "split-solo",
+      "spec": "§8 splits",
+      "rule": "a split of only the caller is valid with no requests",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "id": "split-empty",
+      "spec": "§8 splits",
+      "rule": "empty participant_handles is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "split-duplicate",
+      "spec": "§8 splits",
+      "rule": "a duplicate handle is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "split-unknown",
+      "spec": "§8 splits",
+      "rule": "an unknown handle is 404",
+      "ok": true,
+      "detail": "got 404 not_found, want 404 not_found"
+    },
+    {
+      "id": "split-amount",
+      "spec": "§8 splits",
+      "rule": "an invalid amount is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "split-no-balance-check",
+      "spec": "§8 splits",
+      "rule": "nothing about a split checks anyone's balance",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "id": "split-moves-nothing",
+      "spec": "§8 splits",
+      "rule": "creating a split moves no money",
+      "ok": true,
+      "detail": "10000"
+    },
+    {
+      "id": "settle-no-token",
+      "spec": "§11",
+      "rule": "no token is 401",
+      "ok": true,
+      "detail": "got 401 unauthenticated, want 401 unauthenticated"
+    },
+    {
+      "id": "settle-not-operator",
+      "spec": "§11",
+      "rule": "an authenticated non-operator is 403",
+      "ok": true,
+      "detail": "got 403 forbidden, want 403 forbidden"
+    },
+    {
+      "id": "settle-empty",
+      "spec": "§11",
+      "rule": "zero transfers is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "settle-33",
+      "spec": "§11",
+      "rule": "33 transfers is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "settle-32",
+      "spec": "§11",
+      "rule": "32 transfers is valid",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "settle-shape",
+      "spec": "§11",
+      "rule": "a malformed batch shape is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "settle-entry-shape",
+      "spec": "§11",
+      "rule": "a non-object entry is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "settle-self",
+      "spec": "§11",
+      "rule": "a self-transfer is 422 self_payment",
+      "ok": true,
+      "detail": "got 422 self_payment, want 422 self_payment"
+    },
+    {
+      "id": "settle-unknown",
+      "spec": "§11",
+      "rule": "an unknown handle is 404",
+      "ok": true,
+      "detail": "got 404 not_found, want 404 not_found"
+    },
+    {
+      "id": "settle-order",
+      "spec": "§11",
+      "rule": "entry errors are reported in input order",
+      "ok": true,
+      "detail": "got 404 not_found, want 404 not_found"
+    },
+    {
+      "id": "settle-order-2",
+      "spec": "§11",
+      "rule": "entry errors precede insufficient funds",
+      "ok": true,
+      "detail": "got 422 self_payment, want 422 self_payment"
+    },
+    {
+      "id": "settle-unaffordable",
+      "spec": "§11",
+      "rule": "a settlement leaving any wallet negative is 409",
+      "ok": true,
+      "detail": "got 409 insufficient_funds, want 409 insufficient_funds"
+    },
+    {
+      "id": "settle-atomic",
+      "spec": "§11",
+      "rule": "a refused settlement moves nothing",
+      "ok": true,
+      "detail": "[9968,2532,500]"
+    },
+    {
+      "id": "settle-net",
+      "spec": "§11",
+      "rule": "affordability is net: cy pays 900 holding 500 but receives 500",
+      "ok": true,
+      "detail": "201"
+    },
+    {
+      "id": "settle-receipts",
+      "spec": "§11",
+      "rule": "members share settlement_id and created_at = committed_at, null request_id, input order",
+      "ok": true,
+      "detail": "[{\"payment_id\":\"p_9c292797-499d-4e1c-9e26-6c387e4123be\",\"from_user_id\":\"u_cy\",\"from_handle\":\"cy\",\"to_user_id\":\"u_bob\",\"to_handle\":\"bob\",\"amount\":900,\"currency\":\"EUR\",\"note\":\"\",\"visibility\":\"public\",\"request_id\":null,\"settlement_id\":\"st_d8c9b786-0b89-456d-b9b6-13cac56f6a07\",\"created_at\":\"2026-10-02T03:33:44.183+00:00\"},{\"payment_id\":\"p_f07e9ce0-0ce5-4a73-8927-38db8faff78a\",\"from_user_id\":\"u_bob\",\"from_handle\":\"bob\",\"to_user_id\":\"u_cy\",\"to_handle\":\"cy\",\"amount\":500,\"currency\":\"EUR\",\"note\":\"\",\"visibility\":\"public\",\"request_id\":null,\"settlement_id\":\"st_d8c9b786-0b89-456d-b9b6-13cac56f6a07\",\"created_at\":\"2026-10-02T03:33:44.183+00:00\"}]"
+    },
+    {
+      "id": "nonmember-null",
+      "spec": "§11",
+      "rule": "non-member payments expose settlement_id null",
+      "ok": true,
+      "detail": "null"
+    },
+    {
+      "id": "settle-replay",
+      "spec": "§11",
+      "rule": "a settlement replay is 200 with the original complete response",
+      "ok": true,
+      "detail": "[201,200]"
+    },
+    {
+      "id": "settle-failed-key-free",
+      "spec": "§11",
+      "rule": "failed validation claims no idempotency key",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "export-shape",
+      "spec": "§10",
+      "rule": "export is 200 with track, format_version 1 and state",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "export-snapshot",
+      "spec": "§10",
+      "rule": "export is a snapshot: later writes do not change it",
+      "ok": true,
+      "detail": "differs after a write"
+    },
+    {
+      "id": "import-204",
+      "spec": "§10",
+      "rule": "importing an unchanged export is 204",
+      "ok": true,
+      "detail": "204"
+    },
+    {
+      "id": "import-token",
+      "spec": "§10",
+      "rule": "existing tokens remain valid after import",
+      "ok": true,
+      "detail": "{\"user_id\":\"u_ada\",\"display_name\":\"ADA\",\"handle\":\"ada\",\"balance\":9923,\"currency\":\"EUR\",\"minor_units\":2}"
+    },
+    {
+      "id": "import-retry",
+      "spec": "§10",
+      "rule": "original idempotent responses survive import",
+      "ok": true,
+      "detail": "200"
+    },
+    {
+      "id": "import-payments",
+      "spec": "§10",
+      "rule": "payments survive import unchanged",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "id": "import-login",
+      "spec": "§10",
+      "rule": "hashed-password login survives import",
+      "ok": true,
+      "detail": "login"
+    },
+    {
+      "id": "import-replace",
+      "spec": "§10",
+      "rule": "repeating an import duplicates nothing",
+      "ok": true,
+      "detail": "[1,1]"
+    },
+    {
+      "id": "import-wrong-track",
+      "spec": "§10",
+      "rule": "a wrong track is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "import-wrong-version",
+      "spec": "§10",
+      "rule": "a wrong format_version is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "import-no-state",
+      "spec": "§10",
+      "rule": "a missing state is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "import-bad-state",
+      "spec": "§10",
+      "rule": "an invalid state is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "import-reject-unchanged",
+      "spec": "§10",
+      "rule": "a rejected import leaves the destination unchanged",
+      "ok": true,
+      "detail": "{\"user_id\":\"u_ada\",\"display_name\":\"ADA\",\"handle\":\"ada\",\"balance\":9923,\"currency\":\"EUR\",\"minor_units\":2}"
+    },
+    {
+      "id": "reset-clears-tokens",
+      "spec": "§10",
+      "rule": "reset clears all state, including imported tokens",
+      "ok": true,
+      "detail": "got 401 unauthenticated, want 401 unauthenticated"
+    },
+    {
+      "id": "import-api-user",
+      "spec": "§10",
+      "rule": "accounts created after reset survive export and import",
+      "ok": true,
+      "detail": "got 200 , want 200 "
+    },
+    {
+      "id": "import-corrupt state is a list",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.currency missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.minorUnits missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.tokens missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.operatorIds missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.idempotency missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.currency wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.minorUnits wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.tokens wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.operatorIds wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.idempotency wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0] not an object",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0].id missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0].id wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0].email missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0].email wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0].displayName missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0].displayName wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0].handle missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0].handle wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0].balance missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0].balance wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0].passwordHash missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users[0].passwordHash wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.users duplicated entry",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0] not an object",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].id missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].id wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].fromUserId missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].fromUserId wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].toUserId missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].toUserId wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].amount missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].amount wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].note missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].note wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].visibility missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].visibility wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].createdAt missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments[0].createdAt wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.payments duplicated entry",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0] not an object",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].id missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].id wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].requesterId missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].requesterId wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].payerId missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].payerId wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].amount missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].amount wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].note missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].note wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].status missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].status wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].createdAt missing",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests[0].createdAt wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.requests duplicated entry",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt two users share a handle",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.tokens entry wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.idempotency entry wrong type",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.idempotency entry without fingerprint",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-corrupt state.idempotency entry without body",
+      "spec": "§10",
+      "rule": "an invalid state is 422 validation_failed and leaves the destination unchanged",
+      "ok": true,
+      "detail": "422 validation_failed"
+    },
+    {
+      "id": "import-fuzz-healthy",
+      "spec": "§5",
+      "rule": "after every rejected import the service still answers",
+      "ok": true,
+      "detail": "{\"user_id\":\"u_ada\",\"display_name\":\"ADA\",\"handle\":\"ada\",\"balance\":9990,\"currency\":\"EUR\",\"minor_units\":2}"
+    },
+    {
+      "id": "feed-default-limit",
+      "spec": "§8 GET /requests",
+      "rule": "limit defaults to 50",
+      "ok": true,
+      "detail": "50"
+    },
+    {
+      "id": "feed-has-more-exact",
+      "spec": "§8 GET /activity",
+      "rule": "has_more is false when the page ends exactly at the last item",
+      "ok": true,
+      "detail": "false"
+    },
+    {
+      "id": "feed-limit-1",
+      "spec": "§5",
+      "rule": "limit=1 is valid; offset past the newest pages correctly",
+      "ok": true,
+      "detail": "{\"payments\":[{\"payment_id\":\"p_7ba622f0-273d-40cb-a1e8-81c3ae2df153\",\"from_user_id\":\"u_ada\",\"from_handle\":\"ada\",\"to_user_id\":\"u_bob\",\"to_handle\":\"bob\",\"amount\":1,\"currency\":\"EUR\",\"note\":\"\",\"visibility\":\"public\",\"request_id\":null,\"settlement_id\":null,\"created_at\":\"2026-10-02T03:33:44.952+00:00\"}],\"has_more\":false}"
+    },
+    {
+      "id": "feed-offset-beyond",
+      "spec": "§8",
+      "rule": "an offset beyond the end is an empty page",
+      "ok": true,
+      "detail": "{\"payments\":[],\"has_more\":false}"
+    },
+    {
+      "id": "settle-minus-one",
+      "spec": "§11",
+      "rule": "a settlement leaving one wallet at exactly -1 is 409",
+      "ok": true,
+      "detail": "got 409 insufficient_funds, want 409 insufficient_funds"
+    },
+    {
+      "id": "settle-exactly-zero",
+      "spec": "§11",
+      "rule": "a settlement leaving one wallet at exactly 0 is accepted",
+      "ok": true,
+      "detail": "got 201 , want 201 "
+    },
+    {
+      "id": "settle-handle-type",
+      "spec": "§11",
+      "rule": "a non-string handle in an entry is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "replay-nested-key-order",
+      "spec": "§7",
+      "rule": "key order inside nested objects does not change the JSON value",
+      "ok": true,
+      "detail": "[201,200]"
+    },
+    {
+      "id": "fixture-id-edges",
+      "spec": "§3.4",
+      "rule": "fixture ids of 1 and 64 characters are valid",
+      "ok": true,
+      "detail": "{\"user_id\":\"a\",\"display_name\":\"A\",\"handle\":\"a\",\"balance\":5,\"currency\":\"BHD\",\"minor_units\":3}"
+    },
+    {
+      "id": "fixture-seeded-payments",
+      "spec": "§4 fixture",
+      "rule": "several seeded payments, including amounts 1 and 1000000000, are loaded without changing balances",
+      "ok": true,
+      "detail": "[2,5]"
+    },
+    {
+      "id": "fixture-seeded-requests",
+      "spec": "§4 fixture",
+      "rule": "several seeded requests keep their ids and statuses",
+      "ok": true,
+      "detail": "[\"declined\",\"pending\"]"
+    },
+    {
+      "id": "split-handles-missing",
+      "spec": "§5",
+      "rule": "a missing participant_handles is 422",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "split-handles-string",
+      "spec": "§5",
+      "rule": "participant_handles of the wrong JSON type is 400",
+      "ok": true,
+      "detail": "got 400 malformed_request, want 400 malformed_request"
+    },
+    {
+      "id": "split-handles-numbers",
+      "spec": "§5",
+      "rule": "non-string handles are the wrong JSON type: 400",
+      "ok": true,
+      "detail": "got 400 malformed_request, want 400 malformed_request"
+    },
+    {
+      "id": "settle-null-entry",
+      "spec": "§11",
+      "rule": "a null transfer entry is a malformed batch: 422, never 5xx",
+      "ok": true,
+      "detail": "got 422 validation_failed, want 422 validation_failed"
+    },
+    {
+      "id": "fingerprint-array-vs-object",
+      "spec": "§7",
+      "rule": "an array and an object with index keys are different JSON values: 409 reuse, not a replay",
+      "ok": true,
+      "detail": "[201,409]"
+    }
+  ]
+}

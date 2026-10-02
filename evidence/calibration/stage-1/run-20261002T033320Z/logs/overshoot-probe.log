@@ -1,0 +1,29 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________________ test_a_hold_reserves_funds_without_moving_them ________________
+
+reset = <function reset.<locals>._reset at 0x7fbad6b65220>
+api = <function api.<locals>._api at 0x7fbad6b65430>
+
+    def test_a_hold_reserves_funds_without_moving_them(reset, api):
+        reset(fx.fixture())
+        ada = api().authenticate(fx.ADA['email'], fx.ADA['password'])
+>       held = assert_status(ada.post('/authorizations', json={'to_handle': 'bob', 'amount': 2000},
+                                      idempotency_key=new_key()), 201).json()
+
+pocketful/test/stage_2/test_sample.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = <Response [404 Not Found]>, expected = 201
+
+    def assert_status(resp: httpx.Response, expected: int) -> httpx.Response:
+>       assert resp.status_code == expected, \
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f"expected {expected}, got {resp.status_code}. {_describe(resp)}"
+E       AssertionError: expected 201, got 404. POST /authorizations -> 404 '{"error":{"code":"not_found","message":"no such endpoint"}}'
+
+harness/http.py:108: AssertionError
+=========================== short test summary info ============================
+FAILED pocketful/test/stage_2/test_sample.py::test_a_hold_reserves_funds_without_moving_them
+1 failed, 9 deselected in 0.12s
+pytest exit 1 (1 = the stage-2 check ran and failed, as required)
