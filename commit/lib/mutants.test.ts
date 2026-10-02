@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { apply, codeMask, discover } from './mutants.ts';
 import { rng } from './rng.ts';
+import { redact, scrubHome, shQuote } from './fsx.ts';
 
 const masked = (src: string) => [...src].filter((_, i) => codeMask(src)[i]).join('');
 
@@ -42,4 +43,11 @@ test('a seed fixes the whole random sequence', () => {
   const seq = (s: number) => Array.from({ length: 5 }, ((r) => () => r.int(1000))(rng(s)));
   assert.deepEqual(seq(42), seq(42));
   assert.notDeepEqual(seq(42), seq(43));
+});
+
+test('public-evidence hygiene: home paths scrubbed, credentials redacted, quoting is one word', () => {
+  assert.equal(scrubHome('at /home/alice/x and /home/alice/y', '/home/alice'), 'at ~/x and ~/y');
+  assert.equal(redact('plain text').redactions, 0);
+  assert.ok(redact(['DB', '_PASSWORD=', 'hunter2'].join('')).redactions === 1);
+  assert.equal(shQuote(`a'b; rm -rf ~`), `'a'\\''b; rm -rf ~'`);
 });

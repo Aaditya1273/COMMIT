@@ -154,6 +154,7 @@ test('bootstrap: installs into a fresh directory (spaces in the path) and is ide
     assert.ok(existsSync(join(dest, f)), `${f} installed`);
   }
   assert.ok(!readdirSync(dest).some((f) => /^stage-/.test(f)), 'no stage folders are created');
+  assert.match(readFileSync(join(dest, '.gitignore'), 'utf8'), /^!evidence\/\*\*\/\*\.log$/m, 'evidence logs are committed, not ignored');
   const second = sh([dest]);
   assert.equal(second.status, 0);
   assert.match(second.stdout, /already installed/);

@@ -44,6 +44,12 @@ const SECRET_PATTERNS: Array<[RegExp, string]> = [
   [/(:\/\/[^/\s:@"'\\]+:)[^/\s@"'\\]+(?=@)/g, '$1[REDACTED]'],
 ];
 
+/** The home directory names the local user, and evidence is public: replace it with "~". */
+export function scrubHome(text: string, home = process.env.HOME): string {
+  return home && home.length > 1 ? text.split(home).join('~') : text;
+}
+
+/** Credentials only (see SECRET_PATTERNS); combine with scrubHome for public logs. */
 export function redact(text: string): { text: string; redactions: number } {
   let count = 0;
   let out = text;

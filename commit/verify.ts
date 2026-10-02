@@ -24,7 +24,7 @@ import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { detectEnvironment, EXIT, FACTORY_VERSION, loadConfig } from './lib/config.ts';
-import { redact, shQuote, writeAtomic, writeJsonAtomic } from './lib/fsx.ts';
+import { redact, scrubHome, shQuote, writeAtomic, writeJsonAtomic } from './lib/fsx.ts';
 import { onInterrupt, run, runShell, startService, type Service } from './lib/proc.ts';
 import { EVIDENCE_SCHEMA_VERSION, validateEvidence, validatePlan, validateReport, type Plan, type Step } from './lib/schema.ts';
 
@@ -208,10 +208,11 @@ for (const step of plan.steps) {
       const r = await runShell(substituted, { cwd: root, timeoutMs: step.timeoutMs ?? config.stepTimeoutMs, logPath: join(out, logRel), maxLogBytes: config.maxLogBytes, killGraceMs: config.killGraceMs });
       // Redact credentials before the log can become public evidence.
       const raw = readFileSync(join(out, logRel), 'utf8');
-      const { text, redactions } = redact(raw);
+      const scrubbed = scrubHome(raw);
+      const { text, redactions } = redact(scrubbed);
       const note = r.truncated ? `\n[commit] OUTPUT TRUNCATED: ${r.bytes} bytes written, first ${config.maxLogBytes} kept\n` : '';
       const final = text + note + (r.status === 'timeout' ? `\n[commit] COMMAND TIMEOUT after ${r.durationMs} ms; process group terminated (SIGTERM, then SIGKILL)\n` : '');
-      if (redactions || note || r.status === 'timeout') writeAtomic(join(out, logRel), final);
+      if (redactions || scrubbed !== raw || note || r.status === 'timeout') writeAtomic(join(out, logRel), final);
       let status: StepStatus = r.status === 'timeout' ? 'TIMEOUT' : r.status !== 'exited' ? 'ERROR' : r.exitCode === 0 ? 'PASSED' : 'FAILED';
       let reason: string | null = r.status === 'timeout' ? `timed out after ${r.durationMs} ms`
         : r.status === 'spawn-error' ? 'the command could not be started'

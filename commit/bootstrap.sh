@@ -101,7 +101,7 @@ fi
 if grep -l '<fill in:' "$dest"/mandates/*.md >/dev/null 2>&1; then
   echo "NOTE: mandates still contain '<fill in: ...>' placeholders for Harness:/Model:; set them before the BAND run." >&2
 fi
-[ -f "$dest/.gitignore" ] || printf 'node_modules/\n.venv/\n__pycache__/\n*.log\n.env\n.commit-backup-*/\n' > "$dest/.gitignore"
+[ -f "$dest/.gitignore" ] || printf 'node_modules/\n.venv/\n__pycache__/\n*.log\n!evidence/**/*.log\n.env\n.commit-backup-*/\n' > "$dest/.gitignore"
 [ -d "$dest/.git" ] || git -C "$dest" init -q -b main
 
 if [ "$check" -eq 1 ]; then

@@ -14,7 +14,7 @@ import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { EXIT, FACTORY_VERSION, loadConfig } from './lib/config.ts';
-import { redact, writeAtomic, writeJsonAtomic } from './lib/fsx.ts';
+import { redact, scrubHome, writeAtomic, writeJsonAtomic } from './lib/fsx.ts';
 import { apply, discover, type Mutant } from './lib/mutants.ts';
 import { onInterrupt, runShell, startService } from './lib/proc.ts';
 import { rng } from './lib/rng.ts';
@@ -124,12 +124,12 @@ async function evaluate(mutant: Mutant | null): Promise<Omit<Result, keyof Mutan
       writeFileSync(file, apply(readFileSync(file, 'utf8'), mutant));
     }
     const { service, log } = await startService(startCmd, { cwd: dir, healthPath: args.health, timeoutMs: 20_000, killGraceMs: config.killGraceMs });
-    if (!service) return { outcome: 'invalid', durationMs: Date.now() - started, reason: 'candidate never became healthy', evidence: redact(log().slice(-600)).text };
+    if (!service) return { outcome: 'invalid', durationMs: Date.now() - started, reason: 'candidate never became healthy', evidence: redact(scrubHome(log().slice(-600))).text };
     stops.add(service.stop);
     try {
       // The URL is generated here (127.0.0.1 and a free port), never user input.
       const r = await runShell(checkCmd.replaceAll('{url}', service.url), { timeoutMs, killGraceMs: config.killGraceMs });
-      const evidence = redact(r.tail.slice(-1200)).text;
+      const evidence = redact(scrubHome(r.tail.slice(-1200))).text;
       const layers = Object.fromEntries([...r.tail.matchAll(/^COMMIT-LAYER (\S+)=(\S+)$/gm)].map((m) => [m[1], m[2]]));
       if (r.status === 'timeout') return { outcome: 'timeout', durationMs: r.durationMs, evidence, layers };
       // The check itself could not run: a broken campaign, never a kill.
