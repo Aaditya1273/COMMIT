@@ -1,0 +1,591 @@
+{
+  "schemaVersion": 2,
+  "kind": "commit-evidence",
+  "runId": "20261002T024548Z-d4b9f5",
+  "factoryVersion": "1.0.0-rc.1",
+  "stage": "calibration / pocketful stage 1",
+  "specification": "dark-factory-wearedevs/pocketful/spec/stage-1.md (kickoff commit 803560d)",
+  "plan": "calibration/verification/plan.json",
+  "revision": {
+    "commit": "e4b5f935ea946e0c3005886ee95b19b49672c678",
+    "branch": "main",
+    "targetDirty": false,
+    "targetDigest": "f8c1a458f4d9411512fac334aa89715dec1a1f80481efd85a99412515f5fc0dc",
+    "targetDigestAfter": "f8c1a458f4d9411512fac334aa89715dec1a1f80481efd85a99412515f5fc0dc",
+    "candidateChanged": false
+  },
+  "environment": {
+    "factoryVersion": "1.0.0-rc.1",
+    "node": "v26.5.0",
+    "platform": "linux",
+    "release": "7.1.5-arch1-2",
+    "arch": "x64",
+    "git": "git version 2.55.0",
+    "python": "Python 3.14.6",
+    "docker": {
+      "installed": true,
+      "daemonReachable": false,
+      "detail": "binary present (Docker version 29.6.2, build dfc4efb1e2), daemon unreachable: failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory"
+    }
+  },
+  "startedAt": "2026-10-02T02:45:48.504Z",
+  "finishedAt": "2026-10-02T03:17:59.037Z",
+  "service": {
+    "start": "node --no-warnings src/server.ts",
+    "healthy": true
+  },
+  "steps": [
+    {
+      "id": "typecheck",
+      "kind": "required",
+      "blocking": true,
+      "requirements": [],
+      "command": "npx tsc -p tsconfig.commit.json",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 1053,
+      "outputBytes": 0,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/typecheck.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "report": null
+    },
+    {
+      "id": "lint",
+      "kind": "required",
+      "blocking": true,
+      "requirements": [],
+      "command": "npx eslint commit calibration",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 1123,
+      "outputBytes": 0,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/lint.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "report": null
+    },
+    {
+      "id": "startup",
+      "kind": "startup",
+      "blocking": true,
+      "requirements": [
+        "§3.1",
+        "§3.2"
+      ],
+      "command": "curl -sf 'http://127.0.0.1:41071'/health",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 6,
+      "outputBytes": 15,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/startup.log",
+      "logSha256": "a29ee2b15c494311c52521766e44af56a3ad2248e7a8ab465e5206463c13d288",
+      "report": null
+    },
+    {
+      "id": "shipped-checks",
+      "kind": "required",
+      "blocking": true,
+      "requirements": [
+        "stage-1 sample and shipped suites"
+      ],
+      "command": "cd '../dark-factory-wearedevs' && .venv/bin/python -m pytest pocketful/test/stage_1 -p harness.plugin --base-url 'http://127.0.0.1:41071' -q -p no:cacheprovider",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 19055,
+      "outputBytes": 261,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/shipped-checks.log",
+      "logSha256": "65cf91a1bf285bde5052f5575d5787ba7a2971d5ab37e15035da20f381b030a4",
+      "report": null
+    },
+    {
+      "id": "overshoot-probe",
+      "kind": "required",
+      "blocking": true,
+      "requirements": [
+        "a stage-1 folder must not pass the stage-2 suite"
+      ],
+      "command": "cd '../dark-factory-wearedevs' && ! .venv/bin/python -m pytest pocketful/test/stage_2/test_sample.py -p harness.plugin --base-url 'http://127.0.0.1:41071' -q -p no:cacheprovider",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 306,
+      "outputBytes": 931,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/overshoot-probe.log",
+      "logSha256": "18e1340777e09074bcb008b7a7435d4baeeb90e18c4daade8bd696d32041892e",
+      "report": null
+    },
+    {
+      "id": "contract",
+      "kind": "contract",
+      "blocking": true,
+      "requirements": [
+        "§3",
+        "§4",
+        "§5",
+        "§6",
+        "§7",
+        "§8",
+        "§9",
+        "§10",
+        "§11"
+      ],
+      "command": "node --no-warnings calibration/verification/contract.ts --base-url 'http://127.0.0.1:41071' --out 'evidence/factory-self-audit/full-verification'/contract",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 2774,
+      "outputBytes": 31,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/contract.log",
+      "logSha256": "b8ae4526adbd092977711be01d87c0df771161733640d36ff30323e591ea059d",
+      "report": "contract/contract-report.json"
+    },
+    {
+      "id": "reference-481927",
+      "kind": "reference-model",
+      "blocking": true,
+      "requirements": [
+        "§1 invariants",
+        "§7",
+        "§8",
+        "§9",
+        "§11"
+      ],
+      "command": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url 'http://127.0.0.1:41071' --seed 481927 --operations 1000 --out 'evidence/factory-self-audit/full-verification'/reference-481927",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 5151,
+      "outputBytes": 963,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/reference-481927.log",
+      "logSha256": "8292eb40496b24710cb6f09530dc8a4e825d01a423de5b7e0645cee1437a8262",
+      "report": "reference-481927/reference-report.json"
+    },
+    {
+      "id": "reference-7",
+      "kind": "reference-model",
+      "blocking": true,
+      "requirements": [
+        "§1 invariants",
+        "§7",
+        "§8",
+        "§9",
+        "§11"
+      ],
+      "command": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url 'http://127.0.0.1:41071' --seed 7 --operations 1000 --out 'evidence/factory-self-audit/full-verification'/reference-7",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 4504,
+      "outputBytes": 928,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/reference-7.log",
+      "logSha256": "e8cd1ed388123154ba20aa7b2884481b2757db9141822b358bdcb8740acc7148",
+      "report": "reference-7/reference-report.json"
+    },
+    {
+      "id": "reference-90210",
+      "kind": "reference-model",
+      "blocking": true,
+      "requirements": [
+        "§1 invariants",
+        "§7",
+        "§8",
+        "§9",
+        "§11"
+      ],
+      "command": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url 'http://127.0.0.1:41071' --seed 90210 --operations 1000 --out 'evidence/factory-self-audit/full-verification'/reference-90210",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 4958,
+      "outputBytes": 960,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/reference-90210.log",
+      "logSha256": "47647628b7b3bf91ad7004da2788077bb81180e0cd3f52fa1fae36f0725f94e7",
+      "report": "reference-90210/reference-report.json"
+    },
+    {
+      "id": "adversarial",
+      "kind": "adversarial",
+      "blocking": true,
+      "requirements": [
+        "§1 invariants",
+        "§2 concurrency",
+        "§7",
+        "§11"
+      ],
+      "command": "node --no-warnings calibration/verification/adversarial.ts --base-url 'http://127.0.0.1:41071' --seed 20261001 --workers 50 --rounds 5 --out 'evidence/factory-self-audit/full-verification'/adversarial",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 9712,
+      "outputBytes": 2360,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/adversarial.log",
+      "logSha256": "37490880586a0b70985019cdfc4d6933578eb1d08add11b23f03b36905d20f8c",
+      "report": "adversarial/adversarial-report.json"
+    },
+    {
+      "id": "mutation",
+      "kind": "mutation",
+      "blocking": true,
+      "requirements": [],
+      "command": "node --no-warnings commit/mutate.ts --target calibration/pocketful-stage-1 --start 'node --no-warnings src/server.ts' --check 'calibration/verification/kill-suite.sh {url}' --exclude calibration/verification/equivalents.json --jobs 6 --timeout 180000 --out 'evidence/factory-self-audit/full-verification'/mutation",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 1881552,
+      "outputBytes": 45831,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/mutation.log",
+      "logSha256": "d428d6eaa93909db722d98e9ac908497471b1ff17f9664ac5a12af2d52f96f1e",
+      "report": "mutation/mutation-report.json"
+    },
+    {
+      "id": "clean-build",
+      "kind": "build",
+      "blocking": true,
+      "requirements": [],
+      "command": "docker build --no-cache -t commit-calibration-stage-1 calibration/pocketful-stage-1",
+      "status": "BLOCKED",
+      "reason": "environment precondition not met: docker info",
+      "exitCode": null,
+      "durationMs": 0,
+      "outputBytes": 558,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/clean-build.log",
+      "logSha256": "9fdf0aa0b4c15e72859601257f0ca5ed4c1ebcad687ece0f4739bf6175b288dc",
+      "report": null
+    },
+    {
+      "id": "offline-isolated",
+      "kind": "offline",
+      "blocking": true,
+      "requirements": [
+        "§2 no outbound network at run time, 2 vCPU, 2 GiB"
+      ],
+      "command": "PYTHONPATH='../dark-factory-wearedevs' '../dark-factory-wearedevs'/.venv/bin/python -m harness run --track pocketful --build calibration/pocketful-stage-1 --mode isolated --stage 1 --out 'evidence/factory-self-audit/full-verification'/isolated",
+      "status": "BLOCKED",
+      "reason": "environment precondition not met: docker info",
+      "exitCode": null,
+      "durationMs": 0,
+      "outputBytes": 558,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/offline-isolated.log",
+      "logSha256": "9fdf0aa0b4c15e72859601257f0ca5ed4c1ebcad687ece0f4739bf6175b288dc",
+      "report": null
+    }
+  ],
+  "reports": {
+    "contract": {
+      "kind": "contract-checks",
+      "total": 248,
+      "passed": 248,
+      "failed": 0
+    },
+    "reference-481927": {
+      "kind": "reference-campaign",
+      "runId": "20261002T024613Z-0fc924",
+      "factoryVersion": "1.0.0-rc.1",
+      "campaign": "pocketful-stage-1-reference",
+      "moduleSha256": "d271b4f1cc77ee22e289013a181304308dd4e6149793d5a902d6558538b63f94",
+      "seed": 481927,
+      "operationsRequested": 1000,
+      "operationsExecuted": 1000,
+      "stateComparisons": 1000,
+      "invariantChecks": 2100,
+      "outcomes": {
+        "200": 82,
+        "201": 473,
+        "200 replay": 59,
+        "409 request_not_pending": 45,
+        "422 validation_failed": 77,
+        "403 forbidden": 57,
+        "409 idempotency_key_reuse": 26,
+        "404 not_found": 14,
+        "422 self_payment": 29,
+        "409 insufficient_funds": 124,
+        "409 email_taken": 3,
+        "422 self_request": 7,
+        "409 handle_taken": 4
+      },
+      "durationMs": 5043,
+      "result": "agree",
+      "firstDivergence": null,
+      "reproduction": "node commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url <url> --seed 481927 --operations 1000"
+    },
+    "reference-7": {
+      "kind": "reference-campaign",
+      "runId": "20261002T024618Z-93a16a",
+      "factoryVersion": "1.0.0-rc.1",
+      "campaign": "pocketful-stage-1-reference",
+      "moduleSha256": "d271b4f1cc77ee22e289013a181304308dd4e6149793d5a902d6558538b63f94",
+      "seed": 7,
+      "operationsRequested": 1000,
+      "operationsExecuted": 1000,
+      "stateComparisons": 1000,
+      "invariantChecks": 2100,
+      "outcomes": {
+        "200": 46,
+        "201": 444,
+        "422 validation_failed": 100,
+        "409 insufficient_funds": 138,
+        "200 replay": 53,
+        "422 self_payment": 28,
+        "409 request_not_pending": 86,
+        "409 idempotency_key_reuse": 31,
+        "403 forbidden": 52,
+        "422 self_request": 7,
+        "404 not_found": 10,
+        "409 handle_taken": 5
+      },
+      "durationMs": 4424,
+      "result": "agree",
+      "firstDivergence": null,
+      "reproduction": "node commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url <url> --seed 7 --operations 1000"
+    },
+    "reference-90210": {
+      "kind": "reference-campaign",
+      "runId": "20261002T024622Z-9f2c57",
+      "factoryVersion": "1.0.0-rc.1",
+      "campaign": "pocketful-stage-1-reference",
+      "moduleSha256": "d271b4f1cc77ee22e289013a181304308dd4e6149793d5a902d6558538b63f94",
+      "seed": 90210,
+      "operationsRequested": 1000,
+      "operationsExecuted": 1000,
+      "stateComparisons": 1000,
+      "invariantChecks": 2100,
+      "outcomes": {
+        "200": 73,
+        "201": 475,
+        "409 insufficient_funds": 132,
+        "200 replay": 70,
+        "403 forbidden": 54,
+        "422 self_request": 8,
+        "404 not_found": 9,
+        "422 validation_failed": 58,
+        "422 self_payment": 27,
+        "409 request_not_pending": 48,
+        "409 idempotency_key_reuse": 38,
+        "409 email_taken": 3,
+        "409 handle_taken": 5
+      },
+      "durationMs": 4872,
+      "result": "agree",
+      "firstDivergence": null,
+      "reproduction": "node commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url <url> --seed 90210 --operations 1000"
+    },
+    "adversarial": {
+      "kind": "adversarial-campaign",
+      "baseSeed": 20261001,
+      "workers": 50,
+      "rounds": 5,
+      "campaigns": 55,
+      "passed": 55,
+      "failed": 0,
+      "checks": 225,
+      "reproduction": "node calibration/verification/adversarial.ts --base-url <url> --seed 20261001 --workers 50 --rounds 5"
+    },
+    "mutation": {
+      "kind": "mutation-campaign",
+      "factoryVersion": "1.0.0-rc.1",
+      "target": "calibration/pocketful-stage-1",
+      "files": [
+        "src/auth.ts",
+        "src/errors.ts",
+        "src/server.ts",
+        "src/store.ts",
+        "src/validate.ts",
+        "src/wallet.ts"
+      ],
+      "start": "node --no-warnings src/server.ts",
+      "check": "calibration/verification/kill-suite.sh {url}",
+      "seed": 1,
+      "selection": "all",
+      "discovered": 483,
+      "executed": 483,
+      "tally": {
+        "killed": 398,
+        "survived": 18,
+        "timeout": 1,
+        "invalid": 8,
+        "error": 0,
+        "equivalent": 58
+      },
+      "layers": {
+        "adversarial": {
+          "killed": 145,
+          "onlyThisLayer": 1
+        },
+        "contract": {
+          "killed": 388,
+          "onlyThisLayer": 97
+        },
+        "reference": {
+          "killed": 235,
+          "onlyThisLayer": 1
+        },
+        "shipped": {
+          "killed": 282,
+          "onlyThisLayer": 3
+        }
+      },
+      "valid": 417,
+      "killRate": 0.9544364508393285,
+      "detectionRate": 0.9568345323741008,
+      "formula": "killRate = killed / (killed + survived + timeout); detectionRate counts timeouts as detected; invalid, error and equivalent are excluded from both and listed",
+      "campaignBroken": false,
+      "jobs": 6,
+      "mutantTimeoutMs": 180000,
+      "startedAt": "2026-10-02T02:46:37.467Z",
+      "finishedAt": "2026-10-02T03:17:58.934Z",
+      "durationMs": 1881467,
+      "replay": "node commit/mutate.ts --target calibration/pocketful-stage-1 --start 'node --no-warnings src/server.ts' --check 'calibration/verification/kill-suite.sh {url}' --only <id> --out <new dir>"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "logs/typecheck.log",
+      "type": "log",
+      "producer": "typecheck",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/lint.log",
+      "type": "log",
+      "producer": "lint",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/startup.log",
+      "type": "log",
+      "producer": "startup",
+      "sha256": "a29ee2b15c494311c52521766e44af56a3ad2248e7a8ab465e5206463c13d288"
+    },
+    {
+      "path": "logs/shipped-checks.log",
+      "type": "log",
+      "producer": "shipped-checks",
+      "sha256": "65cf91a1bf285bde5052f5575d5787ba7a2971d5ab37e15035da20f381b030a4"
+    },
+    {
+      "path": "logs/overshoot-probe.log",
+      "type": "log",
+      "producer": "overshoot-probe",
+      "sha256": "18e1340777e09074bcb008b7a7435d4baeeb90e18c4daade8bd696d32041892e"
+    },
+    {
+      "path": "logs/contract.log",
+      "type": "log",
+      "producer": "contract",
+      "sha256": "b8ae4526adbd092977711be01d87c0df771161733640d36ff30323e591ea059d"
+    },
+    {
+      "path": "contract/contract-report.json",
+      "type": "report",
+      "producer": "contract",
+      "sha256": "13337945733c83ce00c9573fc7a0ab4694b625c427e1062e88195030f0217619"
+    },
+    {
+      "path": "logs/reference-481927.log",
+      "type": "log",
+      "producer": "reference-481927",
+      "sha256": "8292eb40496b24710cb6f09530dc8a4e825d01a423de5b7e0645cee1437a8262"
+    },
+    {
+      "path": "reference-481927/reference-report.json",
+      "type": "report",
+      "producer": "reference-481927",
+      "sha256": "ffef238fb59fce950ecef3b2365b13186cc3daed0471b97c76daeb414163d7f7"
+    },
+    {
+      "path": "logs/reference-7.log",
+      "type": "log",
+      "producer": "reference-7",
+      "sha256": "e8cd1ed388123154ba20aa7b2884481b2757db9141822b358bdcb8740acc7148"
+    },
+    {
+      "path": "reference-7/reference-report.json",
+      "type": "report",
+      "producer": "reference-7",
+      "sha256": "4121d94e95b0710539e2f228c0994a5de65b94d2159120136cee63cdbf04943b"
+    },
+    {
+      "path": "logs/reference-90210.log",
+      "type": "log",
+      "producer": "reference-90210",
+      "sha256": "47647628b7b3bf91ad7004da2788077bb81180e0cd3f52fa1fae36f0725f94e7"
+    },
+    {
+      "path": "reference-90210/reference-report.json",
+      "type": "report",
+      "producer": "reference-90210",
+      "sha256": "57de13e4b439d6eee78f83300ac8a84418c3de3c0ea3d1c502d66b829f7c1164"
+    },
+    {
+      "path": "logs/adversarial.log",
+      "type": "log",
+      "producer": "adversarial",
+      "sha256": "37490880586a0b70985019cdfc4d6933578eb1d08add11b23f03b36905d20f8c"
+    },
+    {
+      "path": "adversarial/adversarial-report.json",
+      "type": "report",
+      "producer": "adversarial",
+      "sha256": "6da8cd77e25385583fe5fdfdb015e284b2f385887c1412f710f03a977554865c"
+    },
+    {
+      "path": "logs/mutation.log",
+      "type": "log",
+      "producer": "mutation",
+      "sha256": "d428d6eaa93909db722d98e9ac908497471b1ff17f9664ac5a12af2d52f96f1e"
+    },
+    {
+      "path": "mutation/mutation-report.json",
+      "type": "report",
+      "producer": "mutation",
+      "sha256": "656a6b36db9e37f1c91200d86228319ffd649abc02fe70e8a5769dcfa654935a"
+    },
+    {
+      "path": "logs/clean-build.log",
+      "type": "log",
+      "producer": "clean-build",
+      "sha256": "9fdf0aa0b4c15e72859601257f0ca5ed4c1ebcad687ece0f4739bf6175b288dc"
+    },
+    {
+      "path": "logs/offline-isolated.log",
+      "type": "log",
+      "producer": "offline-isolated",
+      "sha256": "9fdf0aa0b4c15e72859601257f0ca5ed4c1ebcad687ece0f4739bf6175b288dc"
+    }
+  ],
+  "verdict": "INCONCLUSIVE",
+  "verdictReasons": [
+    "INCONCLUSIVE: clean-build: environment precondition not met: docker info",
+    "INCONCLUSIVE: offline-isolated: environment precondition not met: docker info"
+  ],
+  "productionModificationByVerifier": "NONE"
+}
