@@ -137,21 +137,31 @@ free port, and deleted afterwards. The candidate itself is never written.
 
 ## The evidence record (`commit/verify.ts`)
 
+The full contract — manifest schema v2, verdict precedence, exit codes, step statuses,
+atomic writes, redaction and the security model — is in
+[`FACTORY.md` §4](../../FACTORY.md#4-the-verifiers-toolkit-commit). In short:
+
 ```text
 evidence/<run>/
-  evidence.json      the manifest: stage, specification, revision (commit, dirty flag,
-                     tree digest before and after), environment, every step (command,
-                     status, exit code, duration, log path + sha256), report summaries,
-                     verdict, production modification by verifier
+  run-state.json     RUNNING / COMPLETED / CANCELLED, updated after every step
+  evidence.json      the manifest (schema v2): run id, factory version, revision,
+                     environment, every step with status/reason/exit/duration/log sha256,
+                     report summaries, artifact inventory, verdict and its reasons
   evidence.sha256    sha256 of evidence.json: an integrity identifier, not a proof
-  verdict.md         the REJECT / ACCEPT / INCONCLUSIVE block and the step table
-  scorecard.md       the factory scorecard, filled only with numbers this run produced
+  verdict.md         ACCEPT / REJECT / INCONCLUSIVE / ERROR block, generated
+  scorecard.md       the factory scorecard, generated; "not measured" where nothing ran
   reproduction.sh    checks out the revision and re-runs the plan
-  logs/<step>.log    full output of every step
+  logs/<step>.log    bounded, redacted output of every step
   <step>/            reports written by individual layers
 ```
 
-A plan is JSON: the stage, the target folder, the specification reference, how to start
-the service, and steps with `id`, `kind`, `cmd`, `blocking`, optional `requirements`
-(ids from the planner's list), `environment` (a precondition whose failure means
-*environment*, not *implementation*), `needsService` and `report`.
+`node commit/cli.ts audit <run>` re-derives every rendering from the manifest and fails on
+any contradiction or after-the-fact edit.
+
+A plan is JSON, validated before anything runs: the stage, the target folder (relative,
+inside the repository), the specification reference, how to start the service, and steps
+with `id`, `kind`, `cmd`, `blocking`, optional `requirements` (ids from the planner's
+list), `environment` (a precondition whose failure means *environment*, not
+*implementation*), `needsService`, `report` and `timeoutMs`. Commands may use `{url}` (the
+candidate, for `needsService` steps), `{out}` (the evidence directory) and `{kickoff}`
+(`COMMIT_KICKOFF`); all three are substituted shell-quoted.

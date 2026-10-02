@@ -60,11 +60,12 @@ flowchart TD
 
 ### Models
 
-Each mandate starts with the harness and model it runs (`Harness:` / `Model:` lines, which
-`harness check` reads). The defaults are Claude Code with `claude-opus-5-5` for all three.
-Running the verifier on a *different* model family from the builder is a sound variation
-— it decorrelates the two seats' blind spots — and costs nothing structurally: edit the
-verifier's `Model:` line and the seat in BAND Desktop together.
+Each mandate starts with the harness and model its seat runs (`Harness:` / `Model:`
+lines, which `harness check` reads) and a `Mandate-Version:`. The factory ships
+**placeholders** for harness and model, because only the team configuring the seats knows
+them; §2 step 2 fills them in. Running the verifier on a *different* model family from the
+builder is a sound variation — it decorrelates the two seats' blind spots — and costs
+nothing structurally.
 
 ---
 
@@ -86,23 +87,35 @@ The toolkit has **no npm dependencies**: `node commit/verify.ts` runs from a bar
 
 1. **Create the result repository and install the factory into it.**
    ```sh
-   commit/bootstrap.sh /absolute/path/to/result-repo
+   commit/bootstrap.sh --check /absolute/path/to/result-repo
    ```
-   This copies `mandates/`, the `commit/` toolkit and this file — nothing else. The band
-   writes every deliverable itself.
-2. **Create three seats** in BAND Desktop named exactly **Planner**, **Builder** and
+   This copies `mandates/`, the `commit/` toolkit and this file — nothing else — and runs
+   the installed toolkit's self-tests. It is safe to re-run: identical files are left
+   alone, and a file you changed is reported as a conflict and left untouched unless you
+   pass `--force`, which backs it up first. The band writes every deliverable itself.
+2. **Fill in the seat facts.** Each mandate starts with
+   `Harness: <fill in: …>` and `Model: <fill in: …>`. Replace both with what that seat
+   really runs, exactly as BAND Desktop names it. The factory ships placeholders on
+   purpose: these values cannot be known in advance, and a guessed value would be a false
+   statement in the submission.
+3. **Create three seats** in BAND Desktop named exactly **Planner**, **Builder** and
    **Verifier** (the mandate file names must match the seat names). Paste each mandate as
    the seat's standing instruction. Set each seat's working directory to the absolute
    path of the result repository. Give every seat Git and Docker permissions; the
    verifier's write permission is *by mandate* limited to `verification/` and `evidence/`,
    and `commit/verify.ts` independently detects any change to the candidate during a run.
-3. **Confirm the room works**: add all three seats to one room and check that `@planner`,
+4. **Confirm the room works**: add all three seats to one room and check that `@planner`,
    `@builder` and `@verifier` can each receive and answer a direct mention.
-4. **Dispatch one task** to `@planner` (template below). That message is the only human
+5. **Dispatch one task** to `@planner` (template below). That message is the only human
    input for the stage. Do not answer questions, approve or nudge until the planner's
    final report.
-5. **Afterwards**: download the room as `room.json` (BAND console → Sessions → ⋮ →
-   Download full session), commit it unchanged, and run your event's offline check.
+6. **Afterwards**: download the room as `room.json` (BAND console → Sessions → ⋮ →
+   Download full session), commit it unchanged, write the result repository's README,
+   and run the event's checks:
+   ```sh
+   python -m harness check <result-repo> --track <track>
+   python -m harness run --track <track> --repo <result-repo> --all --mode isolated
+   ```
 
 ### The dispatch message
 
@@ -176,12 +189,78 @@ parts — the reference model, the adversarial campaigns, the contract checks �
 written by the verifier seat *during the run, from the specification*, and plug into
 these runners.
 
-| Tool | What it does |
+One entry point, `node commit/cli.ts <command>` (every command takes `--help`):
+
+| Command | What it does |
 |---|---|
-| `commit/verify.ts --plan P --out D` | Runs a verification plan against one candidate. Records commit + tree digest; starts the service from a throwaway copy; runs every step; classifies each as pass / fail / timeout / blocked-environment / skipped; writes `evidence.json`, its sha256, `verdict.md`, `scorecard.md`, `reproduction.sh`. Re-digests the candidate afterwards — **if it changed, the verdict is ERROR**. |
-| `commit/campaign.ts --module M --seed S --operations N` | Seeded reference-model campaign: drives a small model and the live service with the same generated operations, compares every reply and the whole observable state, stops at the first divergence, writes the operation log and the exact reproduction command. |
-| `commit/mutate.ts --target T --check C` | Mutation campaign: seeds realistic defects into isolated copies and runs the verifier's check against each. Aborts loudly if the unmutated baseline fails. Reports killed / survived / timeout / invalid / error / equivalent and which verification layer caught each kill. |
-| `commit/bootstrap.sh <repo>` | Installs the factory into a result repository. |
+| `verify --plan P --out D [--revision SHA]` | Runs a verification plan against one candidate revision. Records commit, branch, dirty state and a tree digest; starts the service from a throwaway copy; runs every step under a time budget; classifies each step; writes the evidence manifest (schema v2) and its sha256, `verdict.md`, `scorecard.md`, `reproduction.sh`. Re-digests the candidate afterwards — **if it changed, the verdict is ERROR**. |
+| `campaign --module M --seed S --operations N` | Seeded reference-model campaign: a small model and the live service driven by the same generated operations, every reply and the whole observable state compared, stop at the first divergence. The report records the seed, the module's sha256 and the exact reproduction command. |
+| `mutate --target T --start S --check C` | Mutation campaign in isolated copies. Aborts with no score if the unmutated baseline fails or a check cannot run. Reports killed / survived / timeout / invalid / error / equivalent, which verification layer caught each kill, and a `--only <id>` replay command. |
+| `audit <evidence dir>…` | Evidence consistency: manifest hash, log and report hashes, `verdict.md` and `scorecard.md` against the manifest, mutation numbers against the report. |
+| `doctor` | What this machine can run: Node version, git, Docker *daemon* reachability (not just the binary), Python, the kickoff package. |
+| `bootstrap.sh [--check] [--force] <repo>` | Installs the factory into a result repository (§2). |
+
+### Verdicts and exit codes
+
+| Verdict | When | Exit |
+|---|---|---|
+| **ACCEPT** | every blocking step ran and passed, on a clean, identified git revision | 0 |
+| **REJECT** | a blocking step failed or timed out; a step's report contradicts its exit status; the candidate did not start | 1 |
+| **INCONCLUSIVE** | nothing failed, but required evidence is missing: a step blocked by the environment or skipped, no blocking step ran at all, an unidentified revision, uncommitted changes in the candidate | 3 |
+| **ERROR** | the verification itself is untrustworthy: the candidate changed during the run, a step could not be executed, a declared report is missing or malformed | 4 |
+
+Precedence is ERROR > REJECT > INCONCLUSIVE > ACCEPT, and every reason is listed in the
+manifest's `verdictReasons`. Usage, configuration and input errors exit 2 before any
+evidence is written; an interrupted run exits 130 and is marked `CANCELLED` in
+`run-state.json` with **no verdict written**. Each step's status is one of `PASSED`,
+`FAILED`, `TIMEOUT`, `ERROR`, `BLOCKED` (environment) or `SKIPPED`.
+
+### Evidence contract
+
+```text
+evidence/<run>/
+  run-state.json     RUNNING → COMPLETED, or CANCELLED; updated after every step
+  evidence.json      schema v2: runId, factoryVersion, stage, specification, plan,
+                     revision {commit, branch, targetDirty, targetDigest, …After},
+                     environment {node, git, docker {installed, daemonReachable}, …},
+                     steps[] {id, status, reason, exitCode, durationMs, outputBytes,
+                     outputTruncated, redactions, log, logSha256}, reports, artifacts[]
+                     {path, type, producer, sha256}, verdict, verdictReasons
+  evidence.sha256    integrity identifier of evidence.json (not proof of correctness)
+  verdict.md         generated from evidence.json
+  scorecard.md       generated from evidence.json; "not measured" where nothing was run
+  reproduction.sh    checks out the revision and re-runs the plan
+  logs/<step>.log    full output (bounded, redacted); <step>/ reports written by steps
+```
+
+Every JSON artifact is validated: plans before anything runs, step reports against
+their kind (a mutation report's tally must add up; a reference report must have run at
+least one operation; any report stating `failed` counts must agree with the exit code),
+the equivalent-mutant register against the current source (a stale id stops the
+campaign), and the manifest against its own schema before it is written. All artifacts
+are written atomically (temporary file, fsync, rename), so a crash leaves either the
+previous file or the complete new one.
+
+### Security model
+
+| Risk | Control |
+|---|---|
+| Command injection | Child processes take argument vectors. Plan commands are shell by design — a plan is code the verifier writes — and the only values the toolkit substitutes into them (`{out}`, `{url}`, `{kickoff}`) are POSIX-quoted; a test proves `--out 'x; touch PWNED $(…)'` runs nothing. |
+| Path escape | Plan targets and report paths must be relative and free of `..`; `mutate --files` may not leave the target; bootstrap refuses `/` and the factory itself. |
+| Credentials in public evidence | Every step log passes through redaction (bearer tokens, `sk-` keys, AWS and GitHub tokens, values assigned to variables named like `*_KEY`, `*_TOKEN`, `*_SECRET` or `*_PASSWORD`, URL passwords, private keys) before it is hashed; the self-audit scans all factory files and evidence for the event scanner's credential shapes. |
+| Runaway processes | Every child has a time budget, runs in its own process group and is stopped with SIGTERM then SIGKILL; on SIGINT/SIGTERM all children stop and temporary workspaces are removed. |
+| Unbounded output | Output streams to disk up to `COMMIT_MAX_LOG_BYTES`; the rest is counted and the truncation recorded, never silent. |
+| Verifier editing the candidate | Services run from a copy; the candidate tree is digested before and after; any change voids the run. This is detection, not prevention: on one machine the verifier seat *can* write the files, and its mandate is what forbids it. |
+| Ambiguous provenance | Acceptance requires a clean, identified commit; `--revision` refuses to run against any other HEAD. |
+
+### Configuration
+
+All tunables are `COMMIT_*` environment variables, validated at start (a bad value exits
+2 with `CONFIG_ERROR`): `COMMIT_STEP_TIMEOUT_MS` (default 10 min),
+`COMMIT_SERVICE_START_TIMEOUT_MS` (60 s), `COMMIT_MUTANT_TIMEOUT_MS` (3 min),
+`COMMIT_MAX_LOG_BYTES` (32 MiB), `COMMIT_KILL_GRACE_MS` (2 s), `COMMIT_KICKOFF`
+(the event kickoff checkout a plan refers to as `{kickoff}`). Nothing secret has a
+default.
 
 Details of each layer, the mutation operators and the report formats are in
 [`docs/factory/verification.md`](docs/factory/verification.md).
@@ -240,7 +319,12 @@ planner records a blocker instead of looping.
 holds a scripted rehearsal on the calibration target: a deliberately faulty revision,
 the verifier's REJECT with its reproduction, the repair commit, and the re-verification.
 Both revisions are real commits on the branch `rehearsal/repair-loop`; `main` carries only
-their evidence. It is a rehearsal of the *mechanism* with one person playing builder,
+their evidence. **Correction:** commit `6020598` was made with `git commit -a` and so also
+swept in two unrelated working-tree changes — a README rewrite and a one-line bootstrap
+fix. The verdicts are unaffected (the verifier digests only `calibration/pocketful-stage-1/`,
+which differs from its parent by exactly the deliberate defect), but the commit is less
+clean than intended, and the README rewrite never reached `main` until it was redone.
+The branch is left as it is rather than rewritten. It is a rehearsal of the *mechanism* with one person playing builder,
 not evidence of seat autonomy — that comes from the BAND run.
 
 | | Revision | What it is | Verdict |
@@ -263,10 +347,12 @@ specification (`calibration/pocketful-stage-1/`). It exists to answer one questi
 before any judged run: **how much bad work does this verifier actually catch?** It is
 not a submission stage and is never copied into one.
 
-### Final independent verification of `04563ed`
+### Latest independent verification: `e4b5f93`, factory 1.0.0-rc.1
 
-[`evidence/calibration/stage-1/run-20261001T163312Z/`](evidence/calibration/stage-1/run-20261001T163312Z/) — [`verdict.md`](evidence/calibration/stage-1/run-20261001T163312Z/verdict.md), [`scorecard.md`](evidence/calibration/stage-1/run-20261001T163312Z/scorecard.md),
-manifest sha256 `0e46b1b1e9dd4f810c7c8d9f0de96cc79e8d1c110d9af2a6eb4ab1fd31f6e369`.
+[`evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/`](evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/) — [`verdict.md`](evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/verdict.md), [`scorecard.md`](evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/scorecard.md),
+evidence schema v2, manifest sha256 `8944b2d23fa95b26cb9750e18b1de1fcd124fbeea264399603e20a2aef6e76d4`,
+run 2026-10-02 02:45–03:18 UTC on Node v26.5.0, clean revision. `node commit/cli.ts audit`
+passes on it.
 
 | Layer | Result |
 |---|---|
@@ -277,10 +363,14 @@ manifest sha256 `0e46b1b1e9dd4f810c7c8d9f0de96cc79e8d1c110d9af2a6eb4ab1fd31f6e36
 | Contract checks (one per spec rule, incl. import-corruption fuzz) | **248 / 248** |
 | Reference model, seeds 481927 · 7 · 90210 | **agree** — 3 × 1,000 generated operations, 6,300 invariant checks, no divergence |
 | Adversarial campaigns | **55 / 55** rounds (11 campaigns × 5 seeds), 225 state checks, 50 concurrent requests per burst |
-| Mutation campaign #3 | **398 killed / 417 valid = 95.4%** (see below) |
+| Mutation campaign #4 | **398 killed / 417 valid = 95.4%** (see below) |
 | Clean build (`docker build --no-cache`) | **not run** — no Docker daemon on this machine |
 | Offline, resource-capped run (`harness run --mode isolated`) | **not run** — same reason |
-| **Verdict** | **INCONCLUSIVE** — nothing failed; two blocking steps could not run |
+| **Verdict** | **INCONCLUSIVE** — nothing failed; the only reasons are the two Docker steps (`environment precondition not met: docker info`) |
+
+The previous full run, on `04563ed` with the pre-hardening toolkit, is
+[`run-20261001T163312Z`](evidence/calibration/stage-1/run-20261001T163312Z/) (legacy
+evidence schema; same verdict, same numbers).
 
 ### What the mutation campaigns measured
 
@@ -292,12 +382,15 @@ a new check found a real defect.
 |---|---|---|---|---|---|---|---|
 | #1 | shipped + reference + adversarial | 469 | 300 | 168 | 64.0% | 64.0% | [`mutation-run-1`](evidence/calibration/stage-1/mutation-run-1/mutation-report.md) |
 | #2 | + contract checks, import fuzz, signup race | 467 | 372 | 94 | 79.7% | 79.7% | [`mutation-run-2`](evidence/calibration/stage-1/mutation-run-2/mutation-report.md) |
-| #3 | + checks for #2's observable survivors; 58 equivalents excluded | 417 | 398 | 18 | **95.4%** | **83.8%** | [`run-…/mutation`](evidence/calibration/stage-1/run-20261001T163312Z/mutation/mutation-report.md) |
+| #3 | + checks for #2's observable survivors; 58 equivalents excluded | 417 | 398 | 18 | **95.4%** | **83.8%** | [`run-20261001…/mutation`](evidence/calibration/stage-1/run-20261001T163312Z/mutation/mutation-report.md) |
+| #4 | same suite, rewritten engine (factory 1.0.0-rc.1), validated register | 417 | 398 | 18 | **95.4%** | **83.8%** | [`run-20261002…/mutation`](evidence/calibration/stage-1/run-20261002T024548Z-d4b9f5/mutation/mutation-report.md) |
 
 ¹ Counting the 58 excluded equivalents as survivors — the like-for-like comparison with #1
-and #2. Each campaign also had 8 invalid mutants (never started) and 1 timeout.
+and #2. Campaign #4 reproduced #3 exactly — same kills, same survivors, same per-layer
+counts — after the mutation engine, process runner and report format were rewritten: the
+measurement does not depend on the incidental details of the tool that took it. Each campaign also had 8 invalid mutants (never started) and 1 timeout.
 
-**Which layer caught what (campaign #3).** Killed by each layer, and killed by that layer
+**Which layer caught what (campaigns #3 and #4, identical).** Killed by each layer, and killed by that layer
 *alone* — defects every other layer would have accepted:
 
 | Layer | Killed | Alone |
@@ -336,7 +429,9 @@ Measured on one 12-core, 15 GB Linux machine (Node 26), from the reports' own ti
 | Release gate (`verify --skip mutation`) per revision | ~50 s |
 | Kill suite against one candidate | ~26 s |
 | Mutation campaign, ~480 mutants, 6 parallel jobs | 31.4–37.3 min |
-| Full verification including mutation | 32.2 min (1,934 s) |
+| Full verification including mutation | 32.2 min (1,934 s, #3); 32.2 min (1,931 s, #4) |
+| Factory self-audit (`pnpm verify`) | 81 s |
+| Factory self-tests (37) | 23 s, most of it the mutation-engine test |
 
 The design consequence: the **release gate** (under a minute) runs on every revision;
 the **mutation campaign** runs when a stage is about to be accepted, and whenever the
@@ -361,6 +456,11 @@ Each of these happened while building and calibrating the factory; each changed 
 | Editing the verification scripts while a campaign ran would have changed the check halfway through a measurement | A measurement is only valid if its inputs are frozen for its duration | Campaign inputs are frozen until the run finishes; each run is committed with its own evidence directory, and `verify.ts` refuses a non-empty output directory |
 | The upstream ledger this repository started from matched none of the Pocketful API, and its dev database URLs trip the event's credential scanner | Reuse has to survive the specification and the rules, not only the code review | The ledger stays for provenance and is never copied into a submission (README, Provenance) |
 | The docs promised Node ≥ 22.18, but the campaign runner used `import.meta.main`, a newer API | A version claim is a claim like any other: it needs a run behind it | Replaced with a portable check; the toolkit self-tests, the calibration service (248/248 contract checks) and a reference campaign were then run on a real Node 22.18.0 binary |
+| A first test of the mutation engine took 180 s: a mutant that deletes the response leaves the check's HTTP request hanging until the 3-minute mutant budget | The engine was right (a hang is classified `timeout`, never a kill), but checks need their own request timeouts, and budgets must be configurable | `--timeout` and `COMMIT_MUTANT_TIMEOUT_MS`; the test now pins the hang to `timeout` in 20 s |
+| The evidence auditor detected "am I the main program?" with a filename suffix test, and `self-audit.ts` also ends in `audit.ts` | Suffix tests on paths are wrong; the self-audit's first run printed the auditor's usage and stopped | Exact path comparison, as in the campaign runner |
+| The full self-audit flagged `commit/self-audit.ts` for naming the track | It was right: that script hard-codes this repository's calibration plan, so it is not generic, and bootstrap would have installed it into result repositories where it cannot work | Moved to `scripts/self-audit.ts`; `commit/` stays installable anywhere |
+| An earlier summary said the README had been rewritten; it had not reached `main` (see §5) | A claim about the repository needs the same check as a claim about the software | The README was rewritten on `main`; the self-audit now covers the documents' file paths and secrets, and the release checklist includes reading the committed files |
+| Tests that print fake credentials would have shipped credential shapes into every result repository, where the event's scanner fails the submission | Test fixtures are files too | Fixture secrets are assembled at run time; the self-audit runs the credential scan over every factory file |
 | No Docker daemon could be started on the calibration machine (no root) | A verifier that turned "could not run" into "pass" or "fail" would lie either way | `INCONCLUSIVE` is a first-class verdict: a blocking step that could not run blocks acceptance without blaming the implementation |
 
 ---
@@ -384,4 +484,16 @@ Each of these happened while building and calibrating the factory; each changed 
   builder's code.
 - **Docker was unavailable on the calibration machine** (daemon not running, no root), so
   the clean-build and offline steps report INCONCLUSIVE there until re-run with Docker; see
-  §6.
+  §6. `pnpm doctor` shows whether a machine can run them.
+- **The verifier's independence is detected, not enforced by the operating system.** All
+  seats run as the same user on one machine; the digest check voids any run in which the
+  candidate changed, and the mandate forbids the verifier to edit it, but nothing stops a
+  write in the first place. Running the verifier in its own Docker Sandbox with a
+  read-only mount of the deliverable would enforce it.
+- **Concurrency outcomes are not replayable from a seed.** A seed fixes each adversarial
+  campaign's fixture and burst; the interleaving of 50 concurrent requests is up to the
+  scheduler. A failing round prints its seed and a one-round reproduction command, which
+  reproduces the attack, not necessarily the exact interleaving.
+- **Interrupted runs are resumable only by re-running.** `run-state.json` distinguishes
+  `CANCELLED` and `RUNNING` from `COMPLETED`, and an interrupted run never writes a
+  verdict, but there is no step-level resume.

@@ -28,12 +28,28 @@ cd ../COMMIT
 The clean-container and offline steps need a running Docker daemon
 (`sudo systemctl start docker` on most Linux systems).
 
-## 1. Typecheck and lint
+## 1. What can this machine run?
 
 ```sh
-pnpm typecheck:commit    # tsc --strict over commit/ and calibration/
-pnpm lint                # eslint over the whole repository
+pnpm doctor              # Node >= 22.18, git, Docker daemon (not just binary), Python, kickoff
 ```
+
+## 1b. Factory health: one command
+
+```sh
+pnpm verify              # ~1.5 min: typecheck, lint, the factory's own tests, mandate
+                         # genericity (official scanner, both tracks), bootstrap rehearsal,
+                         # evidence consistency, secret/path scan, domain coupling,
+                         # reference replay, calibration release gate, container checks
+                         # when Docker works -> evidence/factory-self-audit/summary.{json,md}
+pnpm verify:full         # the same, plus the full calibration verification (~40 min)
+```
+
+Exit 0 means nothing FAILED; INCONCLUSIVE items (no Docker daemon, unfilled seat
+placeholders) are listed in the summary and never counted as passes.
+
+Individually: `pnpm typecheck` (factory + upstream), `pnpm lint`, `pnpm test` (factory
+tests: meta-verification of the release gate, mutation engine, replay, bootstrap).
 
 ## 2. Start the calibration target
 
@@ -68,12 +84,15 @@ pnpm verify:mutation     # ~45-60 min on 12 cores with --jobs 6
 Writes `mutation-report.json` and `mutation-report.md`. Exits 2 — with no score — if the
 unmutated baseline fails the kill check or any check command cannot run.
 
-## 5. The full independent verification
+## 5. The full independent verification of the calibration target
 
 ```sh
-pnpm verify              # every layer, mutation included; writes evidence + verdict
+pnpm verify:calibration  # every layer, mutation included; writes evidence + verdict
 pnpm verify:gate         # the per-revision release gate: everything except mutation
+node commit/cli.ts audit evidence/calibration/stage-1/run-*   # consistency of any run
 ```
+
+Exit codes: 0 ACCEPT, 1 REJECT, 2 usage/config, 3 INCONCLUSIVE, 4 ERROR, 130 interrupted.
 
 Output: a new `evidence/calibration/stage-1/run-<UTC timestamp>/` directory with `evidence.json`, `evidence.sha256`,
 `verdict.md`, `scorecard.md`, `reproduction.sh` and per-step logs.
@@ -93,7 +112,14 @@ The image has no npm install step: the service has zero dependencies and runs it
 TypeScript under Node's type stripping, so the base image is the only thing the build
 fetches and nothing is fetched at run time.
 
-## 7. Check a submission repository offline
+## 7. Bootstrap rehearsal
+
+```sh
+commit/bootstrap.sh --check "$(mktemp -d)/result"     # installs, then runs the installed self-tests
+commit/bootstrap.sh "$that_dir"                         # second run: "already installed; nothing changed"
+```
+
+## 8. Check a submission repository offline
 
 ```sh
 (cd ../dark-factory-wearedevs && .venv/bin/python -m harness check <result-repo> --track pocketful)
