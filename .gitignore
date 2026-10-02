@@ -10,6 +10,8 @@ test-results/
 
 .DS_Store
 *.log
+# Step logs are evidence: their sha256 is recorded in each manifest.
+!evidence/**/*.log
 
 .claude/
 skills-lock.json

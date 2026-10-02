@@ -1,0 +1,16 @@
+
+==================================== ERRORS ====================================
+____________ ERROR collecting pocketful/test/stage_2/test_sample.py ____________
+ImportError while importing test module '/home/bajrangi/Wins/dark-factory-wearedevs/pocketful/test/stage_2/test_sample.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pocketful/test/stage_2/test_sample.py:10: in <module>
+    from playwright.sync_api import expect
+E   ModuleNotFoundError: No module named 'playwright'
+=========================== short test summary info ============================
+ERROR pocketful/test/stage_2/test_sample.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.06s

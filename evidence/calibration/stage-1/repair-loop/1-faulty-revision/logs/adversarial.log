@@ -1,0 +1,56 @@
+PASS same-key-storm round 0 seed 20261001
+FAIL same-key-different-bodies round 0 seed 20261002 :: exactly one 201: {"200":12,"201":15,"409 idempotency_key_reuse":23}; losers are 409 reuse or same-body 200: {"200":12,"201":15,"409 idempotency_key_reuse":23}; only the winner moved money: {"ada":2500,"bob":2500}
+PASS drain-race round 0 seed 20261003
+PASS fan-in round 0 seed 20261004
+PASS ring round 0 seed 20261005
+PASS request-double-pay round 0 seed 20261006
+PASS pay-versus-cancel round 0 seed 20261007
+PASS settlement-under-drain round 0 seed 20261008
+PASS lost-response-retry round 0 seed 20261009
+PASS signup-race round 0 seed 20261010
+PASS mixed-garbage round 0 seed 20261011
+FAIL same-key-storm round 1 seed 20262001 :: exactly one 201: {"200":25,"201":4,"409 insufficient_funds":21}; every other reply is 200 with the same body: {"200":25,"201":4,"409 insufficient_funds":21}; moved once: {"ada":132,"bob":868}; one feed item: 4 payments in the feed
+FAIL same-key-different-bodies round 1 seed 20262002 :: exactly one 201: {"200":14,"201":6,"409 idempotency_key_reuse":30}; losers are 409 reuse or same-body 200: {"200":14,"201":6,"409 idempotency_key_reuse":30}; only the winner moved money: {"ada":3700,"bob":1300}
+PASS drain-race round 1 seed 20262003
+PASS fan-in round 1 seed 20262004
+PASS ring round 1 seed 20262005
+PASS request-double-pay round 1 seed 20262006
+PASS pay-versus-cancel round 1 seed 20262007
+PASS settlement-under-drain round 1 seed 20262008
+PASS lost-response-retry round 1 seed 20262009
+PASS signup-race round 1 seed 20262010
+PASS mixed-garbage round 1 seed 20262011
+FAIL same-key-storm round 2 seed 20263001 :: exactly one 201: {"200":16,"201":3,"409 insufficient_funds":31}; every other reply is 200 with the same body: {"200":16,"201":3,"409 insufficient_funds":31}; moved once: {"ada":169,"bob":831}; one feed item: 3 payments in the feed
+FAIL same-key-different-bodies round 2 seed 20263002 :: exactly one 201: {"200":10,"201":23,"409 insufficient_funds":1,"409 idempotency_key_reuse":16}; losers are 409 reuse or same-body 200: {"200":10,"201":23,"409 insufficient_funds":1,"409 idempotency_key_reuse":16}; only the winner moved money: {"ada":200,"bob":4800}
+PASS drain-race round 2 seed 20263003
+PASS fan-in round 2 seed 20263004
+PASS ring round 2 seed 20263005
+PASS request-double-pay round 2 seed 20263006
+PASS pay-versus-cancel round 2 seed 20263007
+PASS settlement-under-drain round 2 seed 20263008
+PASS lost-response-retry round 2 seed 20263009
+PASS signup-race round 2 seed 20263010
+PASS mixed-garbage round 2 seed 20263011
+FAIL same-key-storm round 3 seed 20264001 :: every other reply is 200 with the same body: {"200":26,"201":1,"409 insufficient_funds":23}
+FAIL same-key-different-bodies round 3 seed 20264002 :: exactly one 201: {"200":5,"201":24,"409 insufficient_funds":4,"409 idempotency_key_reuse":17}; losers are 409 reuse or same-body 200: {"200":5,"201":24,"409 insufficient_funds":4,"409 idempotency_key_reuse":17}; only the winner moved money: {"ada":0,"bob":5000}
+PASS drain-race round 3 seed 20264003
+PASS fan-in round 3 seed 20264004
+PASS ring round 3 seed 20264005
+PASS request-double-pay round 3 seed 20264006
+PASS pay-versus-cancel round 3 seed 20264007
+PASS settlement-under-drain round 3 seed 20264008
+PASS lost-response-retry round 3 seed 20264009
+PASS signup-race round 3 seed 20264010
+PASS mixed-garbage round 3 seed 20264011
+FAIL same-key-storm round 4 seed 20265001 :: every other reply is 200 with the same body: {"200":14,"201":1,"409 insufficient_funds":35}
+FAIL same-key-different-bodies round 4 seed 20265002 :: exactly one 201: {"200":13,"201":24,"409 idempotency_key_reuse":13}; losers are 409 reuse or same-body 200: {"200":13,"201":24,"409 idempotency_key_reuse":13}; only the winner moved money: {"ada":600,"bob":4400}
+PASS drain-race round 4 seed 20265003
+PASS fan-in round 4 seed 20265004
+PASS ring round 4 seed 20265005
+PASS request-double-pay round 4 seed 20265006
+PASS pay-versus-cancel round 4 seed 20265007
+PASS settlement-under-drain round 4 seed 20265008
+PASS lost-response-retry round 4 seed 20265009
+PASS signup-race round 4 seed 20265010
+PASS mixed-garbage round 4 seed 20265011
+46/55 passed, 225 checks
