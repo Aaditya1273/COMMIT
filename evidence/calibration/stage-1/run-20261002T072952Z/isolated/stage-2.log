@@ -1,4 +1,4 @@
-$ docker run --rm --network df-run-16bbc0e447a04c3a945aedd7f0e64e9a -v ~/Wins/dark-factory-wearedevs:/work:ro -v ~/Wins/COMMIT/evidence/calibration/stage-1/run-20261002T052447Z/isolated:/out -e PYTHONDONTWRITEBYTECODE=1 -e PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 -e COLUMNS=200 -w /work df-harness-runner python -m pytest pocketful/test/stage_2 --base-url http://df-svc-8c4b3618d446:8080 -p harness.plugin --rootdir pocketful/test -q --harness-summary /out/stage-2.counts.json
+$ docker run --rm --network df-run-0e10bcff99e14a8ab9c5da6f053ed421 -v ~/Wins/dark-factory-wearedevs:/work:ro -v ~/Wins/COMMIT/evidence/calibration/stage-1/run-20261002T072952Z/isolated:/out -e PYTHONDONTWRITEBYTECODE=1 -e PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 -e COLUMNS=200 -w /work df-harness-runner python -m pytest pocketful/test/stage_2 --base-url http://df-svc-cb020d1b61e8:8080 -p harness.plugin --rootdir pocketful/test -q --harness-summary /out/stage-2.counts.json
 
 FFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFF                                                                                                                                                              [100%]
 ================================================================================================ ERRORS ================================================================================================
@@ -19,7 +19,7 @@ harness/plugin.py:138: Failed
 ___________________________________________________________________________ test_routes_are_directly_navigable[/-pay-submit] ___________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, route = '/', anchor = 'pay-submit'
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, route = '/', anchor = 'pay-submit'
 
     @pytest.mark.parametrize("route,anchor", [
         ("/", "pay-submit"), ("/requests", "incoming-list"), ("/split", "split-submit"),
@@ -45,7 +45,7 @@ pocketful/test/stage_2/test_sample.py:37: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbff29c60>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb66bd5c60>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -71,7 +71,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _____________________________________________________________________ test_routes_are_directly_navigable[/requests-incoming-list] ______________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, route = '/requests', anchor = 'incoming-list'
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, route = '/requests', anchor = 'incoming-list'
 
     @pytest.mark.parametrize("route,anchor", [
         ("/", "pay-submit"), ("/requests", "incoming-list"), ("/split", "split-submit"),
@@ -97,7 +97,7 @@ pocketful/test/stage_2/test_sample.py:37: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf862e80>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb66522e80>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -123,7 +123,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _______________________________________________________________________ test_routes_are_directly_navigable[/split-split-submit] ________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, route = '/split', anchor = 'split-submit'
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, route = '/split', anchor = 'split-submit'
 
     @pytest.mark.parametrize("route,anchor", [
         ("/", "pay-submit"), ("/requests", "incoming-list"), ("/split", "split-submit"),
@@ -149,7 +149,7 @@ pocketful/test/stage_2/test_sample.py:37: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf8c6de0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb661b4900>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -175,7 +175,7 @@ E             - waiting for locator("[data-testid='login-email']")
 ______________________________________________________________________ test_routes_are_directly_navigable[/signup-signup-submit] _______________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, route = '/signup', anchor = 'signup-submit'
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, route = '/signup', anchor = 'signup-submit'
 
     @pytest.mark.parametrize("route,anchor", [
         ("/", "pay-submit"), ("/requests", "incoming-list"), ("/split", "split-submit"),
@@ -201,7 +201,7 @@ pocketful/test/stage_2/test_sample.py:37: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf8431a0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb664ff600>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -227,7 +227,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _______________________________________________________________________ test_routes_are_directly_navigable[/login-login-submit] ________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, route = '/login', anchor = 'login-submit'
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, route = '/login', anchor = 'login-submit'
 
     @pytest.mark.parametrize("route,anchor", [
         ("/", "pay-submit"), ("/requests", "incoming-list"), ("/split", "split-submit"),
@@ -253,7 +253,7 @@ pocketful/test/stage_2/test_sample.py:37: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf6740e0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb661940e0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -279,7 +279,7 @@ E             - waiting for locator("[data-testid='login-email']")
 __________________________________________________________________________ test_balance_is_formatted_and_carries_minor_units ___________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_balance_is_formatted_and_carries_minor_units(seeded, page):
 >       log_in(page)
@@ -301,7 +301,7 @@ pocketful/test/stage_2/test_sample.py:37: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf843ce0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb664ffba0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -327,7 +327,7 @@ E             - waiting for locator("[data-testid='login-email']")
 ____________________________________________________________________________ test_refresh_observes_another_clients_payment _____________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, api = <function api.<locals>._api at 0x7f7bbf6679c0>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, api = <function api.<locals>._api at 0x7fbb6622bba0>
 
     def test_refresh_observes_another_clients_payment(seeded, page, api):
 >       log_in(page)
@@ -349,7 +349,7 @@ pocketful/test/stage_2/test_sample.py:37: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf665760>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb66229da0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -375,7 +375,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _______________________________________________________________________ test_paying_updates_the_balance_without_a_manual_reload ________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_paying_updates_the_balance_without_a_manual_reload(seeded, page):
 >       log_in(page)
@@ -397,7 +397,7 @@ pocketful/test/stage_2/test_sample.py:37: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf8634c0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb66520f40>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -422,7 +422,7 @@ E             - waiting for locator("[data-testid='login-email']")
 /usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
 ____________________________________________________________________________ test_a_hold_reserves_funds_without_moving_them ____________________________________________________________________________
 
-reset = <function reset.<locals>._reset at 0x7f7bbf66d940>, api = <function api.<locals>._api at 0x7f7bbf66d760>
+reset = <function reset.<locals>._reset at 0x7fbb66239940>, api = <function api.<locals>._api at 0x7fbb662398a0>
 
     def test_a_hold_reserves_funds_without_moving_them(reset, api):
         reset(fx.fixture())
@@ -445,7 +445,7 @@ harness/http.py:108: AssertionError
 _______________________________________________________________________________ test_signup_then_current_user_and_handle _______________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/signup'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/signup'>
 
     def test_signup_then_current_user_and_handle(seeded, page):
         page.goto("/signup")
@@ -466,7 +466,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf66df80>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb66239760>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -492,7 +492,7 @@ E             - waiting for locator("[data-testid='signup-email']")
 ___________________________________________________________________________________ test_bad_login_shows_auth_error ____________________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_bad_login_shows_auth_error(seeded, page):
 >       log_in(page, password="nope nope nope", expect_success=False)
@@ -514,7 +514,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf862ca0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb66522a20>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -540,7 +540,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _____________________________________________________________________________________________ test_logout ______________________________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_logout(seeded, page):
 >       log_in(page)
@@ -562,7 +562,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf5eb1a0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb662631a0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -587,7 +587,7 @@ E             - waiting for locator("[data-testid='login-email']")
 /usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
 ______________________________________________________________________________ test_minor_units_zero_has_no_decimal_point ______________________________________________________________________________
 
-reset = <function reset.<locals>._reset at 0x7f7bbf5e9080>, page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+reset = <function reset.<locals>._reset at 0x7fbb66260a40>, page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_minor_units_zero_has_no_decimal_point(reset, page):
         reset(fx.fixture(currency="JPY"))
@@ -610,7 +610,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf66e020>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb66b8b7e0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -636,7 +636,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _______________________________________________________________________________ test_a_typed_decimal_becomes_minor_units _______________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_a_typed_decimal_becomes_minor_units(seeded, page):
         """15 is 1500, 15.5 is 1550, 15.00 is 1500 in a minor_units 2 service."""
@@ -659,7 +659,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf5f6200>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6623bba0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -685,7 +685,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _________________________________________________________________________ test_too_many_decimal_places_is_refused_in_the_form __________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_too_many_decimal_places_is_refused_in_the_form(seeded, page):
         """15.005 has more places than the currency allows: refused, not rounded."""
@@ -708,7 +708,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf666fc0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6622bce0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -734,7 +734,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _______________________________________________________________________________ test_insufficient_funds_shows_pay_error ________________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_insufficient_funds_shows_pay_error(seeded, page):
 >       log_in(page, email=fx.CY["email"])       # Cy holds 500
@@ -757,7 +757,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf60cea0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb662368e0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -783,7 +783,7 @@ E             - waiting for locator("[data-testid='login-email']")
 ____________________________________________________________________________ test_paying_an_unknown_handle_shows_pay_error _____________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_paying_an_unknown_handle_shows_pay_error(seeded, page):
 >       log_in(page)
@@ -805,7 +805,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf5e8860>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb662347c0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -831,7 +831,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _______________________________________________________________________________ test_feed_shows_a_payment_with_its_parts _______________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, api = <function api.<locals>._api at 0x7f7bbf61dc60>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, api = <function api.<locals>._api at 0x7fbb66229b20>
 
     def test_feed_shows_a_payment_with_its_parts(seeded, page, api):
         ada = api().authenticate(fx.ADA["email"], fx.ADA["password"])
@@ -859,7 +859,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf666980>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb662344a0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -885,7 +885,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _______________________________________________________________________________ test_empty_note_element_is_still_present _______________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, api = <function api.<locals>._api at 0x7f7bbf6672e0>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, api = <function api.<locals>._api at 0x7fbb6622b6a0>
 
     def test_empty_note_element_is_still_present(seeded, page, api):
         ada = api().authenticate(fx.ADA["email"], fx.ADA["password"])
@@ -910,7 +910,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf665ee0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6622b9c0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -936,7 +936,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _________________________________________________________________________ test_empty_activity_is_shown_when_nothing_is_visible _________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_empty_activity_is_shown_when_nothing_is_visible(seeded, page):
 >       log_in(page, email=fx.CY["email"])
@@ -958,7 +958,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf5e8ae0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb66260ae0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -984,7 +984,7 @@ E             - waiting for locator("[data-testid='login-email']")
 __________________________________________________________________________ test_private_payment_is_hidden_from_a_third_party ___________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, api = <function api.<locals>._api at 0x7f7bbf61f600>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, api = <function api.<locals>._api at 0x7fbb66260680>
 
     def test_private_payment_is_hidden_from_a_third_party(seeded, page, api):
         bob = api().authenticate(fx.BOB["email"], fx.BOB["password"])
@@ -1011,7 +1011,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf666160>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb662177e0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1037,7 +1037,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _________________________________________________________________________________ test_feed_is_newest_first_in_the_dom _________________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, api = <function api.<locals>._api at 0x7f7bbf6937e0>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, api = <function api.<locals>._api at 0x7fbb6624fba0>
 
     def test_feed_is_newest_first_in_the_dom(seeded, page, api):
         ada = api().authenticate(fx.ADA["email"], fx.ADA["password"])
@@ -1062,7 +1062,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf66dbc0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6624f4c0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1088,7 +1088,7 @@ E             - waiting for locator("[data-testid='login-email']")
 __________________________________________________________________________________ test_incoming_request_can_be_paid ___________________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, api = <function api.<locals>._api at 0x7f7bbf6665c0>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, api = <function api.<locals>._api at 0x7fbb6622ba60>
 
     def test_incoming_request_can_be_paid(seeded, page, api):
         bob = api().authenticate(fx.BOB["email"], fx.BOB["password"])
@@ -1113,7 +1113,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbff28ae0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb66bd4ae0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1139,7 +1139,7 @@ E             - waiting for locator("[data-testid='login-email']")
 ________________________________________________________________________________ test_incoming_request_can_be_declined _________________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, api = <function api.<locals>._api at 0x7f7bbf612ca0>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, api = <function api.<locals>._api at 0x7fbb6625eca0>
 
     def test_incoming_request_can_be_declined(seeded, page, api):
         bob = api().authenticate(fx.BOB["email"], fx.BOB["password"])
@@ -1164,7 +1164,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf5e8cc0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6622a980>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1190,7 +1190,7 @@ E             - waiting for locator("[data-testid='login-email']")
 ________________________________________________________________________________ test_outgoing_request_can_be_cancelled ________________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, api = <function api.<locals>._api at 0x7f7bbf61f4c0>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, api = <function api.<locals>._api at 0x7fbb66260b80>
 
     def test_outgoing_request_can_be_cancelled(seeded, page, api):
         ada = api().authenticate(fx.ADA["email"], fx.ADA["password"])
@@ -1215,7 +1215,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf612de0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6625ec00>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1241,7 +1241,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _______________________________________________________________________ test_paying_a_request_without_funds_shows_request_error ________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, api = <function api.<locals>._api at 0x7f7bbf610ae0>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, api = <function api.<locals>._api at 0x7fbb6625cae0>
 
     def test_paying_a_request_without_funds_shows_request_error(seeded, page, api):
         ada = api().authenticate(fx.ADA["email"], fx.ADA["password"])
@@ -1266,7 +1266,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf613600>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6625ff60>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1292,7 +1292,7 @@ E             - waiting for locator("[data-testid='login-email']")
 ________________________________________________________________________ test_empty_requests_is_shown_when_both_lists_are_empty ________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_empty_requests_is_shown_when_both_lists_are_empty(seeded, page):
 >       log_in(page)
@@ -1314,7 +1314,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf693560>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6624f880>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1340,7 +1340,7 @@ E             - waiting for locator("[data-testid='login-email']")
 ______________________________________________________________________________ test_split_preview_matches_the_server_rule ______________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_split_preview_matches_the_server_rule(seeded, page):
         """10.00 among three is 334, 333, 333 -- computed before anything is posted."""
@@ -1363,7 +1363,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf693920>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6624ff60>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1389,7 +1389,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _______________________________________________________________________________ test_split_preview_follows_handle_order ________________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_split_preview_follows_handle_order(seeded, page):
 >       log_in(page)
@@ -1411,7 +1411,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf61d080>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6624fa60>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1437,7 +1437,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _______________________________________________________________________________ test_split_submits_and_creates_requests ________________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, api = <function api.<locals>._api at 0x7f7bbf610040>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, api = <function api.<locals>._api at 0x7fbb6625d440>
 
     def test_split_submits_and_creates_requests(seeded, page, api):
 >       log_in(page)
@@ -1459,7 +1459,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf61cf40>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6625cb80>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1485,7 +1485,7 @@ E             - waiting for locator("[data-testid='login-email']")
 ________________________________________________________________________________ test_split_error_on_an_unknown_handle _________________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_split_error_on_an_unknown_handle(seeded, page):
 >       log_in(page)
@@ -1507,7 +1507,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf60cea0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb662156c0>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1533,7 +1533,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _______________________________________________________________________ test_submitting_the_pay_form_twice_moves_the_money_once ________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_submitting_the_pay_form_twice_moves_the_money_once(seeded, page):
         """The form still holds its values after a successful pay, so a second click
@@ -1558,7 +1558,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf611a80>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6625cd60>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1584,7 +1584,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _______________________________________________________________________________ test_a_double_submit_leaves_one_payment ________________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>, api = <function api.<locals>._api at 0x7f7bbf5f54e0>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>, api = <function api.<locals>._api at 0x7fbb662365c0>
 
     def test_a_double_submit_leaves_one_payment(seeded, page, api):
 >       log_in(page)
@@ -1606,7 +1606,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf6125c0>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb66236480>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1632,7 +1632,7 @@ E             - waiting for locator("[data-testid='login-email']")
 _________________________________________________________________________ test_changing_the_form_first_is_a_different_payment __________________________________________________________________________
 
 seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
-page = <Page url='http://df-svc-8c4b3618d446:8080/login'>
+page = <Page url='http://df-svc-cb020d1b61e8:8080/login'>
 
     def test_changing_the_form_first_is_a_different_payment(seeded, page):
         """Editing a field starts a new payment, so it must not replay the old one."""
@@ -1655,7 +1655,7 @@ pocketful/test/stage_2/test_ui.py:34: in log_in
     return await self._connection.wrap_api_call(
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = <playwright._impl._connection.Connection object at 0x7f7bc0035640>, cb = <function Channel.send.<locals>.<lambda> at 0x7f7bbf612f20>, is_internal = False, title = None
+self = <playwright._impl._connection.Connection object at 0x7fbb66cdeb70>, cb = <function Channel.send.<locals>.<lambda> at 0x7fbb6625cd60>, is_internal = False, title = None
 
     async def wrap_api_call(
         self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
@@ -1724,5 +1724,5 @@ FAILED pocketful/test/stage_2/test_ui.py::test_submitting_the_pay_form_twice_mov
 FAILED pocketful/test/stage_2/test_ui.py::test_a_double_submit_leaves_one_payment - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
 FAILED pocketful/test/stage_2/test_ui.py::test_changing_the_form_first_is_a_different_payment - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
 ERROR pocketful/test/stage_2/test_sample.py::test_preceding_stage_accounts_survive_import - Failed: upgrade checks require the preceding stage: use harness run --repo --stage N, or supply --previou...
-34 failed, 2 warnings, 1 error in 338.95s (0:05:38)
+34 failed, 2 warnings, 1 error in 339.26s (0:05:39)
 

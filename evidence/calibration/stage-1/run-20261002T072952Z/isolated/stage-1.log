@@ -1,4 +1,4 @@
-$ docker run --rm --network df-run-16bbc0e447a04c3a945aedd7f0e64e9a -v ~/Wins/dark-factory-wearedevs:/work:ro -v ~/Wins/COMMIT/evidence/calibration/stage-1/run-20261002T052447Z/isolated:/out -e PYTHONDONTWRITEBYTECODE=1 -e PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 -e COLUMNS=200 -w /work df-harness-runner python -m pytest pocketful/test/stage_1 --base-url http://df-svc-8c4b3618d446:8080 -p harness.plugin --rootdir pocketful/test -q --harness-summary /out/stage-1.counts.json
+$ docker run --rm --network df-run-0e10bcff99e14a8ab9c5da6f053ed421 -v ~/Wins/dark-factory-wearedevs:/work:ro -v ~/Wins/COMMIT/evidence/calibration/stage-1/run-20261002T072952Z/isolated:/out -e PYTHONDONTWRITEBYTECODE=1 -e PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 -e COLUMNS=200 -w /work df-harness-runner python -m pytest pocketful/test/stage_1 --base-url http://df-svc-cb020d1b61e8:8080 -p harness.plugin --rootdir pocketful/test -q --harness-summary /out/stage-1.counts.json
 
 ...................................................................................................................................................                                              [100%]
 =========================================================================================== warnings summary ===========================================================================================
@@ -7,5 +7,5 @@ $ docker run --rm --network df-run-16bbc0e447a04c3a945aedd7f0e64e9a -v ~/Wins/da
     config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-147 passed, 1 warning in 21.77s
+147 passed, 1 warning in 21.68s
 
