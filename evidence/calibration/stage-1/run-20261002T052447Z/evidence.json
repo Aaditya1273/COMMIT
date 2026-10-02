@@ -1,0 +1,590 @@
+{
+  "schemaVersion": 2,
+  "kind": "commit-evidence",
+  "runId": "20261002T052447Z-482df0",
+  "factoryVersion": "1.0.0-rc.2",
+  "stage": "calibration / pocketful stage 1",
+  "specification": "dark-factory-wearedevs/pocketful/spec/stage-1.md (kickoff commit 803560d)",
+  "plan": "calibration/verification/plan.json",
+  "revision": {
+    "commit": "80f7caa10c36110b87ebe425d80f9bdb9c554cf7",
+    "branch": "main",
+    "targetDirty": false,
+    "targetDigest": "f8c1a458f4d9411512fac334aa89715dec1a1f80481efd85a99412515f5fc0dc",
+    "targetDigestAfter": "f8c1a458f4d9411512fac334aa89715dec1a1f80481efd85a99412515f5fc0dc",
+    "candidateChanged": false
+  },
+  "environment": {
+    "factoryVersion": "1.0.0-rc.2",
+    "node": "v26.5.0",
+    "platform": "linux",
+    "release": "7.1.5-arch1-2",
+    "arch": "x64",
+    "git": "git version 2.55.0",
+    "python": "Python 3.14.6",
+    "docker": {
+      "installed": true,
+      "daemonReachable": true,
+      "detail": "daemon 29.6.2"
+    }
+  },
+  "startedAt": "2026-10-02T05:24:47.609Z",
+  "finishedAt": "2026-10-02T06:03:22.973Z",
+  "service": {
+    "start": "node --no-warnings src/server.ts",
+    "healthy": true
+  },
+  "steps": [
+    {
+      "id": "typecheck",
+      "kind": "required",
+      "blocking": true,
+      "requirements": [],
+      "command": "npx tsc -p tsconfig.commit.json",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 1125,
+      "outputBytes": 0,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/typecheck.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "report": null
+    },
+    {
+      "id": "lint",
+      "kind": "required",
+      "blocking": true,
+      "requirements": [],
+      "command": "npx eslint commit calibration",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 1297,
+      "outputBytes": 0,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/lint.log",
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "report": null
+    },
+    {
+      "id": "startup",
+      "kind": "startup",
+      "blocking": true,
+      "requirements": [
+        "§3.1",
+        "§3.2"
+      ],
+      "command": "curl -sf 'http://127.0.0.1:36595'/health",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 10,
+      "outputBytes": 15,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/startup.log",
+      "logSha256": "a29ee2b15c494311c52521766e44af56a3ad2248e7a8ab465e5206463c13d288",
+      "report": null
+    },
+    {
+      "id": "shipped-checks",
+      "kind": "required",
+      "blocking": true,
+      "requirements": [
+        "stage-1 sample and shipped suites"
+      ],
+      "command": "cd '../dark-factory-wearedevs' && .venv/bin/python -m pytest pocketful/test/stage_1 -p harness.plugin --base-url 'http://127.0.0.1:36595' -q -p no:cacheprovider",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 19238,
+      "outputBytes": 261,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/shipped-checks.log",
+      "logSha256": "f55c24250dc369ca6a568b52dc4cf2a5e328652a85b1039501b7c2816007bc38",
+      "report": null
+    },
+    {
+      "id": "overshoot-probe",
+      "kind": "required",
+      "blocking": true,
+      "requirements": [
+        "a stage-1 folder must not pass the stage-2 suite: stage-2 holds must be absent"
+      ],
+      "command": "cd '../dark-factory-wearedevs' && .venv/bin/python -m pytest pocketful/test/stage_2/test_sample.py -k test_a_hold_reserves_funds_without_moving_them -p harness.plugin --base-url 'http://127.0.0.1:36595' -q -p no:cacheprovider; rc=$?; echo \"pytest exit $rc (1 = the stage-2 check ran and failed, as required)\"; test $rc -eq 1",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 393,
+      "outputBytes": 1571,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/overshoot-probe.log",
+      "logSha256": "fbd811842d95793afabde5cb8fec1cfcf5149eb07b8ff9cd80b11ddf34e1becc",
+      "report": null
+    },
+    {
+      "id": "contract",
+      "kind": "contract",
+      "blocking": true,
+      "requirements": [
+        "§3",
+        "§4",
+        "§5",
+        "§6",
+        "§7",
+        "§8",
+        "§9",
+        "§10",
+        "§11"
+      ],
+      "command": "node --no-warnings calibration/verification/contract.ts --base-url 'http://127.0.0.1:36595' --out 'evidence/calibration/stage-1/run-20261002T052447Z'/contract",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 2786,
+      "outputBytes": 31,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/contract.log",
+      "logSha256": "b8ae4526adbd092977711be01d87c0df771161733640d36ff30323e591ea059d",
+      "report": "contract/contract-report.json"
+    },
+    {
+      "id": "reference-481927",
+      "kind": "reference-model",
+      "blocking": true,
+      "requirements": [
+        "§1 invariants",
+        "§7",
+        "§8",
+        "§9",
+        "§11"
+      ],
+      "command": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url 'http://127.0.0.1:36595' --seed 481927 --operations 1000 --out 'evidence/calibration/stage-1/run-20261002T052447Z'/reference-481927",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 5102,
+      "outputBytes": 963,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/reference-481927.log",
+      "logSha256": "1e555bb890109134828c4a7af573087434ca8aecb5ccd8efe09dfe5a0ff05150",
+      "report": "reference-481927/reference-report.json"
+    },
+    {
+      "id": "reference-7",
+      "kind": "reference-model",
+      "blocking": true,
+      "requirements": [
+        "§1 invariants",
+        "§7",
+        "§8",
+        "§9",
+        "§11"
+      ],
+      "command": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url 'http://127.0.0.1:36595' --seed 7 --operations 1000 --out 'evidence/calibration/stage-1/run-20261002T052447Z'/reference-7",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 4476,
+      "outputBytes": 928,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/reference-7.log",
+      "logSha256": "8ddfc1b2f039ea4acfde9284e005414c4f9ba58a7840dbeacfc9d14a64fe2dfd",
+      "report": "reference-7/reference-report.json"
+    },
+    {
+      "id": "reference-90210",
+      "kind": "reference-model",
+      "blocking": true,
+      "requirements": [
+        "§1 invariants",
+        "§7",
+        "§8",
+        "§9",
+        "§11"
+      ],
+      "command": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url 'http://127.0.0.1:36595' --seed 90210 --operations 1000 --out 'evidence/calibration/stage-1/run-20261002T052447Z'/reference-90210",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 4789,
+      "outputBytes": 960,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/reference-90210.log",
+      "logSha256": "7d81ccaef79fa6241ac35b18bb0073a30ed870f0d12ec4670bc6a6cd0f830071",
+      "report": "reference-90210/reference-report.json"
+    },
+    {
+      "id": "adversarial",
+      "kind": "adversarial",
+      "blocking": true,
+      "requirements": [
+        "§1 invariants",
+        "§2 concurrency",
+        "§7",
+        "§11"
+      ],
+      "command": "node --no-warnings calibration/verification/adversarial.ts --base-url 'http://127.0.0.1:36595' --seed 20261001 --workers 50 --rounds 5 --out 'evidence/calibration/stage-1/run-20261002T052447Z'/adversarial",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 9654,
+      "outputBytes": 2360,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/adversarial.log",
+      "logSha256": "37490880586a0b70985019cdfc4d6933578eb1d08add11b23f03b36905d20f8c",
+      "report": "adversarial/adversarial-report.json"
+    },
+    {
+      "id": "mutation",
+      "kind": "mutation",
+      "blocking": true,
+      "requirements": [],
+      "command": "node --no-warnings commit/mutate.ts --target calibration/pocketful-stage-1 --start 'node --no-warnings src/server.ts' --check 'calibration/verification/kill-suite.sh {url}' --exclude calibration/verification/equivalents.json --jobs 6 --timeout 180000 --out 'evidence/calibration/stage-1/run-20261002T052447Z'/mutation",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 1880239,
+      "outputBytes": 45831,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/mutation.log",
+      "logSha256": "3e40ab017fdb0a6bd2ed219e3ff71a25035bbc5046ca325d5636cfb909e1d2aa",
+      "report": "mutation/mutation-report.json"
+    },
+    {
+      "id": "clean-build",
+      "kind": "build",
+      "blocking": true,
+      "requirements": [],
+      "command": "docker build --no-cache -t commit-calibration-stage-1 calibration/pocketful-stage-1",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 8950,
+      "outputBytes": 1376,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/clean-build.log",
+      "logSha256": "3bf5facb221c8a732c66aee865a164fc0c16e52f95a528caa51057d8c9da22bb",
+      "report": null
+    },
+    {
+      "id": "offline-isolated",
+      "kind": "offline",
+      "blocking": true,
+      "requirements": [
+        "§2 no outbound network at run time, 2 vCPU, 2 GiB"
+      ],
+      "command": "PYTHONPATH='../dark-factory-wearedevs' '../dark-factory-wearedevs'/.venv/bin/python -m harness run --track pocketful --build calibration/pocketful-stage-1 --mode isolated --stage 1 --out 'evidence/calibration/stage-1/run-20261002T052447Z'/isolated",
+      "status": "FAILED",
+      "reason": "exit status 1",
+      "exitCode": 1,
+      "durationMs": 376736,
+      "outputBytes": 1049,
+      "outputTruncated": false,
+      "redactions": 0,
+      "log": "logs/offline-isolated.log",
+      "logSha256": "7ac2cd3e3a5be55d097efd15b3840cb5dfe9482e0e0b451fa322ac3fa4824d84",
+      "report": null
+    }
+  ],
+  "reports": {
+    "contract": {
+      "kind": "contract-checks",
+      "total": 248,
+      "passed": 248,
+      "failed": 0
+    },
+    "reference-481927": {
+      "kind": "reference-campaign",
+      "runId": "20261002T052512Z-517194",
+      "factoryVersion": "1.0.0-rc.2",
+      "campaign": "pocketful-stage-1-reference",
+      "moduleSha256": "d271b4f1cc77ee22e289013a181304308dd4e6149793d5a902d6558538b63f94",
+      "seed": 481927,
+      "operationsRequested": 1000,
+      "operationsExecuted": 1000,
+      "stateComparisons": 1000,
+      "invariantChecks": 2100,
+      "outcomes": {
+        "200": 82,
+        "201": 473,
+        "200 replay": 59,
+        "409 request_not_pending": 45,
+        "422 validation_failed": 77,
+        "403 forbidden": 57,
+        "409 idempotency_key_reuse": 26,
+        "404 not_found": 14,
+        "422 self_payment": 29,
+        "409 insufficient_funds": 124,
+        "409 email_taken": 3,
+        "422 self_request": 7,
+        "409 handle_taken": 4
+      },
+      "durationMs": 4994,
+      "result": "agree",
+      "firstDivergence": null,
+      "reproduction": "node commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url <url> --seed 481927 --operations 1000"
+    },
+    "reference-7": {
+      "kind": "reference-campaign",
+      "runId": "20261002T052518Z-022d3c",
+      "factoryVersion": "1.0.0-rc.2",
+      "campaign": "pocketful-stage-1-reference",
+      "moduleSha256": "d271b4f1cc77ee22e289013a181304308dd4e6149793d5a902d6558538b63f94",
+      "seed": 7,
+      "operationsRequested": 1000,
+      "operationsExecuted": 1000,
+      "stateComparisons": 1000,
+      "invariantChecks": 2100,
+      "outcomes": {
+        "200": 46,
+        "201": 444,
+        "422 validation_failed": 100,
+        "409 insufficient_funds": 138,
+        "200 replay": 53,
+        "422 self_payment": 28,
+        "409 request_not_pending": 86,
+        "409 idempotency_key_reuse": 31,
+        "403 forbidden": 52,
+        "422 self_request": 7,
+        "404 not_found": 10,
+        "409 handle_taken": 5
+      },
+      "durationMs": 4386,
+      "result": "agree",
+      "firstDivergence": null,
+      "reproduction": "node commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url <url> --seed 7 --operations 1000"
+    },
+    "reference-90210": {
+      "kind": "reference-campaign",
+      "runId": "20261002T052522Z-01cfd8",
+      "factoryVersion": "1.0.0-rc.2",
+      "campaign": "pocketful-stage-1-reference",
+      "moduleSha256": "d271b4f1cc77ee22e289013a181304308dd4e6149793d5a902d6558538b63f94",
+      "seed": 90210,
+      "operationsRequested": 1000,
+      "operationsExecuted": 1000,
+      "stateComparisons": 1000,
+      "invariantChecks": 2100,
+      "outcomes": {
+        "200": 73,
+        "201": 475,
+        "409 insufficient_funds": 132,
+        "200 replay": 70,
+        "403 forbidden": 54,
+        "422 self_request": 8,
+        "404 not_found": 9,
+        "422 validation_failed": 58,
+        "422 self_payment": 27,
+        "409 request_not_pending": 48,
+        "409 idempotency_key_reuse": 38,
+        "409 email_taken": 3,
+        "409 handle_taken": 5
+      },
+      "durationMs": 4704,
+      "result": "agree",
+      "firstDivergence": null,
+      "reproduction": "node commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url <url> --seed 90210 --operations 1000"
+    },
+    "adversarial": {
+      "kind": "adversarial-campaign",
+      "baseSeed": 20261001,
+      "workers": 50,
+      "rounds": 5,
+      "campaigns": 55,
+      "passed": 55,
+      "failed": 0,
+      "checks": 225,
+      "reproduction": "node calibration/verification/adversarial.ts --base-url <url> --seed 20261001 --workers 50 --rounds 5"
+    },
+    "mutation": {
+      "kind": "mutation-campaign",
+      "factoryVersion": "1.0.0-rc.2",
+      "target": "calibration/pocketful-stage-1",
+      "files": [
+        "src/auth.ts",
+        "src/errors.ts",
+        "src/server.ts",
+        "src/store.ts",
+        "src/validate.ts",
+        "src/wallet.ts"
+      ],
+      "start": "node --no-warnings src/server.ts",
+      "check": "calibration/verification/kill-suite.sh {url}",
+      "seed": 1,
+      "selection": "all",
+      "discovered": 483,
+      "executed": 483,
+      "tally": {
+        "killed": 398,
+        "survived": 18,
+        "timeout": 1,
+        "invalid": 8,
+        "error": 0,
+        "equivalent": 58
+      },
+      "layers": {
+        "adversarial": {
+          "killed": 145,
+          "onlyThisLayer": 1
+        },
+        "contract": {
+          "killed": 388,
+          "onlyThisLayer": 97
+        },
+        "reference": {
+          "killed": 235,
+          "onlyThisLayer": 1
+        },
+        "shipped": {
+          "killed": 282,
+          "onlyThisLayer": 3
+        }
+      },
+      "valid": 417,
+      "killRate": 0.9544364508393285,
+      "detectionRate": 0.9568345323741008,
+      "formula": "killRate = killed / (killed + survived + timeout); detectionRate counts timeouts as detected; invalid, error and equivalent are excluded from both and listed",
+      "campaignBroken": false,
+      "jobs": 6,
+      "mutantTimeoutMs": 180000,
+      "startedAt": "2026-10-02T05:25:36.988Z",
+      "finishedAt": "2026-10-02T05:56:57.146Z",
+      "durationMs": 1880158,
+      "replay": "node commit/mutate.ts --target calibration/pocketful-stage-1 --start 'node --no-warnings src/server.ts' --check 'calibration/verification/kill-suite.sh {url}' --only <id> --out <new dir>"
+    }
+  },
+  "artifacts": [
+    {
+      "path": "logs/typecheck.log",
+      "type": "log",
+      "producer": "typecheck",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/lint.log",
+      "type": "log",
+      "producer": "lint",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/startup.log",
+      "type": "log",
+      "producer": "startup",
+      "sha256": "a29ee2b15c494311c52521766e44af56a3ad2248e7a8ab465e5206463c13d288"
+    },
+    {
+      "path": "logs/shipped-checks.log",
+      "type": "log",
+      "producer": "shipped-checks",
+      "sha256": "f55c24250dc369ca6a568b52dc4cf2a5e328652a85b1039501b7c2816007bc38"
+    },
+    {
+      "path": "logs/overshoot-probe.log",
+      "type": "log",
+      "producer": "overshoot-probe",
+      "sha256": "fbd811842d95793afabde5cb8fec1cfcf5149eb07b8ff9cd80b11ddf34e1becc"
+    },
+    {
+      "path": "logs/contract.log",
+      "type": "log",
+      "producer": "contract",
+      "sha256": "b8ae4526adbd092977711be01d87c0df771161733640d36ff30323e591ea059d"
+    },
+    {
+      "path": "contract/contract-report.json",
+      "type": "report",
+      "producer": "contract",
+      "sha256": "96df06b9c36576dba1e1c84e3ba82427bfe1118182fde1380afb45a794ee8b82"
+    },
+    {
+      "path": "logs/reference-481927.log",
+      "type": "log",
+      "producer": "reference-481927",
+      "sha256": "1e555bb890109134828c4a7af573087434ca8aecb5ccd8efe09dfe5a0ff05150"
+    },
+    {
+      "path": "reference-481927/reference-report.json",
+      "type": "report",
+      "producer": "reference-481927",
+      "sha256": "86a76df0cb1a0b5f7a5ddbb7a08daa10a6fac5162c2dd38ef40a1500b08b39ef"
+    },
+    {
+      "path": "logs/reference-7.log",
+      "type": "log",
+      "producer": "reference-7",
+      "sha256": "8ddfc1b2f039ea4acfde9284e005414c4f9ba58a7840dbeacfc9d14a64fe2dfd"
+    },
+    {
+      "path": "reference-7/reference-report.json",
+      "type": "report",
+      "producer": "reference-7",
+      "sha256": "64689a629ea2c381c67f93af05fa20b37feda3086d0679ad1bd256e3266ebf2d"
+    },
+    {
+      "path": "logs/reference-90210.log",
+      "type": "log",
+      "producer": "reference-90210",
+      "sha256": "7d81ccaef79fa6241ac35b18bb0073a30ed870f0d12ec4670bc6a6cd0f830071"
+    },
+    {
+      "path": "reference-90210/reference-report.json",
+      "type": "report",
+      "producer": "reference-90210",
+      "sha256": "83e121e6ab03de8b534908f68430853e7e827dae2381ad582ba8ccd30033ebea"
+    },
+    {
+      "path": "logs/adversarial.log",
+      "type": "log",
+      "producer": "adversarial",
+      "sha256": "37490880586a0b70985019cdfc4d6933578eb1d08add11b23f03b36905d20f8c"
+    },
+    {
+      "path": "adversarial/adversarial-report.json",
+      "type": "report",
+      "producer": "adversarial",
+      "sha256": "233b3f3ceab3ae7a74ac9df46c0402b25d6f25a755ae21235f5ebb5ebfd011b7"
+    },
+    {
+      "path": "logs/mutation.log",
+      "type": "log",
+      "producer": "mutation",
+      "sha256": "3e40ab017fdb0a6bd2ed219e3ff71a25035bbc5046ca325d5636cfb909e1d2aa"
+    },
+    {
+      "path": "mutation/mutation-report.json",
+      "type": "report",
+      "producer": "mutation",
+      "sha256": "d0c608a9ab398af0aaba674bc39923bb5733aabca4f6c8903aedcd459afda989"
+    },
+    {
+      "path": "logs/clean-build.log",
+      "type": "log",
+      "producer": "clean-build",
+      "sha256": "3bf5facb221c8a732c66aee865a164fc0c16e52f95a528caa51057d8c9da22bb"
+    },
+    {
+      "path": "logs/offline-isolated.log",
+      "type": "log",
+      "producer": "offline-isolated",
+      "sha256": "7ac2cd3e3a5be55d097efd15b3840cb5dfe9482e0e0b451fa322ac3fa4824d84"
+    }
+  ],
+  "verdict": "REJECT",
+  "verdictReasons": [
+    "REJECT: offline-isolated: exit status 1"
+  ],
+  "productionModificationByVerifier": "NONE"
+}

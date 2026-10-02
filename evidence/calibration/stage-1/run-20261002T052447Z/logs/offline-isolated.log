@@ -1,0 +1,9 @@
+<frozen site>:101: RuntimeWarning: Unexpected value in sys.prefix, expected ~/Wins/dark-factory-wearedevs/.venv, got ~/Wins/COMMIT/../dark-factory-wearedevs/.venv
+<frozen site>:101: RuntimeWarning: Unexpected value in sys.exec_prefix, expected ~/Wins/dark-factory-wearedevs/.venv, got ~/Wins/COMMIT/../dark-factory-wearedevs/.venv
+building calibration/pocketful-stage-1 ...
+  stage 1: pass  (log: ~/Wins/COMMIT/evidence/calibration/stage-1/run-20261002T052447Z/isolated/stage-1.log)
+  stage 2: error  (log: ~/Wins/COMMIT/evidence/calibration/stage-1/run-20261002T052447Z/isolated/stage-2.log)
+  stage 3: fail  (log: ~/Wins/COMMIT/evidence/calibration/stage-1/run-20261002T052447Z/isolated/stage-3.log)
+  stage 4: fail  (log: ~/Wins/COMMIT/evidence/calibration/stage-1/run-20261002T052447Z/isolated/stage-4.log)
+highest contiguous stage: 1
+report: ~/Wins/COMMIT/evidence/calibration/stage-1/run-20261002T052447Z/isolated/report.json

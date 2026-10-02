@@ -1,0 +1,100 @@
+$ docker run --rm --network df-run-16bbc0e447a04c3a945aedd7f0e64e9a -v /home/bajrangi/Wins/dark-factory-wearedevs:/work:ro -v /home/bajrangi/Wins/COMMIT/evidence/calibration/stage-1/run-20261002T052447Z/isolated:/out -e PYTHONDONTWRITEBYTECODE=1 -e PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 -e COLUMNS=200 -w /work df-harness-runner python -m pytest pocketful/test/stage_3 --base-url http://df-svc-8c4b3618d446:8080 -p harness.plugin --rootdir pocketful/test -q --harness-summary /out/stage-3.counts.json
+
+..FFFF                                                                                                                                                                                           [100%]
+=============================================================================================== FAILURES ===============================================================================================
+___________________________________________________________________________ test_as_of_in_the_future_is_the_current_balance ____________________________________________________________________________
+
+world = namespace(fixture={'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'passwor...ct at 0x7fc3d49b4cb0>, bob=<harness.http.Api object at 0x7fc3d3e27e60>, cy=<harness.http.Api object at 0x7fc3d3e29be0>)
+balance = <function balance.<locals>._balance at 0x7fc3d3cdd120>
+
+    def test_as_of_in_the_future_is_the_current_balance(world, balance):
+        now = dt.datetime.now(dt.timezone.utc)
+        later = (now + dt.timedelta(hours=1)).isoformat()
+        body = assert_status(world.ada.get("/me", params={"as_of": later}), 200).json()
+        assert body["balance"] == balance(world.ada)
+>       assert body["as_of"] == later
+               ^^^^^^^^^^^^^
+E       KeyError: 'as_of'
+
+pocketful/test/stage_3/test_sample.py:35: KeyError
+________________________________________________________________________________ test_a_statement_closes_its_arithmetic ________________________________________________________________________________
+
+world = namespace(fixture={'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'passwor...ct at 0x7fc3d3e237a0>, bob=<harness.http.Api object at 0x7fc3d3e24440>, cy=<harness.http.Api object at 0x7fc3d3e26210>)
+pay = <function pay.<locals>._pay at 0x7fc3d3cddc60>
+
+    def test_a_statement_closes_its_arithmetic(world, pay):
+        assert_status(pay(to_handle="bob", amount=300), 201)
+>       body = assert_status(world.ada.get("/statement"), 200).json()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+pocketful/test/stage_3/test_sample.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = <Response [404 Not Found]>, expected = 200
+
+    def assert_status(resp: httpx.Response, expected: int) -> httpx.Response:
+>       assert resp.status_code == expected, \
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f"expected {expected}, got {resp.status_code}. {_describe(resp)}"
+E       AssertionError: expected 200, got 404. GET /statement -> 404 '{"error":{"code":"not_found","message":"no such endpoint"}}'
+
+harness/http.py:108: AssertionError
+______________________________________________________________________________ test_a_statement_walks_the_balance_forward ______________________________________________________________________________
+
+world = namespace(fixture={'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'passwor...ct at 0x7fc3d3e26870>, bob=<harness.http.Api object at 0x7fc3d3e252b0>, cy=<harness.http.Api object at 0x7fc3d4014560>)
+pay = <function pay.<locals>._pay at 0x7fc3d3cddee0>
+
+    def test_a_statement_walks_the_balance_forward(world, pay):
+        for amount in (300, 200):
+            assert_status(pay(to_handle="bob", amount=amount), 201)
+>       body = assert_status(world.ada.get("/statement"), 200).json()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+pocketful/test/stage_3/test_sample.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = <Response [404 Not Found]>, expected = 200
+
+    def assert_status(resp: httpx.Response, expected: int) -> httpx.Response:
+>       assert resp.status_code == expected, \
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f"expected {expected}, got {resp.status_code}. {_describe(resp)}"
+E       AssertionError: expected 200, got 404. GET /statement -> 404 '{"error":{"code":"not_found","message":"no such endpoint"}}'
+
+harness/http.py:108: AssertionError
+____________________________________________________________________________ test_a_correction_changes_the_current_balance _____________________________________________________________________________
+
+world = namespace(fixture={'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'passwor...ct at 0x7fc3d4014380>, bob=<harness.http.Api object at 0x7fc3d3e23350>, cy=<harness.http.Api object at 0x7fc3d3e298e0>)
+pay = <function pay.<locals>._pay at 0x7fc3d3cde480>
+
+    def test_a_correction_changes_the_current_balance(world, pay):
+        payment = assert_status(pay(amount=100), 201).json()
+>       correction = assert_status(world.ada.post('/payments/' + payment['payment_id'] + '/corrections',
+            json={'expected_revision': 1, 'amount': 60, 'effective_at': payment['created_at'],
+                  'reason': 'correct amount'}, idempotency_key=new_key()), 201).json()
+
+pocketful/test/stage_3/test_sample.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = <Response [404 Not Found]>, expected = 201
+
+    def assert_status(resp: httpx.Response, expected: int) -> httpx.Response:
+>       assert resp.status_code == expected, \
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f"expected {expected}, got {resp.status_code}. {_describe(resp)}"
+E       AssertionError: expected 201, got 404. POST /payments/p_8065848a-6725-4139-a9e0-4f0e1151e606/corrections -> 404 '{"error":{"code":"not_found","message":"no such endpoint"}}'
+
+harness/http.py:108: AssertionError
+=========================================================================================== warnings summary ===========================================================================================
+../usr/local/lib/python3.12/site-packages/_pytest/cacheprovider.py:469
+  /usr/local/lib/python3.12/site-packages/_pytest/cacheprovider.py:469: PytestCacheWarning: cache could not write path /work/pocketful/test/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/work/pocketful/test/.pytest_cache/v/cache/nodeids'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================================================================================= short test summary info ========================================================================================
+FAILED pocketful/test/stage_3/test_sample.py::test_as_of_in_the_future_is_the_current_balance - KeyError: 'as_of'
+FAILED pocketful/test/stage_3/test_sample.py::test_a_statement_closes_its_arithmetic - AssertionError: expected 200, got 404. GET /statement -> 404 '{"error":{"code":"not_found","message":"no such ...
+FAILED pocketful/test/stage_3/test_sample.py::test_a_statement_walks_the_balance_forward - AssertionError: expected 200, got 404. GET /statement -> 404 '{"error":{"code":"not_found","message":"no s...
+FAILED pocketful/test/stage_3/test_sample.py::test_a_correction_changes_the_current_balance - AssertionError: expected 201, got 404. POST /payments/p_8065848a-6725-4139-a9e0-4f0e1151e606/correction...
+4 failed, 2 passed, 1 warning in 0.93s
+

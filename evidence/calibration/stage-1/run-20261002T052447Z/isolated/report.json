@@ -1,0 +1,106 @@
+{
+  "revision": "80f7caa10c36110b87ebe425d80f9bdb9c554cf7",
+  "track": "pocketful",
+  "stages": {
+    "1": "pass",
+    "2": "error",
+    "3": "fail",
+    "4": "fail"
+  },
+  "highest_contiguous": 1,
+  "started_at": "2026-10-02T05:57:06.299927+00:00",
+  "finished_at": "2026-10-02T06:03:22.724029+00:00",
+  "schema_version": 2,
+  "run_id": "16bbc0e447a04c3a945aedd7f0e64e9a",
+  "mode": "isolated",
+  "provenance": "working-tree",
+  "state": "completed",
+  "pytest_args": [],
+  "suite_digest": "3ae920dd1bf766dfe774befd681b55e101de1b54f687c6c95beb135de18aefd6",
+  "checks": {
+    "1": {
+      "collected": 147,
+      "passed": 147,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "xfailed": 0,
+      "files": {
+        "stage_1/test_me_payments.py": {
+          "passed": 24,
+          "total": 24
+        },
+        "stage_1/test_requests_splits_feed.py": {
+          "passed": 39,
+          "total": 39
+        },
+        "stage_1/test_retries_splits_input.py": {
+          "passed": 51,
+          "total": 51
+        },
+        "stage_1/test_sample.py": {
+          "passed": 19,
+          "total": 19
+        },
+        "stage_1/test_seeded_state.py": {
+          "passed": 14,
+          "total": 14
+        }
+      }
+    },
+    "2": {
+      "collected": 35,
+      "passed": 0,
+      "failed": 34,
+      "errors": 1,
+      "skipped": 0,
+      "deselected": 0,
+      "xfailed": 0,
+      "files": {
+        "stage_2/test_sample.py": {
+          "passed": 0,
+          "total": 10
+        },
+        "stage_2/test_ui.py": {
+          "passed": 0,
+          "total": 25
+        }
+      }
+    },
+    "3": {
+      "collected": 6,
+      "passed": 2,
+      "failed": 4,
+      "errors": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "xfailed": 0,
+      "files": {
+        "stage_3/test_sample.py": {
+          "passed": 2,
+          "total": 6
+        }
+      }
+    },
+    "4": {
+      "collected": 5,
+      "passed": 0,
+      "failed": 5,
+      "errors": 0,
+      "skipped": 0,
+      "deselected": 0,
+      "xfailed": 0,
+      "files": {
+        "stage_4/test_sample.py": {
+          "passed": 0,
+          "total": 5
+        }
+      }
+    }
+  },
+  "overshoot": null,
+  "claimed_stage": null,
+  "share": null,
+  "upgrade_sources": {}
+}
