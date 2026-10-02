@@ -219,3 +219,12 @@ test('the auditor catches altered evidence', () => {
   assert.match(problems, /changed since the run/);
   assert.ok(readdirSync(ev).includes('evidence.sha256'));
 });
+
+test('files a step writes into the evidence directory are scrubbed of the home directory', () => {
+  const root = repo();
+  const home = process.env.HOME!;
+  const r = verify(root, plan(root, [step('tool', `mkdir -p {out}/tool && echo "report at ${home}/somewhere" > {out}/tool/out.txt`)]));
+  assert.equal(r.code, 0, r.out);
+  const written = readFileSync(join(root, 'ev', 'tool', 'out.txt'), 'utf8');
+  assert.ok(!written.includes(home) && written.includes('~/somewhere'), written);
+});

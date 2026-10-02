@@ -171,6 +171,23 @@ if (plan.service) {
 }
 
 const relOut = relative(root, out);
+
+/**
+ * Tools a step runs may write their own files into the evidence directory (an external
+ * harness's logs and reports). Scrub the home directory from all of them before anything
+ * is validated or hashed, as for step logs.
+ */
+function scrubEvidenceTree(): void {
+  for (const f of readdirSync(out, { recursive: true, encoding: 'utf8' }) as string[]) {
+    const path = join(out, f);
+    if (f === 'run-state.json' || !statSync(path).isFile() || statSync(path).size > 64 * 1024 * 1024) continue;
+    const raw = readFileSync(path);
+    if (raw.includes(0)) continue; // binary
+    const text = raw.toString('utf8');
+    const clean = scrubHome(text);
+    if (clean !== text) writeAtomic(path, clean);
+  }
+}
 const results: StepResult[] = [];
 
 function record(step: Step, status: StepStatus, reason: string | null, output: string, extra: Partial<StepResult> = {}): StepResult {
@@ -217,6 +234,7 @@ for (const step of plan.steps) {
       let reason: string | null = r.status === 'timeout' ? `timed out after ${r.durationMs} ms`
         : r.status === 'spawn-error' ? 'the command could not be started'
           : r.status === 'signaled' ? `killed by ${r.signal}` : r.exitCode === 0 ? null : `exit status ${r.exitCode}`;
+      scrubEvidenceTree();
       if (step.report && (status === 'PASSED' || status === 'FAILED')) {
         const reportPath = join(out, step.report);
         if (!existsSync(reportPath)) {
