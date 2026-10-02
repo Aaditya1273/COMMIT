@@ -16,7 +16,7 @@
       "seed": 20261001,
       "workers": 50,
       "operations": 50,
-      "durationMs": 147,
+      "durationMs": 161,
       "responses": {
         "200": 49,
         "201": 1
@@ -69,7 +69,7 @@
       "seed": 20261002,
       "workers": 50,
       "operations": 50,
-      "durationMs": 118,
+      "durationMs": 102,
       "responses": {
         "200": 15,
         "201": 1,
@@ -115,7 +115,7 @@
       "seed": 20261003,
       "workers": 50,
       "operations": 50,
-      "durationMs": 128,
+      "durationMs": 130,
       "responses": {
         "201": 14,
         "409 insufficient_funds": 36
@@ -164,7 +164,7 @@
       "seed": 20261004,
       "workers": 50,
       "operations": 50,
-      "durationMs": 423,
+      "durationMs": 425,
       "responses": {
         "201": 35,
         "409 insufficient_funds": 15
@@ -208,7 +208,7 @@
       "seed": 20261005,
       "workers": 50,
       "operations": 50,
-      "durationMs": 155,
+      "durationMs": 170,
       "responses": {
         "201": 36,
         "409 insufficient_funds": 14
@@ -245,7 +245,7 @@
       "seed": 20261006,
       "workers": 50,
       "operations": 50,
-      "durationMs": 96,
+      "durationMs": 105,
       "responses": {
         "201": 1,
         "409 request_not_pending": 49
@@ -290,7 +290,7 @@
       "seed": 20261007,
       "workers": 50,
       "operations": 20,
-      "durationMs": 107,
+      "durationMs": 110,
       "responses": {
         "200": 10,
         "409 request_not_pending": 10
@@ -333,7 +333,7 @@
       "seed": 20261008,
       "workers": 50,
       "operations": 50,
-      "durationMs": 154,
+      "durationMs": 166,
       "responses": {
         "201": 4,
         "409 insufficient_funds": 46
@@ -370,7 +370,7 @@
       "seed": 20261009,
       "workers": 50,
       "operations": 20,
-      "durationMs": 100,
+      "durationMs": 102,
       "responses": {
         "200": 8,
         "201": 12
@@ -410,7 +410,7 @@
       "seed": 20261010,
       "workers": 50,
       "operations": 50,
-      "durationMs": 463,
+      "durationMs": 479,
       "responses": {
         "201": 1,
         "409 email_taken": 49
@@ -444,7 +444,7 @@
       "seed": 20261011,
       "workers": 50,
       "operations": 50,
-      "durationMs": 125,
+      "durationMs": 128,
       "responses": {
         "201": 10,
         "422 validation_failed": 10,
@@ -491,7 +491,7 @@
       "seed": 20262001,
       "workers": 50,
       "operations": 50,
-      "durationMs": 95,
+      "durationMs": 102,
       "responses": {
         "200": 49,
         "201": 1
@@ -544,7 +544,7 @@
       "seed": 20262002,
       "workers": 50,
       "operations": 50,
-      "durationMs": 95,
+      "durationMs": 98,
       "responses": {
         "200": 18,
         "201": 1,
@@ -590,7 +590,7 @@
       "seed": 20262003,
       "workers": 50,
       "operations": 50,
-      "durationMs": 123,
+      "durationMs": 130,
       "responses": {
         "201": 19,
         "409 insufficient_funds": 31
@@ -639,7 +639,7 @@
       "seed": 20262004,
       "workers": 50,
       "operations": 50,
-      "durationMs": 407,
+      "durationMs": 416,
       "responses": {
         "201": 29,
         "409 insufficient_funds": 21
@@ -683,7 +683,7 @@
       "seed": 20262005,
       "workers": 50,
       "operations": 50,
-      "durationMs": 154,
+      "durationMs": 149,
       "responses": {
         "201": 27,
         "409 insufficient_funds": 23
@@ -720,7 +720,7 @@
       "seed": 20262006,
       "workers": 50,
       "operations": 50,
-      "durationMs": 94,
+      "durationMs": 98,
       "responses": {
         "201": 1,
         "409 request_not_pending": 49
@@ -808,7 +808,7 @@
       "seed": 20262008,
       "workers": 50,
       "operations": 50,
-      "durationMs": 146,
+      "durationMs": 160,
       "responses": {
         "201": 4,
         "409 insufficient_funds": 46
@@ -845,10 +845,10 @@
       "seed": 20262009,
       "workers": 50,
       "operations": 20,
-      "durationMs": 93,
+      "durationMs": 95,
       "responses": {
-        "200": 4,
-        "201": 16
+        "200": 5,
+        "201": 15
       },
       "finalState": {
         "ada": 4800,
@@ -858,7 +858,7 @@
         {
           "check": "every retry is 200 or 201",
           "ok": true,
-          "detail": "{\"200\":4,\"201\":16}"
+          "detail": "{\"200\":5,\"201\":15}"
         },
         {
           "check": "conservation",
@@ -885,7 +885,7 @@
       "seed": 20262010,
       "workers": 50,
       "operations": 50,
-      "durationMs": 466,
+      "durationMs": 454,
       "responses": {
         "201": 1,
         "409 email_taken": 49
@@ -919,7 +919,7 @@
       "seed": 20262011,
       "workers": 50,
       "operations": 50,
-      "durationMs": 121,
+      "durationMs": 123,
       "responses": {
         "201": 11,
         "422 validation_failed": 6,
@@ -966,7 +966,7 @@
       "seed": 20263001,
       "workers": 50,
       "operations": 50,
-      "durationMs": 97,
+      "durationMs": 94,
       "responses": {
         "200": 49,
         "201": 1
@@ -1019,7 +1019,7 @@
       "seed": 20263002,
       "workers": 50,
       "operations": 50,
-      "durationMs": 96,
+      "durationMs": 95,
       "responses": {
         "200": 16,
         "201": 1,
@@ -1065,7 +1065,7 @@
       "seed": 20263003,
       "workers": 50,
       "operations": 50,
-      "durationMs": 129,
+      "durationMs": 124,
       "responses": {
         "201": 20,
         "409 insufficient_funds": 30
@@ -1158,7 +1158,7 @@
       "seed": 20263005,
       "workers": 50,
       "operations": 50,
-      "durationMs": 153,
+      "durationMs": 158,
       "responses": {
         "201": 40,
         "409 insufficient_funds": 10
@@ -1195,7 +1195,7 @@
       "seed": 20263006,
       "workers": 50,
       "operations": 50,
-      "durationMs": 91,
+      "durationMs": 93,
       "responses": {
         "201": 1,
         "409 request_not_pending": 49
@@ -1240,7 +1240,7 @@
       "seed": 20263007,
       "workers": 50,
       "operations": 20,
-      "durationMs": 102,
+      "durationMs": 105,
       "responses": {
         "200": 10,
         "409 request_not_pending": 10
@@ -1283,7 +1283,7 @@
       "seed": 20263008,
       "workers": 50,
       "operations": 50,
-      "durationMs": 159,
+      "durationMs": 161,
       "responses": {
         "201": 5,
         "409 insufficient_funds": 45
@@ -1320,10 +1320,10 @@
       "seed": 20263009,
       "workers": 50,
       "operations": 20,
-      "durationMs": 92,
+      "durationMs": 95,
       "responses": {
-        "200": 8,
-        "201": 12
+        "200": 6,
+        "201": 14
       },
       "finalState": {
         "ada": 4800,
@@ -1333,7 +1333,7 @@
         {
           "check": "every retry is 200 or 201",
           "ok": true,
-          "detail": "{\"200\":8,\"201\":12}"
+          "detail": "{\"200\":6,\"201\":14}"
         },
         {
           "check": "conservation",
@@ -1360,7 +1360,7 @@
       "seed": 20263010,
       "workers": 50,
       "operations": 50,
-      "durationMs": 466,
+      "durationMs": 457,
       "responses": {
         "201": 1,
         "409 email_taken": 49
@@ -1394,7 +1394,7 @@
       "seed": 20263011,
       "workers": 50,
       "operations": 50,
-      "durationMs": 126,
+      "durationMs": 129,
       "responses": {
         "201": 5,
         "400 missing_idempotency_key": 13,
@@ -1439,7 +1439,7 @@
       "seed": 20264001,
       "workers": 50,
       "operations": 50,
-      "durationMs": 90,
+      "durationMs": 98,
       "responses": {
         "200": 49,
         "201": 1
@@ -1492,7 +1492,7 @@
       "seed": 20264002,
       "workers": 50,
       "operations": 50,
-      "durationMs": 93,
+      "durationMs": 99,
       "responses": {
         "200": 16,
         "201": 1,
@@ -1538,7 +1538,7 @@
       "seed": 20264003,
       "workers": 50,
       "operations": 50,
-      "durationMs": 122,
+      "durationMs": 123,
       "responses": {
         "201": 21,
         "409 insufficient_funds": 29
@@ -1587,7 +1587,7 @@
       "seed": 20264004,
       "workers": 50,
       "operations": 50,
-      "durationMs": 398,
+      "durationMs": 405,
       "responses": {
         "201": 34,
         "409 insufficient_funds": 16
@@ -1631,7 +1631,7 @@
       "seed": 20264005,
       "workers": 50,
       "operations": 50,
-      "durationMs": 157,
+      "durationMs": 150,
       "responses": {
         "201": 36,
         "409 insufficient_funds": 14
@@ -1668,7 +1668,7 @@
       "seed": 20264006,
       "workers": 50,
       "operations": 50,
-      "durationMs": 93,
+      "durationMs": 95,
       "responses": {
         "201": 1,
         "409 request_not_pending": 49
@@ -1756,7 +1756,7 @@
       "seed": 20264008,
       "workers": 50,
       "operations": 50,
-      "durationMs": 149,
+      "durationMs": 151,
       "responses": {
         "201": 4,
         "409 insufficient_funds": 46
@@ -1793,10 +1793,10 @@
       "seed": 20264009,
       "workers": 50,
       "operations": 20,
-      "durationMs": 92,
+      "durationMs": 93,
       "responses": {
-        "200": 8,
-        "201": 12
+        "200": 7,
+        "201": 13
       },
       "finalState": {
         "ada": 4800,
@@ -1806,7 +1806,7 @@
         {
           "check": "every retry is 200 or 201",
           "ok": true,
-          "detail": "{\"200\":8,\"201\":12}"
+          "detail": "{\"200\":7,\"201\":13}"
         },
         {
           "check": "conservation",
@@ -1833,7 +1833,7 @@
       "seed": 20264010,
       "workers": 50,
       "operations": 50,
-      "durationMs": 459,
+      "durationMs": 452,
       "responses": {
         "201": 1,
         "409 email_taken": 49
@@ -1912,7 +1912,7 @@
       "seed": 20265001,
       "workers": 50,
       "operations": 50,
-      "durationMs": 92,
+      "durationMs": 95,
       "responses": {
         "200": 49,
         "201": 1
@@ -1965,7 +1965,7 @@
       "seed": 20265002,
       "workers": 50,
       "operations": 50,
-      "durationMs": 94,
+      "durationMs": 89,
       "responses": {
         "200": 19,
         "201": 1,
@@ -2011,7 +2011,7 @@
       "seed": 20265003,
       "workers": 50,
       "operations": 50,
-      "durationMs": 122,
+      "durationMs": 121,
       "responses": {
         "201": 16,
         "409 insufficient_funds": 34
@@ -2060,7 +2060,7 @@
       "seed": 20265004,
       "workers": 50,
       "operations": 50,
-      "durationMs": 393,
+      "durationMs": 397,
       "responses": {
         "201": 33,
         "409 insufficient_funds": 17
@@ -2104,7 +2104,7 @@
       "seed": 20265005,
       "workers": 50,
       "operations": 50,
-      "durationMs": 155,
+      "durationMs": 151,
       "responses": {
         "201": 27,
         "409 insufficient_funds": 23
@@ -2141,7 +2141,7 @@
       "seed": 20265006,
       "workers": 50,
       "operations": 50,
-      "durationMs": 100,
+      "durationMs": 92,
       "responses": {
         "201": 1,
         "409 request_not_pending": 49
@@ -2186,7 +2186,7 @@
       "seed": 20265007,
       "workers": 50,
       "operations": 20,
-      "durationMs": 105,
+      "durationMs": 107,
       "responses": {
         "200": 10,
         "409 request_not_pending": 10
@@ -2229,7 +2229,7 @@
       "seed": 20265008,
       "workers": 50,
       "operations": 50,
-      "durationMs": 146,
+      "durationMs": 151,
       "responses": {
         "201": 6,
         "409 insufficient_funds": 44
@@ -2266,10 +2266,10 @@
       "seed": 20265009,
       "workers": 50,
       "operations": 20,
-      "durationMs": 90,
+      "durationMs": 94,
       "responses": {
-        "200": 10,
-        "201": 10
+        "200": 8,
+        "201": 12
       },
       "finalState": {
         "ada": 4800,
@@ -2279,7 +2279,7 @@
         {
           "check": "every retry is 200 or 201",
           "ok": true,
-          "detail": "{\"200\":10,\"201\":10}"
+          "detail": "{\"200\":8,\"201\":12}"
         },
         {
           "check": "conservation",
@@ -2306,7 +2306,7 @@
       "seed": 20265010,
       "workers": 50,
       "operations": 50,
-      "durationMs": 450,
+      "durationMs": 452,
       "responses": {
         "201": 1,
         "409 email_taken": 49
@@ -2340,7 +2340,7 @@
       "seed": 20265011,
       "workers": 50,
       "operations": 50,
-      "durationMs": 134,
+      "durationMs": 121,
       "responses": {
         "201": 12,
         "401 unauthenticated": 12,

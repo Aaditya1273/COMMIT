@@ -1,7 +1,7 @@
 {
   "kind": "reference-campaign",
-  "runId": "20261002T040704Z-2a7c3d",
-  "factoryVersion": "1.0.0-rc.2",
+  "runId": "20261002T081130Z-4d127d",
+  "factoryVersion": "1.0.0-rc.3",
   "campaign": "pocketful-stage-1-reference",
   "moduleSha256": "d271b4f1cc77ee22e289013a181304308dd4e6149793d5a902d6558538b63f94",
   "seed": 7,
@@ -23,7 +23,7 @@
     "404 not_found": 10,
     "409 handle_taken": 5
   },
-  "durationMs": 4368,
+  "durationMs": 4519,
   "result": "agree",
   "initial": {
     "currency": "EUR",

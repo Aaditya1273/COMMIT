@@ -2,8 +2,8 @@ F                                                                        [100%]
 =================================== FAILURES ===================================
 ________________ test_a_hold_reserves_funds_without_moving_them ________________
 
-reset = <function reset.<locals>._reset at 0x7f53ae965220>
-api = <function api.<locals>._api at 0x7f53ae965430>
+reset = <function reset.<locals>._reset at 0x7fbfd8755220>
+api = <function api.<locals>._api at 0x7fbfd8755430>
 
     def test_a_hold_reserves_funds_without_moving_them(reset, api):
         reset(fx.fixture())
@@ -25,5 +25,5 @@ E       AssertionError: expected 201, got 404. POST /authorizations -> 404 '{"er
 harness/http.py:108: AssertionError
 =========================== short test summary info ============================
 FAILED pocketful/test/stage_2/test_sample.py::test_a_hold_reserves_funds_without_moving_them
-1 failed, 9 deselected in 0.14s
+1 failed, 9 deselected in 0.13s
 pytest exit 1 (1 = the stage-2 check ran and failed, as required)

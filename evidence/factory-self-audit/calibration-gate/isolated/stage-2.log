@@ -1,0 +1,1728 @@
+$ docker run --rm --network df-run-1a582e4eeea045beb1362a7c1ab2a9a1 -v ~/Wins/dark-factory-wearedevs:/work:ro -v ~/Wins/COMMIT/evidence/factory-self-audit/calibration-gate/isolated:/out -e PYTHONDONTWRITEBYTECODE=1 -e PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 -e COLUMNS=200 -w /work df-harness-runner python -m pytest pocketful/test/stage_2 --base-url http://df-svc-75e4cf8c9b6e:8080 -p harness.plugin --rootdir pocketful/test -q --harness-summary /out/stage-2.counts.json
+
+FFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFF                                                                                                                                                              [100%]
+================================================================================================ ERRORS ================================================================================================
+____________________________________________________________________ ERROR at setup of test_preceding_stage_accounts_survive_import ____________________________________________________________________
+
+request = <SubRequest 'previous_api' for <Function test_preceding_stage_accounts_survive_import>>
+
+    @pytest.fixture
+    def previous_api(request):
+        url = request.config.getoption('--previous-base-url')
+        if not url:
+>           pytest.fail('upgrade checks require the preceding stage: use harness run --repo '
+                        '--stage N, or supply --previous-base-url for development')
+E           Failed: upgrade checks require the preceding stage: use harness run --repo --stage N, or supply --previous-base-url for development
+
+harness/plugin.py:138: Failed
+=============================================================================================== FAILURES ===============================================================================================
+___________________________________________________________________________ test_routes_are_directly_navigable[/-pay-submit] ___________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, route = '/', anchor = 'pay-submit'
+
+    @pytest.mark.parametrize("route,anchor", [
+        ("/", "pay-submit"), ("/requests", "incoming-list"), ("/split", "split-submit"),
+        ("/signup", "signup-submit"), ("/login", "login-submit"),
+    ])
+    def test_routes_are_directly_navigable(seeded, page, route, anchor):
+>       log_in(page)
+
+pocketful/test/stage_2/test_sample.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_sample.py:37: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1e239c60>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_____________________________________________________________________ test_routes_are_directly_navigable[/requests-incoming-list] ______________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, route = '/requests', anchor = 'incoming-list'
+
+    @pytest.mark.parametrize("route,anchor", [
+        ("/", "pay-submit"), ("/requests", "incoming-list"), ("/split", "split-submit"),
+        ("/signup", "signup-submit"), ("/login", "login-submit"),
+    ])
+    def test_routes_are_directly_navigable(seeded, page, route, anchor):
+>       log_in(page)
+
+pocketful/test/stage_2/test_sample.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_sample.py:37: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1db76e80>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_______________________________________________________________________ test_routes_are_directly_navigable[/split-split-submit] ________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, route = '/split', anchor = 'split-submit'
+
+    @pytest.mark.parametrize("route,anchor", [
+        ("/", "pay-submit"), ("/requests", "incoming-list"), ("/split", "split-submit"),
+        ("/signup", "signup-submit"), ("/login", "login-submit"),
+    ])
+    def test_routes_are_directly_navigable(seeded, page, route, anchor):
+>       log_in(page)
+
+pocketful/test/stage_2/test_sample.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_sample.py:37: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d87ad40>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+______________________________________________________________________ test_routes_are_directly_navigable[/signup-signup-submit] _______________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, route = '/signup', anchor = 'signup-submit'
+
+    @pytest.mark.parametrize("route,anchor", [
+        ("/", "pay-submit"), ("/requests", "incoming-list"), ("/split", "split-submit"),
+        ("/signup", "signup-submit"), ("/login", "login-submit"),
+    ])
+    def test_routes_are_directly_navigable(seeded, page, route, anchor):
+>       log_in(page)
+
+pocketful/test/stage_2/test_sample.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_sample.py:37: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1db53600>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_______________________________________________________________________ test_routes_are_directly_navigable[/login-login-submit] ________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, route = '/login', anchor = 'login-submit'
+
+    @pytest.mark.parametrize("route,anchor", [
+        ("/", "pay-submit"), ("/requests", "incoming-list"), ("/split", "split-submit"),
+        ("/signup", "signup-submit"), ("/login", "login-submit"),
+    ])
+    def test_routes_are_directly_navigable(seeded, page, route, anchor):
+>       log_in(page)
+
+pocketful/test/stage_2/test_sample.py:61: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_sample.py:37: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d808040>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+__________________________________________________________________________ test_balance_is_formatted_and_carries_minor_units ___________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_balance_is_formatted_and_carries_minor_units(seeded, page):
+>       log_in(page)
+
+pocketful/test/stage_2/test_sample.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_sample.py:37: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1db52fc0>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+____________________________________________________________________________ test_refresh_observes_another_clients_payment _____________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, api = <function api.<locals>._api at 0x7f4a1d803c40>
+
+    def test_refresh_observes_another_clients_payment(seeded, page, api):
+>       log_in(page)
+
+pocketful/test/stage_2/test_sample.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_sample.py:37: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d801e40>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_______________________________________________________________________ test_paying_updates_the_balance_without_a_manual_reload ________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_paying_updates_the_balance_without_a_manual_reload(seeded, page):
+>       log_in(page)
+
+pocketful/test/stage_2/test_sample.py:87: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_sample.py:37: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1db74a40>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+____________________________________________________________________________ test_a_hold_reserves_funds_without_moving_them ____________________________________________________________________________
+
+reset = <function reset.<locals>._reset at 0x7f4a1d88d800>, api = <function api.<locals>._api at 0x7f4a1d88d760>
+
+    def test_a_hold_reserves_funds_without_moving_them(reset, api):
+        reset(fx.fixture())
+        ada = api().authenticate(fx.ADA['email'], fx.ADA['password'])
+>       held = assert_status(ada.post('/authorizations', json={'to_handle': 'bob', 'amount': 2000},
+                                      idempotency_key=new_key()), 201).json()
+
+pocketful/test/stage_2/test_sample.py:107: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = <Response [404 Not Found]>, expected = 201
+
+    def assert_status(resp: httpx.Response, expected: int) -> httpx.Response:
+>       assert resp.status_code == expected, \
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f"expected {expected}, got {resp.status_code}. {_describe(resp)}"
+E       AssertionError: expected 201, got 404. POST /authorizations -> 404 '{"error":{"code":"not_found","message":"no such endpoint"}}'
+
+harness/http.py:108: AssertionError
+_______________________________________________________________________________ test_signup_then_current_user_and_handle _______________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/signup'>
+
+    def test_signup_then_current_user_and_handle(seeded, page):
+        page.goto("/signup")
+>       page.fill(sel("signup-email"), "dee.ann@example.com")
+
+pocketful/test/stage_2/test_ui.py:46: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d88de40>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='signup-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+___________________________________________________________________________________ test_bad_login_shows_auth_error ____________________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_bad_login_shows_auth_error(seeded, page):
+>       log_in(page, password="nope nope nope", expect_success=False)
+
+pocketful/test/stage_2/test_ui.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d80b100>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_____________________________________________________________________________________________ test_logout ______________________________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_logout(seeded, page):
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d88b1a0>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+______________________________________________________________________________ test_minor_units_zero_has_no_decimal_point ______________________________________________________________________________
+
+reset = <function reset.<locals>._reset at 0x7f4a1d889800>, page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_minor_units_zero_has_no_decimal_point(reset, page):
+        reset(fx.fixture(currency="JPY"))
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d888900>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_______________________________________________________________________________ test_a_typed_decimal_becomes_minor_units _______________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_a_typed_decimal_becomes_minor_units(seeded, page):
+        """15 is 1500, 15.5 is 1550, 15.00 is 1500 in a minor_units 2 service."""
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d892200>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_________________________________________________________________________ test_too_many_decimal_places_is_refused_in_the_form __________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_too_many_decimal_places_is_refused_in_the_form(seeded, page):
+        """15.005 has more places than the currency allows: refused, not rounded."""
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:101: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d88dc60>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_______________________________________________________________________________ test_insufficient_funds_shows_pay_error ________________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_insufficient_funds_shows_pay_error(seeded, page):
+>       log_in(page, email=fx.CY["email"])       # Cy holds 500
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+pocketful/test/stage_2/test_ui.py:109: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d89cea0>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+____________________________________________________________________________ test_paying_an_unknown_handle_shows_pay_error _____________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_paying_an_unknown_handle_shows_pay_error(seeded, page):
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:115: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d888220>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_______________________________________________________________________________ test_feed_shows_a_payment_with_its_parts _______________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, api = <function api.<locals>._api at 0x7f4a1d803ba0>
+
+    def test_feed_shows_a_payment_with_its_parts(seeded, page, api):
+        ada = api().authenticate(fx.ADA["email"], fx.ADA["password"])
+        made = ada.post("/payments", json={
+            "to_handle": "bob", "amount": 2500, "note": "dinner", "visibility": "public"},
+            idempotency_key=new_key()).json()
+        pid = made["payment_id"]
+    
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d88f9c0>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_______________________________________________________________________________ test_empty_note_element_is_still_present _______________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, api = <function api.<locals>._api at 0x7f4a1d8036a0>
+
+    def test_empty_note_element_is_still_present(seeded, page, api):
+        ada = api().authenticate(fx.ADA["email"], fx.ADA["password"])
+        pid = ada.post("/payments", json={"to_handle": "bob", "amount": 100},
+                       idempotency_key=new_key()).json()["payment_id"]
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d802520>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_________________________________________________________________________ test_empty_activity_is_shown_when_nothing_is_visible _________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_empty_activity_is_shown_when_nothing_is_visible(seeded, page):
+>       log_in(page, email=fx.CY["email"])
+
+pocketful/test/stage_2/test_ui.py:150: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d889620>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+__________________________________________________________________________ test_private_payment_is_hidden_from_a_third_party ___________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, api = <function api.<locals>._api at 0x7f4a1d7f39c0>
+
+    def test_private_payment_is_hidden_from_a_third_party(seeded, page, api):
+        bob = api().authenticate(fx.BOB["email"], fx.BOB["password"])
+        pid = bob.post("/payments", json={
+            "to_handle": "cy", "amount": 100, "visibility": "private"},
+            idempotency_key=new_key()).json()["payment_id"]
+>       log_in(page)                              # Ada is neither party
+        ^^^^^^^^^^^^
+
+pocketful/test/stage_2/test_ui.py:160: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d7f3ba0>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_________________________________________________________________________________ test_feed_is_newest_first_in_the_dom _________________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, api = <function api.<locals>._api at 0x7f4a1d8cba60>
+
+    def test_feed_is_newest_first_in_the_dom(seeded, page, api):
+        ada = api().authenticate(fx.ADA["email"], fx.ADA["password"])
+        made = [ada.post("/payments", json={"to_handle": "bob", "amount": 10 + i},
+                        idempotency_key=new_key()).json() for i in range(3)]
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:170: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d8c96c0>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+__________________________________________________________________________________ test_incoming_request_can_be_paid ___________________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, api = <function api.<locals>._api at 0x7f4a1d803880>
+
+    def test_incoming_request_can_be_paid(seeded, page, api):
+        bob = api().authenticate(fx.BOB["email"], fx.BOB["password"])
+        rid = bob.post("/requests", json={"payer_handle": "ada", "amount": 1200},
+                       idempotency_key=new_key()).json()["request_id"]
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:189: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1e238ae0>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+________________________________________________________________________________ test_incoming_request_can_be_declined _________________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, api = <function api.<locals>._api at 0x7f4a1d876ca0>
+
+    def test_incoming_request_can_be_declined(seeded, page, api):
+        bob = api().authenticate(fx.BOB["email"], fx.BOB["password"])
+        rid = bob.post("/requests", json={"payer_handle": "ada", "amount": 100},
+                       idempotency_key=new_key()).json()["request_id"]
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:204: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d888860>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+________________________________________________________________________________ test_outgoing_request_can_be_cancelled ________________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, api = <function api.<locals>._api at 0x7f4a1d89c900>
+
+    def test_outgoing_request_can_be_cancelled(seeded, page, api):
+        ada = api().authenticate(fx.ADA["email"], fx.ADA["password"])
+        rid = ada.post("/requests", json={"payer_handle": "bob", "amount": 100},
+                       idempotency_key=new_key()).json()["request_id"]
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:214: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d875080>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_______________________________________________________________________ test_paying_a_request_without_funds_shows_request_error ________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, api = <function api.<locals>._api at 0x7f4a1d874a40>
+
+    def test_paying_a_request_without_funds_shows_request_error(seeded, page, api):
+        ada = api().authenticate(fx.ADA["email"], fx.ADA["password"])
+        rid = ada.post("/requests", json={"payer_handle": "cy", "amount": 90_000},
+                       idempotency_key=new_key()).json()["request_id"]
+>       log_in(page, email=fx.CY["email"])
+
+pocketful/test/stage_2/test_ui.py:227: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d877f60>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+________________________________________________________________________ test_empty_requests_is_shown_when_both_lists_are_empty ________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_empty_requests_is_shown_when_both_lists_are_empty(seeded, page):
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:234: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d8cb740>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+______________________________________________________________________________ test_split_preview_matches_the_server_rule ______________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_split_preview_matches_the_server_rule(seeded, page):
+        """10.00 among three is 334, 333, 333 -- computed before anything is posted."""
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:243: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d8c8ea0>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_______________________________________________________________________________ test_split_preview_follows_handle_order ________________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_split_preview_follows_handle_order(seeded, page):
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:254: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d7f0220>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_______________________________________________________________________________ test_split_submits_and_creates_requests ________________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, api = <function api.<locals>._api at 0x7f4a1d8742c0>
+
+    def test_split_submits_and_creates_requests(seeded, page, api):
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:264: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d8c8ea0>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+________________________________________________________________________________ test_split_error_on_an_unknown_handle _________________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_split_error_on_an_unknown_handle(seeded, page):
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:281: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d876b60>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_______________________________________________________________________ test_submitting_the_pay_form_twice_moves_the_money_once ________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_submitting_the_pay_form_twice_moves_the_money_once(seeded, page):
+        """The form still holds its values after a successful pay, so a second click
+        sends the same body. A form that mints its idempotency key at submit time
+        sends a new one and pays twice."""
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:295: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d875080>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_______________________________________________________________________________ test_a_double_submit_leaves_one_payment ________________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>, api = <function api.<locals>._api at 0x7f4a1d891a80>
+
+    def test_a_double_submit_leaves_one_payment(seeded, page, api):
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:309: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d89cfe0>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+_________________________________________________________________________ test_changing_the_form_first_is_a_different_payment __________________________________________________________________________
+
+seeded = {'currency': 'EUR', 'minor_units': 2, 'users': [{'id': 'u_ada', 'email': 'ada@example.com', 'password': 'correct horse...'id': 'u_cy', 'email': 'cy@example.com', 'password': 'correct horse', 'display_name': 'Cy', ...}], 'payments': [], ...}
+page = <Page url='http://df-svc-75e4cf8c9b6e:8080/login'>
+
+    def test_changing_the_form_first_is_a_different_payment(seeded, page):
+        """Editing a field starts a new payment, so it must not replay the old one."""
+>       log_in(page)
+
+pocketful/test/stage_2/test_ui.py:324: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+pocketful/test/stage_2/test_ui.py:34: in log_in
+    page.fill(sel("login-email"), email or fx.ADA["email"])
+/usr/local/lib/python3.12/site-packages/playwright/sync_api/_generated.py:11332: in fill
+    self._sync(
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_page.py:930: in fill
+    return await self._main_frame.fill(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:637: in fill
+    await self._fill(**locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_frame.py:649: in _fill
+    await self._channel.send("fill", self._timeout, locals_to_params(locals()))
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:76: in send
+    return await self._connection.wrap_api_call(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <playwright._impl._connection.Connection object at 0x7f4a1e340f50>, cb = <function Channel.send.<locals>.<lambda> at 0x7f4a1d877ec0>, is_internal = False, title = None
+
+    async def wrap_api_call(
+        self, cb: Callable[[], Any], is_internal: bool = False, title: str = None
+    ) -> Any:
+        if self._api_zone.get():
+            return await cb()
+        task = asyncio.current_task(self._loop)
+        parsed_st = _attach_api_call_information(
+            getattr(task, "__pw_stack__", None) or _capture_stack_trace(),
+            is_internal,
+            title,
+        )
+        self._api_zone.set(parsed_st)
+        try:
+            return await cb()
+        except Exception as error:
+>           raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+E           playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+E           Call log:
+E             - waiting for locator("[data-testid='login-email']")
+
+/usr/local/lib/python3.12/site-packages/playwright/_impl/_connection.py:632: TimeoutError
+=========================================================================================== warnings summary ===========================================================================================
+../usr/local/lib/python3.12/site-packages/_pytest/cacheprovider.py:469
+  /usr/local/lib/python3.12/site-packages/_pytest/cacheprovider.py:469: PytestCacheWarning: cache could not write path /work/pocketful/test/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/work/pocketful/test/.pytest_cache/v/cache/nodeids'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+../usr/local/lib/python3.12/site-packages/_pytest/cacheprovider.py:423
+  /usr/local/lib/python3.12/site-packages/_pytest/cacheprovider.py:423: PytestCacheWarning: cache could not write path /work/pocketful/test/.pytest_cache/v/cache/lastfailed: [Errno 30] Read-only file system: '/work/pocketful/test/.pytest_cache/v/cache/lastfailed'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================================================================================= short test summary info ========================================================================================
+FAILED pocketful/test/stage_2/test_sample.py::test_routes_are_directly_navigable[/-pay-submit] - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_sample.py::test_routes_are_directly_navigable[/requests-incoming-list] - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_sample.py::test_routes_are_directly_navigable[/split-split-submit] - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_sample.py::test_routes_are_directly_navigable[/signup-signup-submit] - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_sample.py::test_routes_are_directly_navigable[/login-login-submit] - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_sample.py::test_balance_is_formatted_and_carries_minor_units - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_sample.py::test_refresh_observes_another_clients_payment - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_sample.py::test_paying_updates_the_balance_without_a_manual_reload - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_sample.py::test_a_hold_reserves_funds_without_moving_them - AssertionError: expected 201, got 404. POST /authorizations -> 404 '{"error":{"code":"not_found","mess...
+FAILED pocketful/test/stage_2/test_ui.py::test_signup_then_current_user_and_handle - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_bad_login_shows_auth_error - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_logout - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_minor_units_zero_has_no_decimal_point - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_a_typed_decimal_becomes_minor_units - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_too_many_decimal_places_is_refused_in_the_form - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_insufficient_funds_shows_pay_error - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_paying_an_unknown_handle_shows_pay_error - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_feed_shows_a_payment_with_its_parts - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_empty_note_element_is_still_present - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_empty_activity_is_shown_when_nothing_is_visible - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_private_payment_is_hidden_from_a_third_party - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_feed_is_newest_first_in_the_dom - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_incoming_request_can_be_paid - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_incoming_request_can_be_declined - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_outgoing_request_can_be_cancelled - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_paying_a_request_without_funds_shows_request_error - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_empty_requests_is_shown_when_both_lists_are_empty - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_split_preview_matches_the_server_rule - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_split_preview_follows_handle_order - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_split_submits_and_creates_requests - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_split_error_on_an_unknown_handle - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_submitting_the_pay_form_twice_moves_the_money_once - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_a_double_submit_leaves_one_payment - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+FAILED pocketful/test/stage_2/test_ui.py::test_changing_the_form_first_is_a_different_payment - playwright._impl._errors.TimeoutError: Page.fill: Timeout 10000ms exceeded.
+ERROR pocketful/test/stage_2/test_sample.py::test_preceding_stage_accounts_survive_import - Failed: upgrade checks require the preceding stage: use harness run --repo --stage N, or supply --previou...
+34 failed, 2 warnings, 1 error in 338.65s (0:05:38)
+

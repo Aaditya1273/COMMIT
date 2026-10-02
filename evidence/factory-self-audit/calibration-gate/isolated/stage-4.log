@@ -1,0 +1,118 @@
+$ docker run --rm --network df-run-1a582e4eeea045beb1362a7c1ab2a9a1 -v ~/Wins/dark-factory-wearedevs:/work:ro -v ~/Wins/COMMIT/evidence/factory-self-audit/calibration-gate/isolated:/out -e PYTHONDONTWRITEBYTECODE=1 -e PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 -e COLUMNS=200 -w /work df-harness-runner python -m pytest pocketful/test/stage_4 --base-url http://df-svc-75e4cf8c9b6e:8080 -p harness.plugin --rootdir pocketful/test -q --harness-summary /out/stage-4.counts.json
+
+FFFFF                                                                                                                                                                                            [100%]
+=============================================================================================== FAILURES ===============================================================================================
+_______________________________________________________________________________ test_other_payments_carry_refund_of_null _______________________________________________________________________________
+
+world = namespace(ada=<harness.http.Api object at 0x7f29fb6ec050>, bob=<harness.http.Api object at 0x7f29fb4fb9b0>)
+
+    def test_other_payments_carry_refund_of_null(world):
+>       assert pay(world.ada)["refund_of"] is None
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'refund_of'
+
+pocketful/test/stage_4/test_sample.py:44: KeyError
+______________________________________________________________________________ test_a_refund_is_a_linked_reverse_payment _______________________________________________________________________________
+
+world = namespace(ada=<harness.http.Api object at 0x7f29fb4fb350>, bob=<harness.http.Api object at 0x7f29fb4f94f0>)
+
+    def test_a_refund_is_a_linked_reverse_payment(world):
+        payment = pay(world.ada)
+>       refunded = assert_status(refund(world.bob, payment), 201).json()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+pocketful/test/stage_4/test_sample.py:49: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = <Response [404 Not Found]>, expected = 201
+
+    def assert_status(resp: httpx.Response, expected: int) -> httpx.Response:
+>       assert resp.status_code == expected, \
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f"expected {expected}, got {resp.status_code}. {_describe(resp)}"
+E       AssertionError: expected 201, got 404. POST /payments/p_d6fff322-048d-4665-9084-d0a43e620a34/refunds -> 404 '{"error":{"code":"not_found","message":"no such endpoint"}}'
+
+harness/http.py:108: AssertionError
+____________________________________________________________________________ test_a_refund_replay_returns_the_original_body ____________________________________________________________________________
+
+world = namespace(ada=<harness.http.Api object at 0x7f29fb4f9d00>, bob=<harness.http.Api object at 0x7f29fb4fc650>)
+
+    def test_a_refund_replay_returns_the_original_body(world):
+        payment, key = pay(world.ada), new_key()
+>       first = assert_status(refund(world.bob, payment, key=key), 201).json()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+pocketful/test/stage_4/test_sample.py:57: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = <Response [404 Not Found]>, expected = 201
+
+    def assert_status(resp: httpx.Response, expected: int) -> httpx.Response:
+>       assert resp.status_code == expected, \
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f"expected {expected}, got {resp.status_code}. {_describe(resp)}"
+E       AssertionError: expected 201, got 404. POST /payments/p_0316a399-ad87-4d4c-aee8-1c35cffe7d7b/refunds -> 404 '{"error":{"code":"not_found","message":"no such endpoint"}}'
+
+harness/http.py:108: AssertionError
+____________________________________________________________________________ test_operator_can_correct_a_payment_in_a_batch ____________________________________________________________________________
+
+world = namespace(ada=<harness.http.Api object at 0x7f29fb4fe480>, bob=<harness.http.Api object at 0x7f29fc08c800>)
+
+    def test_operator_can_correct_a_payment_in_a_batch(world):
+        payment = pay(world.ada, amount=100)
+>       body = assert_status(world.ada.post("/correction-batches", json=batch(payment),
+                                            idempotency_key=new_key()), 201).json()
+
+pocketful/test/stage_4/test_sample.py:63: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = <Response [404 Not Found]>, expected = 201
+
+    def assert_status(resp: httpx.Response, expected: int) -> httpx.Response:
+>       assert resp.status_code == expected, \
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f"expected {expected}, got {resp.status_code}. {_describe(resp)}"
+E       AssertionError: expected 201, got 404. POST /correction-batches -> 404 '{"error":{"code":"not_found","message":"no such endpoint"}}'
+
+harness/http.py:108: AssertionError
+_______________________________________________________________________________ test_a_batch_needs_a_settlement_operator _______________________________________________________________________________
+
+world = namespace(ada=<harness.http.Api object at 0x7f29fb502ba0>, bob=<harness.http.Api object at 0x7f29fb503980>)
+
+    def test_a_batch_needs_a_settlement_operator(world):
+        payment = pay(world.bob, to_handle="ada", amount=100)
+>       assert_error(world.bob.post("/correction-batches", json=batch(payment),
+                                    idempotency_key=new_key()), 403, "forbidden")
+
+pocketful/test/stage_4/test_sample.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+resp = <Response [404 Not Found]>, status = 403, code = 'forbidden'
+
+    def assert_error(resp: httpx.Response, status: int, code: str) -> httpx.Response:
+        """Assert an error response's status and `error.code` together.
+    
+        Both are asserted in one place so a failure reports the actual code rather
+        than only the status, which is what makes a wrong-code failure debuggable.
+        """
+        actual = error_code(resp) if 400 <= resp.status_code < 600 else None
+>       assert resp.status_code == status and actual == code, (
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            f"expected {status} {code}, got {resp.status_code} {actual}. {_describe(resp)}")
+E       AssertionError: expected 403 forbidden, got 404 not_found. POST /correction-batches -> 404 '{"error":{"code":"not_found","message":"no such endpoint"}}'
+
+harness/http.py:134: AssertionError
+=========================================================================================== warnings summary ===========================================================================================
+../usr/local/lib/python3.12/site-packages/_pytest/cacheprovider.py:469
+  /usr/local/lib/python3.12/site-packages/_pytest/cacheprovider.py:469: PytestCacheWarning: cache could not write path /work/pocketful/test/.pytest_cache/v/cache/nodeids: [Errno 30] Read-only file system: '/work/pocketful/test/.pytest_cache/v/cache/nodeids'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================================================================================= short test summary info ========================================================================================
+FAILED pocketful/test/stage_4/test_sample.py::test_other_payments_carry_refund_of_null - KeyError: 'refund_of'
+FAILED pocketful/test/stage_4/test_sample.py::test_a_refund_is_a_linked_reverse_payment - AssertionError: expected 201, got 404. POST /payments/p_d6fff322-048d-4665-9084-d0a43e620a34/refunds -> 404...
+FAILED pocketful/test/stage_4/test_sample.py::test_a_refund_replay_returns_the_original_body - AssertionError: expected 201, got 404. POST /payments/p_0316a399-ad87-4d4c-aee8-1c35cffe7d7b/refunds -...
+FAILED pocketful/test/stage_4/test_sample.py::test_operator_can_correct_a_payment_in_a_batch - AssertionError: expected 201, got 404. POST /correction-batches -> 404 '{"error":{"code":"not_found","...
+FAILED pocketful/test/stage_4/test_sample.py::test_a_batch_needs_a_settlement_operator - AssertionError: expected 403 forbidden, got 404 not_found. POST /correction-batches -> 404 '{"error":{"code"...
+5 failed, 1 warning in 0.58s
+

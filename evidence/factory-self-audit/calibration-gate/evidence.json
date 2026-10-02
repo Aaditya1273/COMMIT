@@ -1,13 +1,13 @@
 {
   "schemaVersion": 2,
   "kind": "commit-evidence",
-  "runId": "20261002T040633Z-5dd507",
-  "factoryVersion": "1.0.0-rc.2",
+  "runId": "20261002T081100Z-0f8bcc",
+  "factoryVersion": "1.0.0-rc.3",
   "stage": "calibration / pocketful stage 1",
   "specification": "dark-factory-wearedevs/pocketful/spec/stage-1.md (kickoff commit 803560d)",
   "plan": "calibration/verification/plan.json",
   "revision": {
-    "commit": "72aa9ed4fbcf80c6d73cffc3d8662be41a70d4cd",
+    "commit": "f9837321d140e35eef340bde368db31bb16583c0",
     "branch": "main",
     "targetDirty": false,
     "targetDigest": "f8c1a458f4d9411512fac334aa89715dec1a1f80481efd85a99412515f5fc0dc",
@@ -15,7 +15,7 @@
     "candidateChanged": false
   },
   "environment": {
-    "factoryVersion": "1.0.0-rc.2",
+    "factoryVersion": "1.0.0-rc.3",
     "node": "v26.5.0",
     "platform": "linux",
     "release": "7.1.5-arch1-2",
@@ -24,12 +24,12 @@
     "python": "Python 3.14.6",
     "docker": {
       "installed": true,
-      "daemonReachable": false,
-      "detail": "binary present (Docker version 29.6.2, build dfc4efb1e2), daemon unreachable: failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory"
+      "daemonReachable": true,
+      "detail": "daemon 29.6.2"
     }
   },
-  "startedAt": "2026-10-02T04:06:33.994Z",
-  "finishedAt": "2026-10-02T04:07:23.159Z",
+  "startedAt": "2026-10-02T08:11:00.120Z",
+  "finishedAt": "2026-10-02T08:17:59.974Z",
   "service": {
     "start": "node --no-warnings src/server.ts",
     "healthy": true
@@ -44,7 +44,7 @@
       "status": "PASSED",
       "reason": null,
       "exitCode": 0,
-      "durationMs": 1080,
+      "durationMs": 1066,
       "outputBytes": 0,
       "outputTruncated": false,
       "redactions": 0,
@@ -61,7 +61,7 @@
       "status": "PASSED",
       "reason": null,
       "exitCode": 0,
-      "durationMs": 1104,
+      "durationMs": 1166,
       "outputBytes": 0,
       "outputTruncated": false,
       "redactions": 0,
@@ -77,11 +77,11 @@
         "§3.1",
         "§3.2"
       ],
-      "command": "curl -sf 'http://127.0.0.1:46311'/health",
+      "command": "curl -sf 'http://127.0.0.1:33885'/health",
       "status": "PASSED",
       "reason": null,
       "exitCode": 0,
-      "durationMs": 8,
+      "durationMs": 7,
       "outputBytes": 15,
       "outputTruncated": false,
       "redactions": 0,
@@ -96,16 +96,16 @@
       "requirements": [
         "stage-1 sample and shipped suites"
       ],
-      "command": "cd '../dark-factory-wearedevs' && .venv/bin/python -m pytest pocketful/test/stage_1 -p harness.plugin --base-url 'http://127.0.0.1:46311' -q -p no:cacheprovider",
+      "command": "cd '../dark-factory-wearedevs' && .venv/bin/python -m pytest pocketful/test/stage_1 -p harness.plugin --base-url 'http://127.0.0.1:33885' -q -p no:cacheprovider",
       "status": "PASSED",
       "reason": null,
       "exitCode": 0,
-      "durationMs": 19417,
+      "durationMs": 19248,
       "outputBytes": 261,
       "outputTruncated": false,
       "redactions": 0,
       "log": "logs/shipped-checks.log",
-      "logSha256": "28a87217a83ed0c55fdcf8c34e19b3287667b8074f74aef562c3be47daf911a6",
+      "logSha256": "7e23f38d2ca8da48973569b5fa00cd912d96da1e7c7b029a06afea4df293829c",
       "report": null
     },
     {
@@ -115,16 +115,16 @@
       "requirements": [
         "a stage-1 folder must not pass the stage-2 suite: stage-2 holds must be absent"
       ],
-      "command": "cd '../dark-factory-wearedevs' && .venv/bin/python -m pytest pocketful/test/stage_2/test_sample.py -k test_a_hold_reserves_funds_without_moving_them -p harness.plugin --base-url 'http://127.0.0.1:46311' -q -p no:cacheprovider; rc=$?; echo \"pytest exit $rc (1 = the stage-2 check ran and failed, as required)\"; test $rc -eq 1",
+      "command": "cd '../dark-factory-wearedevs' && .venv/bin/python -m pytest pocketful/test/stage_2/test_sample.py -k test_a_hold_reserves_funds_without_moving_them -p harness.plugin --base-url 'http://127.0.0.1:33885' -q -p no:cacheprovider; rc=$?; echo \"pytest exit $rc (1 = the stage-2 check ran and failed, as required)\"; test $rc -eq 1",
       "status": "PASSED",
       "reason": null,
       "exitCode": 0,
-      "durationMs": 389,
+      "durationMs": 391,
       "outputBytes": 1571,
       "outputTruncated": false,
       "redactions": 0,
       "log": "logs/overshoot-probe.log",
-      "logSha256": "046540fceebb9c362849268fdebe4cd92e9682f97f1e06993cd6802b9c7b3ce5",
+      "logSha256": "fb4545dd8caa98c2b9ae67fe7775840c382e1922e2ff96a52935d5b9d33221ee",
       "report": null
     },
     {
@@ -142,11 +142,11 @@
         "§10",
         "§11"
       ],
-      "command": "node --no-warnings calibration/verification/contract.ts --base-url 'http://127.0.0.1:46311' --out 'evidence/factory-self-audit/calibration-gate'/contract",
+      "command": "node --no-warnings calibration/verification/contract.ts --base-url 'http://127.0.0.1:33885' --out 'evidence/factory-self-audit/calibration-gate'/contract",
       "status": "PASSED",
       "reason": null,
       "exitCode": 0,
-      "durationMs": 2744,
+      "durationMs": 2767,
       "outputBytes": 31,
       "outputTruncated": false,
       "redactions": 0,
@@ -165,16 +165,16 @@
         "§9",
         "§11"
       ],
-      "command": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url 'http://127.0.0.1:46311' --seed 481927 --operations 1000 --out 'evidence/factory-self-audit/calibration-gate'/reference-481927",
+      "command": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url 'http://127.0.0.1:33885' --seed 481927 --operations 1000 --out 'evidence/factory-self-audit/calibration-gate'/reference-481927",
       "status": "PASSED",
       "reason": null,
       "exitCode": 0,
-      "durationMs": 5080,
+      "durationMs": 5200,
       "outputBytes": 963,
       "outputTruncated": false,
       "redactions": 0,
       "log": "logs/reference-481927.log",
-      "logSha256": "64aefadd2b3f41e63f648dd0a422da3a77c999625763ecde43fd95e6942c6735",
+      "logSha256": "4ceab93b29768733c2a03533fad9dbaec2e87dc0b1adbe2fb17b78da0d8005c8",
       "report": "reference-481927/reference-report.json"
     },
     {
@@ -188,16 +188,16 @@
         "§9",
         "§11"
       ],
-      "command": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url 'http://127.0.0.1:46311' --seed 7 --operations 1000 --out 'evidence/factory-self-audit/calibration-gate'/reference-7",
+      "command": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url 'http://127.0.0.1:33885' --seed 7 --operations 1000 --out 'evidence/factory-self-audit/calibration-gate'/reference-7",
       "status": "PASSED",
       "reason": null,
       "exitCode": 0,
-      "durationMs": 4475,
+      "durationMs": 4605,
       "outputBytes": 928,
       "outputTruncated": false,
       "redactions": 0,
       "log": "logs/reference-7.log",
-      "logSha256": "abc5b1f754011baf61e0e70727e67317aa9d501c5646831c410bc388ee8a32d1",
+      "logSha256": "a4d0213b01df5901118c264fd5d3123b9261d9dd07cfc5615c8d97feb5a25a0f",
       "report": "reference-7/reference-report.json"
     },
     {
@@ -211,16 +211,16 @@
         "§9",
         "§11"
       ],
-      "command": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url 'http://127.0.0.1:46311' --seed 90210 --operations 1000 --out 'evidence/factory-self-audit/calibration-gate'/reference-90210",
+      "command": "node --no-warnings commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url 'http://127.0.0.1:33885' --seed 90210 --operations 1000 --out 'evidence/factory-self-audit/calibration-gate'/reference-90210",
       "status": "PASSED",
       "reason": null,
       "exitCode": 0,
-      "durationMs": 4740,
+      "durationMs": 4895,
       "outputBytes": 960,
       "outputTruncated": false,
       "redactions": 0,
       "log": "logs/reference-90210.log",
-      "logSha256": "1b46c41eb9d9996d83b4f67d15dddaedf79a7a93de59e8ac50b095db5a41097c",
+      "logSha256": "5051e651f12bb2a0d5512622ced1743663b5766ba5def21bce0ce9083e47f2f6",
       "report": "reference-90210/reference-report.json"
     },
     {
@@ -233,11 +233,11 @@
         "§7",
         "§11"
       ],
-      "command": "node --no-warnings calibration/verification/adversarial.ts --base-url 'http://127.0.0.1:46311' --seed 20261001 --workers 50 --rounds 5 --out 'evidence/factory-self-audit/calibration-gate'/adversarial",
+      "command": "node --no-warnings calibration/verification/adversarial.ts --base-url 'http://127.0.0.1:33885' --seed 20261001 --workers 50 --rounds 5 --out 'evidence/factory-self-audit/calibration-gate'/adversarial",
       "status": "PASSED",
       "reason": null,
       "exitCode": 0,
-      "durationMs": 9659,
+      "durationMs": 9758,
       "outputBytes": 2360,
       "outputTruncated": false,
       "redactions": 0,
@@ -268,15 +268,15 @@
       "blocking": true,
       "requirements": [],
       "command": "docker build --no-cache -t commit-calibration-stage-1 calibration/pocketful-stage-1",
-      "status": "BLOCKED",
-      "reason": "environment precondition not met: docker info",
-      "exitCode": null,
-      "durationMs": 0,
-      "outputBytes": 558,
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 2618,
+      "outputBytes": 1376,
       "outputTruncated": false,
       "redactions": 0,
       "log": "logs/clean-build.log",
-      "logSha256": "9fdf0aa0b4c15e72859601257f0ca5ed4c1ebcad687ece0f4739bf6175b288dc",
+      "logSha256": "82fc5563cb479e7387d502ff985deebf555d92642ac1f47c1daa5e6a117284ec",
       "report": null
     },
     {
@@ -286,16 +286,16 @@
       "requirements": [
         "§2 no outbound network at run time, 2 vCPU, 2 GiB"
       ],
-      "command": "PYTHONPATH='../dark-factory-wearedevs' '../dark-factory-wearedevs'/.venv/bin/python -m harness run --track pocketful --build calibration/pocketful-stage-1 --mode isolated --stage 1 --out 'evidence/factory-self-audit/calibration-gate'/isolated",
-      "status": "BLOCKED",
-      "reason": "environment precondition not met: docker info",
-      "exitCode": null,
-      "durationMs": 0,
-      "outputBytes": 558,
+      "command": "PYTHONPATH='../dark-factory-wearedevs' '../dark-factory-wearedevs'/.venv/bin/python -m harness run --track pocketful --build calibration/pocketful-stage-1 --mode isolated --stage 1 --out 'evidence/factory-self-audit/calibration-gate'/isolated; echo \"harness exit $? (the worst of all suites, including the next stage's, which must fail; judged from report.json instead)\"; node --no-warnings calibration/verification/isolated-check.ts 'evidence/factory-self-audit/calibration-gate'/isolated/report.json 1",
+      "status": "PASSED",
+      "reason": null,
+      "exitCode": 0,
+      "durationMs": 367602,
+      "outputBytes": 1225,
       "outputTruncated": false,
       "redactions": 0,
       "log": "logs/offline-isolated.log",
-      "logSha256": "9fdf0aa0b4c15e72859601257f0ca5ed4c1ebcad687ece0f4739bf6175b288dc",
+      "logSha256": "0e46c79ddf0e13896f743db656d1072298b77d7cd13fa9d5d8ad2ca2b6dddd32",
       "report": null
     }
   ],
@@ -308,8 +308,8 @@
     },
     "reference-481927": {
       "kind": "reference-campaign",
-      "runId": "20261002T040659Z-e2e228",
-      "factoryVersion": "1.0.0-rc.2",
+      "runId": "20261002T081125Z-678be0",
+      "factoryVersion": "1.0.0-rc.3",
       "campaign": "pocketful-stage-1-reference",
       "moduleSha256": "d271b4f1cc77ee22e289013a181304308dd4e6149793d5a902d6558538b63f94",
       "seed": 481927,
@@ -332,15 +332,15 @@
         "422 self_request": 7,
         "409 handle_taken": 4
       },
-      "durationMs": 4999,
+      "durationMs": 5114,
       "result": "agree",
       "firstDivergence": null,
       "reproduction": "node commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url <url> --seed 481927 --operations 1000"
     },
     "reference-7": {
       "kind": "reference-campaign",
-      "runId": "20261002T040704Z-2a7c3d",
-      "factoryVersion": "1.0.0-rc.2",
+      "runId": "20261002T081130Z-4d127d",
+      "factoryVersion": "1.0.0-rc.3",
       "campaign": "pocketful-stage-1-reference",
       "moduleSha256": "d271b4f1cc77ee22e289013a181304308dd4e6149793d5a902d6558538b63f94",
       "seed": 7,
@@ -362,15 +362,15 @@
         "404 not_found": 10,
         "409 handle_taken": 5
       },
-      "durationMs": 4368,
+      "durationMs": 4519,
       "result": "agree",
       "firstDivergence": null,
       "reproduction": "node commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url <url> --seed 7 --operations 1000"
     },
     "reference-90210": {
       "kind": "reference-campaign",
-      "runId": "20261002T040708Z-d65cae",
-      "factoryVersion": "1.0.0-rc.2",
+      "runId": "20261002T081135Z-60b893",
+      "factoryVersion": "1.0.0-rc.3",
       "campaign": "pocketful-stage-1-reference",
       "moduleSha256": "d271b4f1cc77ee22e289013a181304308dd4e6149793d5a902d6558538b63f94",
       "seed": 90210,
@@ -393,7 +393,7 @@
         "409 email_taken": 3,
         "409 handle_taken": 5
       },
-      "durationMs": 4659,
+      "durationMs": 4806,
       "result": "agree",
       "firstDivergence": null,
       "reproduction": "node commit/campaign.ts --module calibration/verification/reference.campaign.ts --base-url <url> --seed 90210 --operations 1000"
@@ -433,13 +433,13 @@
       "path": "logs/shipped-checks.log",
       "type": "log",
       "producer": "shipped-checks",
-      "sha256": "28a87217a83ed0c55fdcf8c34e19b3287667b8074f74aef562c3be47daf911a6"
+      "sha256": "7e23f38d2ca8da48973569b5fa00cd912d96da1e7c7b029a06afea4df293829c"
     },
     {
       "path": "logs/overshoot-probe.log",
       "type": "log",
       "producer": "overshoot-probe",
-      "sha256": "046540fceebb9c362849268fdebe4cd92e9682f97f1e06993cd6802b9c7b3ce5"
+      "sha256": "fb4545dd8caa98c2b9ae67fe7775840c382e1922e2ff96a52935d5b9d33221ee"
     },
     {
       "path": "logs/contract.log",
@@ -451,43 +451,43 @@
       "path": "contract/contract-report.json",
       "type": "report",
       "producer": "contract",
-      "sha256": "c8313dd94fe31cfe53d69f04160f4d19c87988d5f19671eeeb995209265d6828"
+      "sha256": "735d30fd71bb7b063b16936205b48f8bc8a5831a92c309fcc87957deb252d010"
     },
     {
       "path": "logs/reference-481927.log",
       "type": "log",
       "producer": "reference-481927",
-      "sha256": "64aefadd2b3f41e63f648dd0a422da3a77c999625763ecde43fd95e6942c6735"
+      "sha256": "4ceab93b29768733c2a03533fad9dbaec2e87dc0b1adbe2fb17b78da0d8005c8"
     },
     {
       "path": "reference-481927/reference-report.json",
       "type": "report",
       "producer": "reference-481927",
-      "sha256": "7da162a3b961732aa4cc8776a20eac57bd3b0fca9cdb02bb9eb13a8c987f7fdb"
+      "sha256": "37b0eb2537916fda15b2ae3eefcd9884fd7ded8525b3396052195de52361a06d"
     },
     {
       "path": "logs/reference-7.log",
       "type": "log",
       "producer": "reference-7",
-      "sha256": "abc5b1f754011baf61e0e70727e67317aa9d501c5646831c410bc388ee8a32d1"
+      "sha256": "a4d0213b01df5901118c264fd5d3123b9261d9dd07cfc5615c8d97feb5a25a0f"
     },
     {
       "path": "reference-7/reference-report.json",
       "type": "report",
       "producer": "reference-7",
-      "sha256": "a306c1beda421eba8cd88fe30c1ea2f44353c93acde05593f36b3edf909b9407"
+      "sha256": "7ccb8d9b5f983fda4b9517a3afc47ffe23a9b41efc0ee1d4affa5a3830836f62"
     },
     {
       "path": "logs/reference-90210.log",
       "type": "log",
       "producer": "reference-90210",
-      "sha256": "1b46c41eb9d9996d83b4f67d15dddaedf79a7a93de59e8ac50b095db5a41097c"
+      "sha256": "5051e651f12bb2a0d5512622ced1743663b5766ba5def21bce0ce9083e47f2f6"
     },
     {
       "path": "reference-90210/reference-report.json",
       "type": "report",
       "producer": "reference-90210",
-      "sha256": "7648e4708329e6fc53f01f68ae423c7c51181ed45f88d5fe1c2c51eee2cea220"
+      "sha256": "ff2b2080f54bf4d8c10d88ff847af5118594d890f873f267d8dc28a231047875"
     },
     {
       "path": "logs/adversarial.log",
@@ -499,7 +499,7 @@
       "path": "adversarial/adversarial-report.json",
       "type": "report",
       "producer": "adversarial",
-      "sha256": "cebe030fece9879557b73f03739985126627b264a1a7188e11fa237ffac6bf65"
+      "sha256": "4be670ca02598bdc73cda2e88666b4b3808397b580b2b7a771b4fbc131d9b841"
     },
     {
       "path": "logs/mutation.log",
@@ -511,20 +511,18 @@
       "path": "logs/clean-build.log",
       "type": "log",
       "producer": "clean-build",
-      "sha256": "9fdf0aa0b4c15e72859601257f0ca5ed4c1ebcad687ece0f4739bf6175b288dc"
+      "sha256": "82fc5563cb479e7387d502ff985deebf555d92642ac1f47c1daa5e6a117284ec"
     },
     {
       "path": "logs/offline-isolated.log",
       "type": "log",
       "producer": "offline-isolated",
-      "sha256": "9fdf0aa0b4c15e72859601257f0ca5ed4c1ebcad687ece0f4739bf6175b288dc"
+      "sha256": "0e46c79ddf0e13896f743db656d1072298b77d7cd13fa9d5d8ad2ca2b6dddd32"
     }
   ],
   "verdict": "INCONCLUSIVE",
   "verdictReasons": [
-    "INCONCLUSIVE: mutation: skipped by --skip for this run; a skipped blocking step can never yield ACCEPT",
-    "INCONCLUSIVE: clean-build: environment precondition not met: docker info",
-    "INCONCLUSIVE: offline-isolated: environment precondition not met: docker info"
+    "INCONCLUSIVE: mutation: skipped by --skip for this run; a skipped blocking step can never yield ACCEPT"
   ],
   "productionModificationByVerifier": "NONE"
 }

@@ -464,14 +464,14 @@
       "spec": "§3.4",
       "rule": "timestamps are RFC 3339 with an explicit offset",
       "ok": true,
-      "detail": "2026-10-02T04:06:57.349+00:00"
+      "detail": "2026-10-02T08:11:23.323+00:00"
     },
     {
       "id": "id-length",
       "spec": "§3.4",
       "rule": "ids are strings of at most 64 characters",
       "ok": true,
-      "detail": "p_746c2660-cabf-4530-a881-cfd0d916b92a"
+      "detail": "p_8a71a651-2088-41ad-85d7-6a6a87582740"
     },
     {
       "id": "failed-no-trace",
@@ -569,7 +569,7 @@
       "spec": "§8 pay",
       "rule": "paying returns the payment with request_id, the payer chooses visibility",
       "ok": true,
-      "detail": "{\"payment_id\":\"p_a2ee00ca-b9bc-4432-9712-494c86e8a261\",\"from_user_id\":\"u_ada\",\"from_handle\":\"ada\",\"to_user_id\":\"u_bob\",\"to_handle\":\"bob\",\"amount\":300,\"currency\":\"EUR\",\"note\":\"taxi\",\"visibility\":\"private\",\"request_id\":\"rq_e0f68bb9-0f90-4df9-afb1-2d5518f5013b\",\"settlement_id\":null,\"created_at\":\"2026-10-02T04:06:57.497+00:00\"}"
+      "detail": "{\"payment_id\":\"p_2f30fb6c-7f60-4331-be87-9052c0b7ca50\",\"from_user_id\":\"u_ada\",\"from_handle\":\"ada\",\"to_user_id\":\"u_bob\",\"to_handle\":\"bob\",\"amount\":300,\"currency\":\"EUR\",\"note\":\"taxi\",\"visibility\":\"private\",\"request_id\":\"rq_7773f9bc-c7c3-45eb-8a0d-dddce93eca6c\",\"settlement_id\":null,\"created_at\":\"2026-10-02T08:11:23.470+00:00\"}"
     },
     {
       "id": "pay-replay-after-paid",
@@ -1017,7 +1017,7 @@
       "spec": "§11",
       "rule": "members share settlement_id and created_at = committed_at, null request_id, input order",
       "ok": true,
-      "detail": "[{\"payment_id\":\"p_f59745a3-12ab-4a37-88b8-3d1a60ee7f1f\",\"from_user_id\":\"u_cy\",\"from_handle\":\"cy\",\"to_user_id\":\"u_bob\",\"to_handle\":\"bob\",\"amount\":900,\"currency\":\"EUR\",\"note\":\"\",\"visibility\":\"public\",\"request_id\":null,\"settlement_id\":\"st_6500b194-e59c-4800-999d-d75a10a0f1c0\",\"created_at\":\"2026-10-02T04:06:57.955+00:00\"},{\"payment_id\":\"p_10c38106-bc49-4fd4-ab40-0dcd662e622a\",\"from_user_id\":\"u_bob\",\"from_handle\":\"bob\",\"to_user_id\":\"u_cy\",\"to_handle\":\"cy\",\"amount\":500,\"currency\":\"EUR\",\"note\":\"\",\"visibility\":\"public\",\"request_id\":null,\"settlement_id\":\"st_6500b194-e59c-4800-999d-d75a10a0f1c0\",\"created_at\":\"2026-10-02T04:06:57.955+00:00\"}]"
+      "detail": "[{\"payment_id\":\"p_d2faedcd-f97e-4e73-a973-789daf5dbb22\",\"from_user_id\":\"u_cy\",\"from_handle\":\"cy\",\"to_user_id\":\"u_bob\",\"to_handle\":\"bob\",\"amount\":900,\"currency\":\"EUR\",\"note\":\"\",\"visibility\":\"public\",\"request_id\":null,\"settlement_id\":\"st_a97343b5-98ad-4201-a5d2-c2b154f7bd52\",\"created_at\":\"2026-10-02T08:11:23.933+00:00\"},{\"payment_id\":\"p_65b81318-a549-45ae-8f33-db0be7724d67\",\"from_user_id\":\"u_bob\",\"from_handle\":\"bob\",\"to_user_id\":\"u_cy\",\"to_handle\":\"cy\",\"amount\":500,\"currency\":\"EUR\",\"note\":\"\",\"visibility\":\"public\",\"request_id\":null,\"settlement_id\":\"st_a97343b5-98ad-4201-a5d2-c2b154f7bd52\",\"created_at\":\"2026-10-02T08:11:23.933+00:00\"}]"
     },
     {
       "id": "nonmember-null",
@@ -1647,7 +1647,7 @@
       "spec": "§5",
       "rule": "limit=1 is valid; offset past the newest pages correctly",
       "ok": true,
-      "detail": "{\"payments\":[{\"payment_id\":\"p_4ebd123a-793a-4d54-9e4c-30d755d61116\",\"from_user_id\":\"u_ada\",\"from_handle\":\"ada\",\"to_user_id\":\"u_bob\",\"to_handle\":\"bob\",\"amount\":1,\"currency\":\"EUR\",\"note\":\"\",\"visibility\":\"public\",\"request_id\":null,\"settlement_id\":null,\"created_at\":\"2026-10-02T04:06:58.727+00:00\"}],\"has_more\":false}"
+      "detail": "{\"payments\":[{\"payment_id\":\"p_f6e31ec4-e711-41e9-bd04-0651a741663e\",\"from_user_id\":\"u_ada\",\"from_handle\":\"ada\",\"to_user_id\":\"u_bob\",\"to_handle\":\"bob\",\"amount\":1,\"currency\":\"EUR\",\"note\":\"\",\"visibility\":\"public\",\"request_id\":null,\"settlement_id\":null,\"created_at\":\"2026-10-02T08:11:24.732+00:00\"}],\"has_more\":false}"
     },
     {
       "id": "feed-offset-beyond",

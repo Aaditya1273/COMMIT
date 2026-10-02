@@ -1,6 +1,6 @@
 {
-  "runId": "20261002T040633Z-5dd507",
-  "factoryVersion": "1.0.0-rc.2",
+  "runId": "20261002T081100Z-0f8bcc",
+  "factoryVersion": "1.0.0-rc.3",
   "status": "COMPLETED",
   "phase": "VERDICT INCONCLUSIVE",
   "completedSteps": [
@@ -18,5 +18,5 @@
     "clean-build",
     "offline-isolated"
   ],
-  "updatedAt": "2026-10-02T04:07:23.167Z"
+  "updatedAt": "2026-10-02T08:17:59.988Z"
 }

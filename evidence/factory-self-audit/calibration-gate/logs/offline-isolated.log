@@ -1,15 +1,11 @@
-environment precondition failed: docker info
-Client:
- Version:    29.6.2
- Context:    default
- Debug Mode: false
- Plugins:
-  buildx: Docker Buildx (Docker Inc.)
-    Version:  0.35.0
-    Path:     /usr/lib/docker/cli-plugins/docker-buildx
-  compose: Docker Compose (Docker Inc.)
-    Version:  5.3.1
-    Path:     /usr/lib/docker/cli-plugins/docker-compose
-
-Server:
-failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory
+<frozen site>:101: RuntimeWarning: Unexpected value in sys.prefix, expected ~/Wins/dark-factory-wearedevs/.venv, got ~/Wins/COMMIT/../dark-factory-wearedevs/.venv
+<frozen site>:101: RuntimeWarning: Unexpected value in sys.exec_prefix, expected ~/Wins/dark-factory-wearedevs/.venv, got ~/Wins/COMMIT/../dark-factory-wearedevs/.venv
+building calibration/pocketful-stage-1 ...
+  stage 1: pass  (log: ~/Wins/COMMIT/evidence/factory-self-audit/calibration-gate/isolated/stage-1.log)
+  stage 2: error  (log: ~/Wins/COMMIT/evidence/factory-self-audit/calibration-gate/isolated/stage-2.log)
+  stage 3: fail  (log: ~/Wins/COMMIT/evidence/factory-self-audit/calibration-gate/isolated/stage-3.log)
+  stage 4: fail  (log: ~/Wins/COMMIT/evidence/factory-self-audit/calibration-gate/isolated/stage-4.log)
+highest contiguous stage: 1
+report: ~/Wins/COMMIT/evidence/factory-self-audit/calibration-gate/isolated/report.json
+harness exit 1 (the worst of all suites, including the next stage's, which must fail; judged from report.json instead)
+isolated mode: stage 1 147/147 passed; highest contiguous 1; stage 2: 0/35 passed

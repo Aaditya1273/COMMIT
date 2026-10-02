@@ -24,7 +24,7 @@ Reproduce: `node calibration/verification/adversarial.ts --base-url <url> --seed
 | request-double-pay | 1 | 20262006 | 50 | 201×1, 409 request_not_pending×49 | PASS |
 | pay-versus-cancel | 1 | 20262007 | 20 | 200×10, 409 request_not_pending×10 | PASS |
 | settlement-under-drain | 1 | 20262008 | 50 | 201×4, 409 insufficient_funds×46 | PASS |
-| lost-response-retry | 1 | 20262009 | 20 | 200×4, 201×16 | PASS |
+| lost-response-retry | 1 | 20262009 | 20 | 200×5, 201×15 | PASS |
 | signup-race | 1 | 20262010 | 50 | 201×1, 409 email_taken×49 | PASS |
 | mixed-garbage | 1 | 20262011 | 50 | 201×11, 422 validation_failed×6, 401 unauthenticated×13, 400 malformed_request×3, 422 self_payment×3, 400 missing_idempotency_key×11, 404 not_found×2, 409 insufficient_funds×1 | PASS |
 | same-key-storm | 2 | 20263001 | 50 | 200×49, 201×1 | PASS |
@@ -35,7 +35,7 @@ Reproduce: `node calibration/verification/adversarial.ts --base-url <url> --seed
 | request-double-pay | 2 | 20263006 | 50 | 201×1, 409 request_not_pending×49 | PASS |
 | pay-versus-cancel | 2 | 20263007 | 20 | 200×10, 409 request_not_pending×10 | PASS |
 | settlement-under-drain | 2 | 20263008 | 50 | 201×5, 409 insufficient_funds×45 | PASS |
-| lost-response-retry | 2 | 20263009 | 20 | 200×8, 201×12 | PASS |
+| lost-response-retry | 2 | 20263009 | 20 | 200×6, 201×14 | PASS |
 | signup-race | 2 | 20263010 | 50 | 201×1, 409 email_taken×49 | PASS |
 | mixed-garbage | 2 | 20263011 | 50 | 201×5, 400 missing_idempotency_key×13, 422 validation_failed×20, 401 unauthenticated×8, 404 not_found×3, 400 malformed_request×1 | PASS |
 | same-key-storm | 3 | 20264001 | 50 | 200×49, 201×1 | PASS |
@@ -46,7 +46,7 @@ Reproduce: `node calibration/verification/adversarial.ts --base-url <url> --seed
 | request-double-pay | 3 | 20264006 | 50 | 201×1, 409 request_not_pending×49 | PASS |
 | pay-versus-cancel | 3 | 20264007 | 20 | 200×10, 409 request_not_pending×10 | PASS |
 | settlement-under-drain | 3 | 20264008 | 50 | 201×4, 409 insufficient_funds×46 | PASS |
-| lost-response-retry | 3 | 20264009 | 20 | 200×8, 201×12 | PASS |
+| lost-response-retry | 3 | 20264009 | 20 | 200×7, 201×13 | PASS |
 | signup-race | 3 | 20264010 | 50 | 201×1, 409 email_taken×49 | PASS |
 | mixed-garbage | 3 | 20264011 | 50 | 201×11, 422 self_payment×5, 401 unauthenticated×11, 422 validation_failed×11, 400 malformed_request×3, 400 missing_idempotency_key×9 | PASS |
 | same-key-storm | 4 | 20265001 | 50 | 200×49, 201×1 | PASS |
@@ -57,7 +57,7 @@ Reproduce: `node calibration/verification/adversarial.ts --base-url <url> --seed
 | request-double-pay | 4 | 20265006 | 50 | 201×1, 409 request_not_pending×49 | PASS |
 | pay-versus-cancel | 4 | 20265007 | 20 | 200×10, 409 request_not_pending×10 | PASS |
 | settlement-under-drain | 4 | 20265008 | 50 | 201×6, 409 insufficient_funds×44 | PASS |
-| lost-response-retry | 4 | 20265009 | 20 | 200×10, 201×10 | PASS |
+| lost-response-retry | 4 | 20265009 | 20 | 200×8, 201×12 | PASS |
 | signup-race | 4 | 20265010 | 50 | 201×1, 409 email_taken×49 | PASS |
 | mixed-garbage | 4 | 20265011 | 50 | 201×12, 401 unauthenticated×12, 404 not_found×4, 422 self_payment×4, 422 validation_failed×13, 400 missing_idempotency_key×5 | PASS |
 

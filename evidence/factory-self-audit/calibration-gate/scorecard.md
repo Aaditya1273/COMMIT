@@ -1,6 +1,6 @@
 # COMMIT — calibration / pocketful stage 1 factory result
 
-Generated from `evidence.json` (run 20261002T040633Z-5dd507); do not edit by hand.
+Generated from `evidence.json` (run 20261002T081100Z-0f8bcc); do not edit by hand.
 
 ```text
 Human dispatches:            not measured in this run
@@ -12,13 +12,13 @@ Planner:
     ambiguities recorded:    not measured in this run
 
 Verifier (this run):
-    revision:                72aa9ed4fbcf80c6d73cffc3d8662be41a70d4cd
-    independent checks:      13 steps, 10 passed
+    revision:                f9837321d140e35eef340bde368db31bb16583c0
+    independent checks:      13 steps, 12 passed
     adversarial checks:      55/55 campaign rounds, 225 state checks, 50 concurrent
     reference-model runs:    agree (seed 481927, 1000 ops, 2100 invariant checks); agree (seed 7, 1000 ops, 2100 invariant checks); agree (seed 90210, 1000 ops, 2100 invariant checks)
-    clean rebuild:           BLOCKED
+    clean rebuild:           PASSED
     clean startup:           PASSED
-    offline execution:       BLOCKED
+    offline execution:       PASSED
 
 Mutation campaign:
     seeded mutants:          not measured in this run
@@ -36,9 +36,9 @@ Defect handling:
     false accepts:           not measured in this run
 
 Resource usage:
-    verification time:       49 s
+    verification time:       420 s
     model/token usage:       not measured in this run
 
 Final verdict:               INCONCLUSIVE
-Evidence manifest:           sha256 adab9b347aa8fa4b46cdb6de34dd9d72661fca00fa31abcc02889aaae3fe38bd
+Evidence manifest:           sha256 8dcb2ea33a982302797c84891b163831ab9c1daf3f6ce7c90149ef12967e5324
 ```

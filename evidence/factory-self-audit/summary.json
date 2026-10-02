@@ -1,11 +1,11 @@
 {
   "kind": "factory-self-audit",
-  "factoryVersion": "1.0.0-rc.2",
+  "factoryVersion": "1.0.0-rc.3",
   "mode": "quick",
-  "revision": "72aa9ed4fbcf80c6d73cffc3d8662be41a70d4cd",
+  "revision": "f9837321d140e35eef340bde368db31bb16583c0",
   "dirty": false,
   "environment": {
-    "factoryVersion": "1.0.0-rc.2",
+    "factoryVersion": "1.0.0-rc.3",
     "node": "v26.5.0",
     "platform": "linux",
     "release": "7.1.5-arch1-2",
@@ -14,17 +14,17 @@
     "python": "Python 3.14.6",
     "docker": {
       "installed": true,
-      "daemonReachable": false,
-      "detail": "binary present (Docker version 29.6.2, build dfc4efb1e2), daemon unreachable: failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory"
+      "daemonReachable": true,
+      "detail": "daemon 29.6.2"
     }
   },
-  "startedAt": "2026-10-02T04:06:02.086Z",
-  "durationMs": 81097,
+  "startedAt": "2026-10-02T08:10:28.909Z",
+  "durationMs": 451097,
   "counts": {
-    "PASS": 23,
+    "PASS": 25,
     "PARTIAL": 1,
     "FAIL": 0,
-    "INCONCLUSIVE": 3,
+    "INCONCLUSIVE": 1,
     "NOT RUN": 0
   },
   "items": [
@@ -38,34 +38,34 @@
       "status": "PASS",
       "detail": "exit 0",
       "command": "npx tsc -p tsconfig.commit.json",
-      "durationMs": 1280
+      "durationMs": 1070
     },
     {
       "area": "Lint (whole repository)",
       "status": "PASS",
       "detail": "exit 0",
       "command": "npx eslint .",
-      "durationMs": 3211
+      "durationMs": 2627
     },
     {
       "area": "Factory self-tests",
       "status": "PASS",
-      "detail": "38 passed, 0 failed",
+      "detail": "39 passed, 0 failed",
       "command": "node --no-warnings --test 'commit/**/*.test.ts'",
-      "durationMs": 22947
+      "durationMs": 23043
     },
     {
       "area": "Bootstrap into a fresh repository (+ installed self-test)",
       "status": "PASS",
       "detail": "mandates, toolkit and FACTORY.md installed; installed self-tests pass; no stage folders created",
-      "command": "sh commit/bootstrap.sh --check '/tmp/commit-rehearsal-EmKvxZ/result'",
-      "durationMs": 245
+      "command": "sh commit/bootstrap.sh --check '/tmp/commit-rehearsal-6AeIdw/result'",
+      "durationMs": 244
     },
     {
       "area": "Bootstrap re-run is idempotent",
       "status": "PASS",
       "detail": "second run changed nothing",
-      "command": "sh commit/bootstrap.sh '/tmp/commit-rehearsal-EmKvxZ/result'",
+      "command": "sh commit/bootstrap.sh '/tmp/commit-rehearsal-6AeIdw/result'",
       "durationMs": 23
     },
     {
@@ -121,12 +121,12 @@
     {
       "area": "Evidence consistency (all committed runs)",
       "status": "PASS",
-      "detail": "5 runs: manifest hashes, logs, verdict.md and scorecard.md agree"
+      "detail": "7 runs: manifest hashes, logs, verdict.md and scorecard.md agree"
     },
     {
       "area": "Secret scan (factory files + evidence)",
       "status": "PASS",
-      "detail": "191 files, no credential shapes"
+      "detail": "300 files, no credential shapes"
     },
     {
       "area": "Machine-specific paths",
@@ -136,7 +136,7 @@
     {
       "area": "Evidence complete in a fresh clone of HEAD",
       "status": "PASS",
-      "detail": "5 committed runs audit clean in a clone"
+      "detail": "7 committed runs audit clean in a clone"
     },
     {
       "area": "No domain coupling in commit/ and mandates/",
@@ -151,27 +151,27 @@
     {
       "area": "Calibration release gate (all layers but mutation)",
       "status": "PASS",
-      "detail": "10/13 steps PASSED (typecheck, lint, startup, shipped-checks, overshoot-probe, contract, reference-481927, reference-7, reference-90210, adversarial); verdict INCONCLUSIVE"
+      "detail": "12/13 steps PASSED (typecheck, lint, startup, shipped-checks, overshoot-probe, contract, reference-481927, reference-7, reference-90210, adversarial, clean-build, offline-isolated); verdict INCONCLUSIVE"
     },
     {
       "area": "Clean container build",
-      "status": "INCONCLUSIVE",
-      "detail": "not run: binary present (Docker version 29.6.2, build dfc4efb1e2), daemon unreachable: failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory"
+      "status": "PASS",
+      "detail": "step clean-build: PASSED"
     },
     {
       "area": "Offline, resource-capped run (official isolated mode)",
-      "status": "INCONCLUSIVE",
-      "detail": "not run: binary present (Docker version 29.6.2, build dfc4efb1e2), daemon unreachable: failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory"
+      "status": "PASS",
+      "detail": "step offline-isolated: PASSED"
     },
     {
       "area": "Gate evidence audits clean",
       "status": "PASS",
-      "detail": "run 20261002T040633Z-5dd507"
+      "detail": "run 20261002T081100Z-0f8bcc"
     },
     {
       "area": "Full calibration verification (cited, audited, not re-run)",
       "status": "PASS",
-      "detail": "evidence/calibration/stage-1/run-20261002T033320Z: verdict INCONCLUSIVE on bcc73e9; mutation 398/417 killed (95.4%), 58 equivalents excluded; reasons: INCONCLUSIVE: clean-build: environment precondition not met: docker info; INCONCLUSIVE: offline-isolated: environment precondition not met: docker info"
+      "detail": "evidence/calibration/stage-1/run-20261002T072952Z: verdict ACCEPT on a899d17; mutation 398/417 killed (95.4%), 58 equivalents excluded; reasons: none"
     }
   ]
 }
