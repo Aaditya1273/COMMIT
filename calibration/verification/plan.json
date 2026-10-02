@@ -144,7 +144,8 @@
       "kind": "build",
       "blocking": true,
       "environment": "docker info",
-      "cmd": "docker build --no-cache -t commit-calibration-stage-1 calibration/pocketful-stage-1"
+      "cmd": "docker build --no-cache -t commit-calibration-stage-1 calibration/pocketful-stage-1",
+      "timeoutMs": 900000
     },
     {
       "id": "offline-isolated",
@@ -154,7 +155,8 @@
       "requirements": [
         "\u00a72 no outbound network at run time, 2 vCPU, 2 GiB"
       ],
-      "cmd": "PYTHONPATH={kickoff} {kickoff}/.venv/bin/python -m harness run --track pocketful --build calibration/pocketful-stage-1 --mode isolated --stage 1 --out {out}/isolated"
+      "cmd": "PYTHONPATH={kickoff} {kickoff}/.venv/bin/python -m harness run --track pocketful --build calibration/pocketful-stage-1 --mode isolated --stage 1 --out {out}/isolated",
+      "timeoutMs": 2700000
     }
   ]
 }
