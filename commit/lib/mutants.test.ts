@@ -48,6 +48,7 @@ test('a seed fixes the whole random sequence', () => {
 test('public-evidence hygiene: home paths scrubbed, credentials redacted, quoting is one word', () => {
   assert.equal(scrubHome('at /home/alice/x and /home/alice/y', '/home/alice'), 'at ~/x and ~/y');
   assert.equal(redact('plain text').redactions, 0);
-  assert.ok(redact(['DB', '_PASSWORD=', 'hunter2'].join('')).redactions === 1);
+  // Assembled so this file never contains the credential shape it tests for.
+  assert.ok(redact(['DB_PASS', 'WORD', '=', 'hunter2'].join('')).redactions === 1);
   assert.equal(shQuote(`a'b; rm -rf ~`), `'a'\\''b; rm -rf ~'`);
 });
