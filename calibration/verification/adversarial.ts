@@ -3,7 +3,7 @@
 // burst, then judges the *persistent state* -- balances, request status, the feed --
 // not only the status codes the burst returned.
 //
-//   node calibration/verification/adversarial.ts --base-url URL [--seed S] [--workers 50] [--rounds 3] [--out DIR]
+//   node calibration/verification/adversarial.ts --base-url URL [--seed S] [--workers 50] [--rounds 3] [--only name,name] [--out DIR]
 //
 // One burst that passes proves little; every campaign runs `rounds` times with fresh
 // seeded fixtures, and the report records seed, workers, operations, timing and the
@@ -20,6 +20,7 @@ const { values: args } = parseArgs({
     seed: { type: 'string', default: '20261001' },
     workers: { type: 'string', default: '50' },
     rounds: { type: 'string', default: '3' },
+    only: { type: 'string' },
     out: { type: 'string' },
   },
 });
@@ -289,8 +290,15 @@ const campaigns: Campaign[] = [
 
 const results: CampaignResult[] = [];
 const seed = Number(args.seed);
+const only = args.only ? new Set(args.only.split(',')) : null;
+const unknown = [...(only ?? [])].filter((n) => !campaigns.some((c) => c.name === n));
+if (unknown.length) {
+  console.error(`unknown campaign(s): ${unknown.join(', ')}; known: ${campaigns.map((c) => c.name).join(', ')}`);
+  process.exit(2);
+}
 for (let round = 0; round < Number(args.rounds); round++) {
   for (const [index, c] of campaigns.entries()) {
+    if (only && !only.has(c.name)) continue;
     const campaignSeed = seed + round * 1000 + index;
     const findings: Finding[] = [];
     const started = Date.now();
@@ -304,6 +312,10 @@ for (let round = 0; round < Number(args.rounds); round++) {
     const ok = findings.length > 0 && findings.every((x) => x.ok);
     results.push({ campaign: c.name, property: c.property, round, seed: campaignSeed, workers: WORKERS, operations: replies.length, durationMs: Date.now() - started, responses: tally(replies), finalState: state, findings, ok });
     console.log(`${ok ? 'PASS' : 'FAIL'} ${c.name} round ${round} seed ${campaignSeed}${ok ? '' : ' :: ' + findings.filter((x) => !x.ok).map((x) => `${x.check}: ${x.detail}`).join('; ')}`);
+    // Each round's seed is base + round*1000 + campaign index, so one failing round is
+    // replayed alone by choosing the base that maps to it. Concurrency interleavings are
+    // not reproducible from a seed; the burst shape and the fixture are.
+    if (!ok) console.log(`     reproduce: node calibration/verification/adversarial.ts --base-url <url> --only ${c.name} --rounds 1 --workers ${WORKERS} --seed ${campaignSeed - index}`);
   }
 }
 

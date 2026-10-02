@@ -8,10 +8,13 @@
 // generator. This runner owns everything generic: the seeded RNG, stepping model and
 // implementation in lockstep, comparing after every step, stopping at the first
 // divergence, and writing a report whose seed and command reproduce the run exactly.
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { createHash, randomBytes } from 'node:crypto';
+import { existsSync, mkdirSync, readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isDeepStrictEqual, parseArgs } from 'node:util';
+import { EXIT, FACTORY_VERSION } from './lib/config.ts';
+import { writeAtomic, writeJsonAtomic } from './lib/fsx.ts';
 import { rng, type Rng } from './lib/rng.ts';
 
 export interface CampaignModule<Model, Op, Expected, Observed> {
@@ -32,7 +35,11 @@ export interface CampaignModule<Model, Op, Expected, Observed> {
 
 export interface CampaignReport {
   kind: 'reference-campaign';
+  runId: string;
+  factoryVersion: string;
   campaign: string;
+  /** sha256 of the campaign module: the seed reproduces the run only with the same generator. */
+  moduleSha256: string | null;
   seed: number;
   operationsRequested: number;
   operationsExecuted: number;
@@ -48,7 +55,7 @@ export interface CampaignReport {
   operations: unknown[];
 }
 
-export async function runCampaign<M, O, E, X>(mod: CampaignModule<M, O, E, X>, opts: { baseUrl: string; seed: number; operations: number; command: string }): Promise<CampaignReport> {
+export async function runCampaign<M, O, E, X>(mod: CampaignModule<M, O, E, X>, opts: { baseUrl: string; seed: number; operations: number; command: string; moduleSha256?: string }): Promise<CampaignReport> {
   const started = Date.now();
   const random = rng(opts.seed);
   const { model, initial } = await mod.setup(opts.baseUrl, random);
@@ -85,7 +92,10 @@ export async function runCampaign<M, O, E, X>(mod: CampaignModule<M, O, E, X>, o
 
   return {
     kind: 'reference-campaign',
+    runId: `${new Date(started).toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z')}-${randomBytes(3).toString('hex')}`,
+    factoryVersion: FACTORY_VERSION,
     campaign: mod.name,
+    moduleSha256: opts.moduleSha256 ?? null,
     seed: opts.seed,
     operationsRequested: opts.operations,
     operationsExecuted: history.length,
@@ -107,8 +117,10 @@ function markdown(r: CampaignReport): string {
 
 | | |
 |---|---|
-| Result | **${r.result.toUpperCase()}** |
+| Result | **${r.result.toUpperCase()}** (${r.firstDivergence ? '1 divergence' : '0 divergences'} -- agreement is not proof of correctness) |
+| Run | ${r.runId} (factory ${r.factoryVersion}) |
 | Seed | ${r.seed} |
+| Campaign module sha256 | \`${r.moduleSha256 ?? 'n/a'}\` |
 | Operations executed / requested | ${r.operationsExecuted} / ${r.operationsRequested} |
 | Whole-state comparisons | ${r.stateComparisons} |
 | Invariant checks | ${r.invariantChecks} |
@@ -140,31 +152,56 @@ The full operation sequence is in \`reference-report.json\`.
 `;
 }
 
+const USAGE = `usage: node commit/campaign.ts --module FILE --base-url URL --seed S [--operations N] [--out NEW_DIR]
+
+  --module FILE      campaign module (default export implements CampaignModule)
+  --base-url URL     the running candidate, http(s)://...
+  --seed S           non-negative integer; the seed plus the module reproduce the run exactly
+  --operations N     operations to generate (default 500)
+  --out DIR          write reference-report.json/.md here; must not exist or be empty
+  --help, --version
+
+exit: 0 agree, 1 diverged, 2 usage error`;
+
+function usage(code: number, message?: string): never {
+  console.error(message ? `${message}\n\n${USAGE}` : USAGE);
+  process.exit(code);
+}
+
 // Run as a CLI only when executed directly (portable to Node 22; `import.meta.main` is newer).
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const { values: args } = parseArgs({
-    options: {
-      module: { type: 'string' },
-      'base-url': { type: 'string' },
-      seed: { type: 'string', default: String(Date.now() % 1_000_000) },
-      operations: { type: 'string', default: '500' },
-      out: { type: 'string' },
-    },
-  });
-  if (!args.module || !args['base-url']) {
-    console.error('usage: campaign.ts --module FILE --base-url URL [--seed S] [--operations N] [--out DIR]');
-    process.exit(2);
+  let args;
+  try {
+    args = parseArgs({
+      options: {
+        module: { type: 'string' }, 'base-url': { type: 'string' }, seed: { type: 'string' }, operations: { type: 'string', default: '500' },
+        out: { type: 'string' }, help: { type: 'boolean', default: false }, version: { type: 'boolean', default: false },
+      },
+    }).values;
+  } catch (error) {
+    usage(EXIT.USAGE, (error as Error).message);
   }
-  const mod = (await import(resolve(args.module))).default as CampaignModule<unknown, unknown, unknown, unknown>;
+  if (args.help) usage(EXIT.OK);
+  if (args.version) { console.log(FACTORY_VERSION); process.exit(EXIT.OK); }
+  // No hidden default seed: a campaign without a recorded seed cannot be replayed.
+  if (!args.module || !args['base-url'] || args.seed === undefined) usage(EXIT.USAGE, 'INPUT_ERROR: --module, --base-url and --seed are required');
+  if (!/^\d+$/.test(args.seed)) usage(EXIT.USAGE, `INPUT_ERROR: --seed must be a non-negative integer, got ${args.seed}`);
+  if (!/^\d+$/.test(args.operations!) || Number(args.operations) < 1) usage(EXIT.USAGE, `INPUT_ERROR: --operations must be a positive integer, got ${args.operations}`);
+  if (!/^https?:\/\/[^\s]+$/.test(args['base-url'])) usage(EXIT.USAGE, `INPUT_ERROR: --base-url must be an http(s) URL, got ${args['base-url']}`);
+  const modulePath = resolve(args.module);
+  if (!existsSync(modulePath)) usage(EXIT.USAGE, `INPUT_ERROR: --module ${args.module} does not exist`);
+  if (args.out && existsSync(args.out) && readdirSync(args.out).length > 0) usage(EXIT.USAGE, `INPUT_ERROR: refusing to write into non-empty ${args.out}`);
+  const mod = (await import(modulePath)).default as CampaignModule<unknown, unknown, unknown, unknown>;
   const seed = Number(args.seed);
   const command = `node commit/campaign.ts --module ${args.module} --base-url <url> --seed ${seed} --operations ${args.operations}`;
-  const report = await runCampaign(mod, { baseUrl: args['base-url'], seed, operations: Number(args.operations), command });
+  const moduleSha256 = createHash('sha256').update(readFileSync(modulePath)).digest('hex');
+  const report = await runCampaign(mod, { baseUrl: args['base-url'], seed, operations: Number(args.operations), command, moduleSha256 });
   if (args.out) {
     mkdirSync(args.out, { recursive: true });
-    writeFileSync(join(args.out, 'reference-report.json'), JSON.stringify(report, null, 2) + '\n');
-    writeFileSync(join(args.out, 'reference-report.md'), markdown(report));
+    writeJsonAtomic(join(args.out, 'reference-report.json'), report);
+    writeAtomic(join(args.out, 'reference-report.md'), markdown(report));
   }
   const { operations: _ops, initial: _init, ...brief } = report;
   console.log(JSON.stringify(brief, null, 2));
-  process.exit(report.result === 'agree' ? 0 : 1);
+  process.exit(report.result === 'agree' ? EXIT.OK : EXIT.REJECT);
 }

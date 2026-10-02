@@ -10,12 +10,12 @@
       "cmd": "curl -sf {url}/health" },
     { "id": "shipped-checks", "kind": "required", "blocking": true, "needsService": true,
       "requirements": ["stage-1 sample and shipped suites"],
-      "environment": "test -x ../dark-factory-wearedevs/.venv/bin/python",
-      "cmd": "cd ../dark-factory-wearedevs && .venv/bin/python -m pytest pocketful/test/stage_1 -p harness.plugin --base-url {url} -q -p no:cacheprovider" },
+      "environment": "test -x {kickoff}/.venv/bin/python",
+      "cmd": "cd {kickoff} && .venv/bin/python -m pytest pocketful/test/stage_1 -p harness.plugin --base-url {url} -q -p no:cacheprovider" },
     { "id": "overshoot-probe", "kind": "required", "blocking": true, "needsService": true,
       "requirements": ["a stage-1 folder must not pass the stage-2 suite"],
-      "environment": "test -x ../dark-factory-wearedevs/.venv/bin/python",
-      "cmd": "cd ../dark-factory-wearedevs && ! .venv/bin/python -m pytest pocketful/test/stage_2/test_sample.py -p harness.plugin --base-url {url} -q -p no:cacheprovider" },
+      "environment": "test -x {kickoff}/.venv/bin/python",
+      "cmd": "cd {kickoff} && ! .venv/bin/python -m pytest pocketful/test/stage_2/test_sample.py -p harness.plugin --base-url {url} -q -p no:cacheprovider" },
     { "id": "contract", "kind": "contract", "blocking": true, "needsService": true, "report": "contract/contract-report.json",
       "requirements": ["§3", "§4", "§5", "§6", "§7", "§8", "§9", "§10", "§11"],
       "cmd": "node --no-warnings calibration/verification/contract.ts --base-url {url} --out {out}/contract" },
@@ -32,12 +32,12 @@
       "requirements": ["§1 invariants", "§2 concurrency", "§7", "§11"],
       "cmd": "node --no-warnings calibration/verification/adversarial.ts --base-url {url} --seed 20261001 --workers 50 --rounds 5 --out {out}/adversarial" },
     { "id": "mutation", "kind": "mutation", "blocking": true, "report": "mutation/mutation-report.json", "timeoutMs": 7200000,
-      "environment": "test -x ../dark-factory-wearedevs/.venv/bin/python",
+      "environment": "test -x {kickoff}/.venv/bin/python",
       "cmd": "node --no-warnings commit/mutate.ts --target calibration/pocketful-stage-1 --start 'node --no-warnings src/server.ts' --check 'calibration/verification/kill-suite.sh {url}' --exclude calibration/verification/equivalents.json --jobs 6 --timeout 180000 --out {out}/mutation" },
     { "id": "clean-build", "kind": "build", "blocking": true, "environment": "docker info",
       "cmd": "docker build --no-cache -t commit-calibration-stage-1 calibration/pocketful-stage-1" },
     { "id": "offline-isolated", "kind": "offline", "blocking": true, "environment": "docker info",
       "requirements": ["§2 no outbound network at run time, 2 vCPU, 2 GiB"],
-      "cmd": "PYTHONPATH=../dark-factory-wearedevs ../dark-factory-wearedevs/.venv/bin/python -m harness run --track pocketful --build calibration/pocketful-stage-1 --mode isolated --stage 1 --out {out}/isolated" }
+      "cmd": "PYTHONPATH={kickoff} {kickoff}/.venv/bin/python -m harness run --track pocketful --build calibration/pocketful-stage-1 --mode isolated --stage 1 --out {out}/isolated" }
   ]
 }
