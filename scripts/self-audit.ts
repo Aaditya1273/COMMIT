@@ -210,7 +210,8 @@ const summary = {
   factoryVersion: FACTORY_VERSION,
   mode: args.full ? 'full' : 'quick',
   revision: (await run('git', ['rev-parse', 'HEAD'], { cwd: root })).tail.trim(),
-  dirty: (await run('git', ['status', '--porcelain'], { cwd: root })).tail.trim() !== '',
+  // The audit's own output directory does not make the audited revision dirty.
+  dirty: (await run('git', ['status', '--porcelain', '--', '.', `:!${relative(root, out)}`], { cwd: root })).tail.trim() !== '',
   environment: env,
   startedAt: new Date(started).toISOString(),
   durationMs: Date.now() - started,
