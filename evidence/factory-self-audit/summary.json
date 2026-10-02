@@ -1,0 +1,177 @@
+{
+  "kind": "factory-self-audit",
+  "factoryVersion": "1.0.0-rc.2",
+  "mode": "quick",
+  "revision": "72aa9ed4fbcf80c6d73cffc3d8662be41a70d4cd",
+  "dirty": false,
+  "environment": {
+    "factoryVersion": "1.0.0-rc.2",
+    "node": "v26.5.0",
+    "platform": "linux",
+    "release": "7.1.5-arch1-2",
+    "arch": "x64",
+    "git": "git version 2.55.0",
+    "python": "Python 3.14.6",
+    "docker": {
+      "installed": true,
+      "daemonReachable": false,
+      "detail": "binary present (Docker version 29.6.2, build dfc4efb1e2), daemon unreachable: failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory"
+    }
+  },
+  "startedAt": "2026-10-02T04:06:02.086Z",
+  "durationMs": 81097,
+  "counts": {
+    "PASS": 23,
+    "PARTIAL": 1,
+    "FAIL": 0,
+    "INCONCLUSIVE": 3,
+    "NOT RUN": 0
+  },
+  "items": [
+    {
+      "area": "Node runtime",
+      "status": "PASS",
+      "detail": "v26.5.0; COMMIT requires >= 22.18"
+    },
+    {
+      "area": "Typecheck (factory + calibration)",
+      "status": "PASS",
+      "detail": "exit 0",
+      "command": "npx tsc -p tsconfig.commit.json",
+      "durationMs": 1280
+    },
+    {
+      "area": "Lint (whole repository)",
+      "status": "PASS",
+      "detail": "exit 0",
+      "command": "npx eslint .",
+      "durationMs": 3211
+    },
+    {
+      "area": "Factory self-tests",
+      "status": "PASS",
+      "detail": "38 passed, 0 failed",
+      "command": "node --no-warnings --test 'commit/**/*.test.ts'",
+      "durationMs": 22947
+    },
+    {
+      "area": "Bootstrap into a fresh repository (+ installed self-test)",
+      "status": "PASS",
+      "detail": "mandates, toolkit and FACTORY.md installed; installed self-tests pass; no stage folders created",
+      "command": "sh commit/bootstrap.sh --check '/tmp/commit-rehearsal-EmKvxZ/result'",
+      "durationMs": 245
+    },
+    {
+      "area": "Bootstrap re-run is idempotent",
+      "status": "PASS",
+      "detail": "second run changed nothing",
+      "command": "sh commit/bootstrap.sh '/tmp/commit-rehearsal-EmKvxZ/result'",
+      "durationMs": 23
+    },
+    {
+      "area": "Mandate genericity: planner (pocketful, official scanner)",
+      "status": "PASS",
+      "detail": "no track vocabulary; Harness/Model lines present"
+    },
+    {
+      "area": "Mandate genericity: builder (pocketful, official scanner)",
+      "status": "PASS",
+      "detail": "no track vocabulary; Harness/Model lines present"
+    },
+    {
+      "area": "Mandate genericity: verifier (pocketful, official scanner)",
+      "status": "PASS",
+      "detail": "no track vocabulary; Harness/Model lines present"
+    },
+    {
+      "area": "Mandate genericity: planner (tablekeeper, official scanner)",
+      "status": "PASS",
+      "detail": "no track vocabulary; Harness/Model lines present"
+    },
+    {
+      "area": "Mandate genericity: builder (tablekeeper, official scanner)",
+      "status": "PASS",
+      "detail": "no track vocabulary; Harness/Model lines present"
+    },
+    {
+      "area": "Mandate genericity: verifier (tablekeeper, official scanner)",
+      "status": "PASS",
+      "detail": "no track vocabulary; Harness/Model lines present"
+    },
+    {
+      "area": "Mandate genericity: planner (toy, official scanner)",
+      "status": "PASS",
+      "detail": "no track vocabulary; Harness/Model lines present"
+    },
+    {
+      "area": "Mandate genericity: builder (toy, official scanner)",
+      "status": "PASS",
+      "detail": "no track vocabulary; Harness/Model lines present"
+    },
+    {
+      "area": "Mandate genericity: verifier (toy, official scanner)",
+      "status": "PASS",
+      "detail": "no track vocabulary; Harness/Model lines present"
+    },
+    {
+      "area": "Mandate Harness/Model values",
+      "status": "INCONCLUSIVE",
+      "detail": "placeholders in planner, builder, verifier: fill in the real values in the result repository before the BAND run"
+    },
+    {
+      "area": "Evidence consistency (all committed runs)",
+      "status": "PASS",
+      "detail": "5 runs: manifest hashes, logs, verdict.md and scorecard.md agree"
+    },
+    {
+      "area": "Secret scan (factory files + evidence)",
+      "status": "PASS",
+      "detail": "191 files, no credential shapes"
+    },
+    {
+      "area": "Machine-specific paths",
+      "status": "PARTIAL",
+      "detail": "4 historical step logs (recorded before home-directory scrubbing) contain the local checkout path in pytest tracebacks; kept byte-identical because their sha256 is part of the evidence; new logs are scrubbed"
+    },
+    {
+      "area": "Evidence complete in a fresh clone of HEAD",
+      "status": "PASS",
+      "detail": "5 committed runs audit clean in a clone"
+    },
+    {
+      "area": "No domain coupling in commit/ and mandates/",
+      "status": "PASS",
+      "detail": "16 files checked against 231 track terms of both graded tracks"
+    },
+    {
+      "area": "Reference-model replay (seed 481927, 300 ops, twice)",
+      "status": "PASS",
+      "detail": "both runs agree with the model; identical operation sequences (sha256 279c4f0faf118ad3…)"
+    },
+    {
+      "area": "Calibration release gate (all layers but mutation)",
+      "status": "PASS",
+      "detail": "10/13 steps PASSED (typecheck, lint, startup, shipped-checks, overshoot-probe, contract, reference-481927, reference-7, reference-90210, adversarial); verdict INCONCLUSIVE"
+    },
+    {
+      "area": "Clean container build",
+      "status": "INCONCLUSIVE",
+      "detail": "not run: binary present (Docker version 29.6.2, build dfc4efb1e2), daemon unreachable: failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory"
+    },
+    {
+      "area": "Offline, resource-capped run (official isolated mode)",
+      "status": "INCONCLUSIVE",
+      "detail": "not run: binary present (Docker version 29.6.2, build dfc4efb1e2), daemon unreachable: failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory"
+    },
+    {
+      "area": "Gate evidence audits clean",
+      "status": "PASS",
+      "detail": "run 20261002T040633Z-5dd507"
+    },
+    {
+      "area": "Full calibration verification (cited, audited, not re-run)",
+      "status": "PASS",
+      "detail": "evidence/calibration/stage-1/run-20261002T033320Z: verdict INCONCLUSIVE on bcc73e9; mutation 398/417 killed (95.4%), 58 equivalents excluded; reasons: INCONCLUSIVE: clean-build: environment precondition not met: docker info; INCONCLUSIVE: offline-isolated: environment precondition not met: docker info"
+    }
+  ]
+}
