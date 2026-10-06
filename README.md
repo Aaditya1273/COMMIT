@@ -2,6 +2,26 @@
 
 ### The software factory that measures how much bad work it can kill.
 
+<p align="center">
+  <a href="https://lablab.ai/ai-hackathons/wearedevelopers-hackathon/guerrero/commit-factory-that-measures-bad-work"><img src="docs/media/commit-preview.gif" alt="COMMIT — film preview: who checks the checker, 27 charges for one payment, the COMMIT reveal, the real BAND run, the app it built" width="760"></a>
+</p>
+
+<p align="center">
+  <a href="https://lablab.ai/ai-hackathons/wearedevelopers-hackathon/guerrero/commit-factory-that-measures-bad-work"><b>▶ Watch the film (3:53)</b></a> &nbsp;·&nbsp;
+  <a href="https://storage.googleapis.com/lablab-static-eu/submissions/ajdxs9xxz0t764xhuqddyv99/mmgki45xibk6ufrn0r8gevx0/presentation/presentation_benph46sw7dnougxvgfjj7qa.pdf"><b>Presentation (PDF)</b></a> &nbsp;·&nbsp;
+  <a href="https://github.com/Aaditya1273/COMMIT-Pocketful"><b>Result repository (the run)</b></a> &nbsp;·&nbsp;
+  <a href="https://lablab.ai/ai-hackathons/wearedevelopers-hackathon/guerrero/commit-factory-that-measures-bad-work"><b>Hackathon submission</b></a>
+</p>
+
+| The submitted run · 5 Oct 2026 | |
+|---|---|
+| Stages accepted | **4 / 4** (Pocketful 1–4), each by an independent Verifier seat |
+| Official harness, isolated, all stages | **highest contiguous stage 4**; every stage folder claims its own stage |
+| Stage code written by a human | **0 lines** — full room log in [`room.json`](https://github.com/Aaditya1273/COMMIT-Pocketful/blob/main/room.json) |
+| Time and model spend | **9 h 32 min**, **$33.57** (BAND room counter) |
+| Human input | the dispatch + one time-limit note, both disclosed |
+
+
 > **Don't trust green checks. Measure whether your factory can detect bad work.**
 
 COMMIT is a three-seat autonomous software factory for **BAND Desktop**, built for the
@@ -30,6 +50,12 @@ artifact. A green suite answers *did the checks we wrote pass?*, not *would thes
 notice if the code were wrong?* Coverage does not answer that either; mutation testing
 does, so COMMIT uses it to measure its own verifier.
 
+<p align="center"><img src="docs/media/slide-problem.jpg" alt="AI writes the code. Nobody trusts it: over 25% of new code at Google is AI-written; 46% of developers distrust AI accuracy vs 33% who trust it" width="49%"> <img src="docs/media/slide-green-checks-real-bug.jpg" alt="Green checks, real bug: 147/147 official checks passed, yet one payment was charged 27 times when 50 customers paid at once" width="49%"></p>
+
+We proved it on a payment service: one realistic planted bug (an audit log written at the
+wrong moment) kept all **147 / 147** official checks green, while 50 concurrent customers
+paying with one idempotency key got the same payment charged **27 times** (`{"201":27}`).
+
 ## The factory
 
 ```mermaid
@@ -54,6 +80,12 @@ The mandates are generic — roles, handoffs, evidence and rejection rules, neve
 endpoints, fields or error codes — and the factory checks that on every run with the
 event's own scanner, against both graded tracks.
 
+<p align="center"><img src="docs/media/slide-architecture.jpg" alt="Architecture: spec into a BAND room with Planner, Builder and a read-only Verifier; the Verifier runs a six-layer release gate and rejects with a reproduce command" width="49%"> <img src="docs/media/slide-workflow.jpg" alt="Workflow of one stage: dispatch, plan, build, verify, ACCEPT, with the reject-repair loop; real stage-3 times" width="49%"></p>
+
+**What makes it different** — not another checker, a *measured* one:
+
+<p align="center"><img src="docs/media/slide-uniqueness.jpg" alt="Comparison: only COMMIT measures its own checks with mutation testing and seals re-auditable evidence" width="49%"> <img src="docs/media/slide-market-gap.jpg" alt="Positioning: coding agents and CI test suites are self-reported; COMMIT verifies and measures the verifier" width="49%"></p>
+
 ## The toolkit (`commit/`)
 
 Node ≥ 22.18, no npm dependencies. One entry point: `node commit/cli.ts <command>`.
@@ -69,7 +101,33 @@ Node ≥ 22.18, no npm dependencies. One entry point: `node commit/cli.ts <comma
 `commit/bootstrap.sh` installs the factory — and only the factory — into a fresh result
 repository, safely and idempotently.
 
-## Measured results
+## The submitted run (5 Oct 2026)
+
+One dispatch to `@planner` in BAND Desktop at 13:08 IST; all four Pocketful stages were
+accepted by 22:40 IST. Full detail, evidence and the room log are in the
+**[result repository](https://github.com/Aaditya1273/COMMIT-Pocketful)**.
+
+| Stage | Verdict | Revision | Official suites (isolated, no network) | Verifier's own evidence |
+|---|---|---|---|---|
+| 1 | **ACCEPT** | `29baf05` | 147 / 147 | 14/14 blocking steps · contract 49/49 · adversarial 50/50 · full 782-mutant campaign, 92.5 % killed |
+| 2 | **ACCEPT** | `ef962af` | 147/147 · 35/35 | 19/19 blocking steps · UI 16/16 · auth contract 14/14 · mutation sample 79.8 % |
+| 3 | **ACCEPT** | `39de1bf` | 147 · 35 · 6 | 24/24 blocking steps · upgrade 58/58 · ledger contract 12/12 · mutation sample 86.0 % |
+| 4 | **ACCEPT** | `cc1d710` | 147 · 35 · 6 · 5 | 25/25 blocking steps · refund contract 5/5 · upgrades 58/58 + 19/19 · mutation sample 77.0 % |
+
+<p align="center"><img src="docs/media/slide-real-run.jpg" alt="4/4 stages accepted: timeline from the 13:08 dispatch to stage 4 at 22:37, next to the real BAND room showing the final report" width="49%"> <img src="docs/media/slide-cost.jpg" alt="What it cost: $33.57 model spend, 9 h 32 m, 0 stage-code lines by a human; work split Planner 150, Builder 335, Verifier 536 turns" width="49%"></p>
+
+### What the factory built
+
+The Pocketful wallet — payments, requests, splits and holds — written entirely by the band.
+Screenshots of the accepted stage-4 revision, running locally:
+
+<p align="center"><img src="docs/media/app-home.jpg" alt="Pocketful home: available balance, a payment to Bob in the activity feed, a hold and a request just placed" width="74%"> <img src="docs/media/app-mobile.jpg" alt="Pocketful on a phone" width="22%"></p>
+<p align="center"><img src="docs/media/app-holds.jpg" alt="Holds page: money reserved for Cy and Bob" width="49%"> <img src="docs/media/app-requests.jpg" alt="Requests page: a pending request to Cy" width="49%"></p>
+
+Run it yourself from the result repository: `cd stage-4 && docker build -t pocketful . && docker run --rm -p 8080:8080 pocketful`,
+then open <http://localhost:8080/login> ([`RUN.md`](https://github.com/Aaditya1273/COMMIT-Pocketful/blob/main/stage-4/RUN.md)).
+
+## Calibration results
 
 The verifier was calibrated against a hand-written Pocketful stage-1 service
 ([`calibration/`](calibration/README.md) — **calibration only, never a submission**).
@@ -95,6 +153,8 @@ The 18 remaining survivors are listed in [`FACTORY.md` §6](FACTORY.md#6-measure
 
 The mutation score measures the verifier against the defects it can model; it is not a
 claim that the service is correct, and agreement with a reference model is not proof.
+
+<p align="center"><img src="docs/media/slide-mutation.jpg" alt="Mutation kill rate by campaign: 64.0%, 79.7%, then 95.4% — every bug that slipped through became a new check" width="49%"> <img src="docs/media/slide-caught-fixed-proven.jpg" alt="Caught, fixed, proven: reject 6020598 (paid 27x), repair 57e088b, inconclusive (2 steps skipped), accept a899d17 on the full gate" width="49%"></p>
 
 ## Reproduce
 
@@ -135,6 +195,16 @@ docs/factory/             verification in depth, reproducibility runbook
 docs/production-readiness.md
 apps/ packages/ docs/adr/ docs/*.md docker/   inherited upstream ledger (see Provenance)
 ```
+
+## Links
+
+| | |
+|---|---|
+| Film (3:53) | [watch on the submission page](https://lablab.ai/ai-hackathons/wearedevelopers-hackathon/guerrero/commit-factory-that-measures-bad-work) · [download MP4](https://storage.googleapis.com/lablab-video-submissions/submissions/ajdxs9xxz0t764xhuqddyv99/mmgki45xibk6ufrn0r8gevx0/video/video_l4mjeog53xysagt5gb0qnqxe.mp4) |
+| Presentation | [PDF, 15 slides](https://storage.googleapis.com/lablab-static-eu/submissions/ajdxs9xxz0t764xhuqddyv99/mmgki45xibk6ufrn0r8gevx0/presentation/presentation_benph46sw7dnougxvgfjj7qa.pdf) |
+| Result repository (the judged run) | <https://github.com/Aaditya1273/COMMIT-Pocketful> |
+| Hackathon submission | [lablab.ai — COMMIT: Factory That Measures Bad Work](https://lablab.ai/ai-hackathons/wearedevelopers-hackathon/guerrero/commit-factory-that-measures-bad-work) |
+| Factory in depth | [`FACTORY.md`](FACTORY.md) · [`mandates/`](mandates/) · [`docs/production-readiness.md`](docs/production-readiness.md) |
 
 ## Research foundation
 
